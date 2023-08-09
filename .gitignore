@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+Lectures/*/Scaffolding/
+Lectures/*/*slides_files*
+Lectures/*/*slides.Rmd
+Lectures/*/*.Rhistory
+Lectures/*/*AK*
+Lectures/*/VideoDecodeStats
+NFGH
