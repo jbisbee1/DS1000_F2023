@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Intro to Data Science</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Intro to Data Science
+]
+.subtitle[
+## What <code>R</code> we doing?
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/01/09
+Slides Updated: 2023-01-08
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Meet the instructor
+
+2. Course Motivation
+
+  - What is data science (DS) &amp; why should we care?
+
+3. Course Objectives
+
+  - **Content:** Critical thinking, analysis, presentation
+
+  - **Skills:** Computing and analysis in R
+  
+4. Course Expectations &amp; Syllabus review
+
+---
+
+# Meet the instructor
+
+- Education
+
+--
+
+  - PhD from NYU Politics in 2019
+
+  - Postdocs at Princeton Niehaus &amp; NYU CSMaP
+  
+--
+
+- Published some things
+
+--
+
+  - Methods-ey: external validity [1](https://www.journals.uchicago.edu/doi/full/10.1086/691280?af=R), [2](https://www.cambridge.org/core/journals/american-political-science-review/article/testing-social-science-network-theories-with-online-network-data-an-evaluation-of-external-validity/4BF517F10F38DFB574FED4A3D805B613); measurement [3](https://www.cambridge.org/core/journals/american-political-science-review/article/barp-improving-mister-p-using-bayesian-additive-regression-trees/630866EB47F9366EDB3C22CFD951BB6F), [4](https://www.cambridge.org/core/journals/political-analysis/article/geographic-boundaries-and-local-economic-conditions-matter-for-views-of-the-economy/32C8C058B8E16CAD48374F95B2B1B3EF)
+
+  - Substantive: economics &amp; populism [1](https://www.tandfonline.com/doi/full/10.1080/13501763.2019.1678662); Covid-19 &amp; U.S. politics [2](https://www.journals.uchicago.edu/doi/10.1086/716969),  [3](https://www.cambridge.org/core/journals/american-political-science-review/article/flight-to-safety-covidinduced-changes-in-the-intensity-of-status-quo-preference-and-voting-behavior/AE84D93BAF8B27284DD8F6A75DE5D18A); IPE [4](https://doi.org/10.1017/S0020818319000109); academic naval-gazing [5](https://www.cambridge.org/core/journals/perspectives-on-politics/article/abs/polisci-twitter-a-descriptive-analysis-of-how-political-scientists-use-twitter-in-2019/C8A193C3E939C1ABCD4600DFE8AEF79A?utm_source=hootsuite&amp;utm_medium=twitter&amp;utm_campaign=PPS_Dec20)
+
+  - Popular press: [1](https://www.washingtonpost.com/news/monkey-cage/wp/2018/04/04/losing-jobs-to-free-trade-makes-americans-more-protectionist-and-nativist/), [2](https://www.washingtonpost.com/politics/2020/04/02/sanders-was-losing-biden-anyway-he-lost-more-areas-with-coronavirus-cases/?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=wp_monkeycage), [Podcasts](https://www.niskanencenter.org/did-chinese-trade-competition-increase-nativism-and-elect-trump/)
+  
+--
+
+- Work
+
+--
+
+  - World Bank / IFC
+  
+  - MarketCast
+
+---
+
+# Meet the instructor
+
+- Current research
+
+--
+
+  - .red[YouTube] + .blue[polarization]
+
+--
+
+  - .red[Twitter] + .blue[misinformation]
+  
+--
+
+  - .red[Telegram] + .blue[white supremacists]
+  
+--
+
+- (Throughout the semester, I colorcode .red[data] .blue[science])
+
+---
+
+# Why are you here?
+
+--
+
+background-image: url(./figs/fight_ds_econ.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_ps.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_cs.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_stats.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_stem.PNG)
+background-size: contain
+
+---
+
+# Is this all just a fad?
+
+--
+
+- No
+
+
+&lt;center&gt;&lt;img src="figs/datagrowth.png" width = "75%"&gt;&lt;/center&gt;
+
+
+---
+
+# Is this all just a fad?
+
+- But there are faddish qualities
+
+&lt;center&gt;&lt;img src="figs/hype_cycle.png" width = "75%"&gt;&lt;/center&gt;
+
+
+---
+
+# So what IS data science?
+
+- Split into two camps
+
+--
+
+1. .blue[Research] camp
+
+--
+
+  - Focused on **answering a research question**
+  
+  - Follows the "scientific method"
+  
+  - Goal: contribute to knowledge
+  
+  - Domain: academia
+  
+--
+  
+2. .red[Prediction] camp
+
+--
+
+  - Focused on **making a prediction**
+  
+  - Typically unconcerned with theory or *why* a model works
+  
+  - Goal: inform a decision / policy
+  
+  - Domain: private sector
+  
+---
+
+# The Two Camps
+
+&lt;center&gt;&lt;img src="figs/camps1.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# The Two Camps
+
+&lt;center&gt;&lt;img src="figs/camps2.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# The Two Camps
+
+&lt;center&gt;&lt;img src="figs/camps3.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+- The scientific method
+
+  1. .red[Observation] &amp;rarr; .blue[Question]
+
+--
+
+  2. .blue[Theory] &amp;rarr; .blue[Hypothesis]
+
+--
+
+  3. .red[Data Collection / Wrangling] &amp;rarr; .red[Analysis]
+
+--
+
+  4. .red[Results] &amp;rarr; .blue[Conclusion]
+  
+--
+
+&lt;img src="Intro_Data_Science_slides_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# .blue[Research] Camp
+
+- The scientific method
+
+  1. .red[Observation] &amp;rarr; .blue[Question]
+
+  2. .blue[Theory] &amp;rarr; .blue[Hypothesis]
+
+  3. .red[Data Collection / Wrangling] &amp;rarr; .red[Analysis]
+
+  4. .red[Results] &amp;rarr; .blue[Conclusion]
+
+&lt;img src="Intro_Data_Science_slides_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# .blue[Research] Camp
+
+--
+
+&lt;center&gt;&lt;img src="figs/brown_et_al.png" width=80%&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+1. **.red[Observation]** &amp;rarr; **.blue[Question]**
+  
+--
+
+  - Observation is facilitated by .red[data] (Descriptive analysis)
+
+--
+
+&lt;img src="figs/transparency_tube.png" width="100%"&gt;
+
+---
+
+# .blue[Research] Camp
+
+1. **.red[Observation]** &amp;rarr; **.blue[Question]**
+
+  - Observation is facilitated by .red[data] (Descriptive analysis)
+
+&lt;img src="figs/recs_example_1.png" width="100%"&gt;
+
+
+---
+
+# .blue[Research] Camp
+
+1. **.red[Observation]** &amp;rarr; **.blue[Question]**
+
+  - Observation is facilitated by .red[data] (Descriptive analysis)
+
+&lt;img src="figs/recs_example_2.png" width="100%"&gt;
+
+
+---
+
+# .blue[Research] Camp
+
+1. **.red[Observation]** &amp;rarr; **.blue[Question]**
+
+  - The question pertains to .blue[science]
+  
+--
+
+  - I.e., does YouTube's algorithm put users into "echo chambers"?
+
+--
+
+&lt;center&gt;&lt;img src="figs/echo_chamber.png" width="60%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 2&gt;
+
+&lt;li&gt; **.blue[Theory]** &amp;rarr; **.blue[Hypothesis]**
+  
+--
+
+  - Theorizing requires abstraction &amp; simplification
+
+  - I.e., people (in general) avoid conflict
+
+--
+
+&lt;center&gt;&lt;img src="figs/utility_1.png" width="60%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 2&gt;
+
+&lt;li&gt; **.blue[Theory]** &amp;rarr; **.blue[Hypothesis]**
+
+  - Theorizing requires abstraction &amp; simplification
+
+  - I.e., people (in general) avoid conflict
+
+&lt;center&gt;&lt;img src="figs/utility_2.png" width="60%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 2&gt;
+
+&lt;li&gt; **.blue[Theory]** &amp;rarr; **.blue[Hypothesis]**
+
+  - Theorizing requires abstraction &amp; simplification
+
+  - I.e., people (in general) avoid conflict
+
+&lt;center&gt;&lt;img src="figs/utility_3.png" width="60%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 2&gt;
+
+&lt;li&gt; **.blue[Theory]** &amp;rarr; **.blue[Hypothesis]**
+
+  - Theorizing requires abstraction &amp; simplification
+
+  - I.e., people (in general) avoid conflict
+
+&lt;center&gt;&lt;img src="figs/utility_4.png" width="60%"&gt;&lt;/center&gt;
+
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 2&gt;
+
+&lt;li&gt; **.blue[Theory]** &amp;rarr; **.blue[Hypothesis]**
+
+  - Theorizing requires abstraction &amp; simplification
+
+  - I.e., people (in general) avoid conflict
+
+&lt;center&gt;&lt;img src="figs/utility_5.png" width="60%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 2&gt;
+
+&lt;li&gt; **.blue[Theory]** &amp;rarr; **.blue[Hypothesis]**
+
+  - Theorizing requires abstraction &amp; simplification
+
+  - I.e., people (in general) avoid conflict
+  
+  - YouTube wants users to watch more videos
+
+--
+
+.leftcol[
+&lt;img src="figs/covington_et_al_2016.png" width="100%"&gt;
+]
+
+--
+
+.rightcol[
+&lt;img src="figs/yt_rec_algo.png" width="100%"&gt;
+]
+
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 2&gt;
+
+&lt;li&gt; **.blue[Theory]** &amp;rarr; **.blue[Hypothesis]**
+
+  - Theorizing requires abstraction &amp; simplification
+
+  - I.e., people (in general) avoid conflict
+  
+  - YouTube wants users to watch more videos
+
+- Hypotheses fall out naturally from well-done theory
+
+--
+
+- **H1:** *YouTube's recommendation algorithm should suggested liberal content to liberals and conservative content to conservatives.*
+
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+  - Data collection separates "Data Science"...
+  
+  - ...from "Science, with data"
+  
+&lt;center&gt;&lt;img src="figs/data_collection_1.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+  - Data collection separates "Data Science"...
+  
+  - ...from "Science, with data"
+  
+&lt;center&gt;&lt;img src="figs/data_collection_2.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+  - Data collection separates "Data Science"...
+  
+  - ...from "Science, with data"
+  
+&lt;center&gt;&lt;img src="figs/data_collection_3.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+  - Data collection separates "Data Science"...
+  
+  - ...from "Science, with data"
+  
+&lt;center&gt;&lt;img src="figs/data_collection_4.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+--
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+--
+
+&lt;center&gt;&lt;img src="figs/emptrav_1.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_2.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_3.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_4.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_5.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_6.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_7.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_8.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_9.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_10.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_11.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_12.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_13.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 3&gt;
+
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
+
+- Analysis is informed by the .red[data] you have collected...
+
+- ...and the .blue[hypotheses] you have generated
+
+&lt;center&gt;&lt;img src="figs/emptrav_14.png" width="90%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 4&gt;
+
+&lt;li&gt; **.red[Results]** &amp;rarr; **.blue[Conclusion]**
+
+--
+
+  - Results fall out naturally from the analysis...
+  
+  - ...and must be interpreted in terms of the theory and hypotheses...
+  
+  - ...to draw conclusions
+  
+--
+
+&lt;center&gt;&lt;img src="figs/ideo_dist_1.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 4&gt;
+
+&lt;li&gt; **.red[Results]** &amp;rarr; **.blue[Conclusion]**
+
+  - Results fall out naturally from the analysis...
+  
+  - ...and must be interpreted in terms of the theory and hypotheses...
+  
+  - ...to draw conclusions
+
+&lt;center&gt;&lt;img src="figs/ideo_dist_2.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# .blue[Research] Camp
+
+&lt;ol start = 4&gt;
+
+&lt;li&gt; **.red[Results]** &amp;rarr; **.blue[Conclusion]**
+
+  - Results fall out naturally from the analysis...
+  
+  - ...and must be interpreted in terms of the theory and hypotheses...
+  
+  - ...to draw conclusions
+
+&lt;center&gt;&lt;img src="figs/ideo_dist_3.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# The Two Camps
+
+&lt;center&gt;&lt;img src="figs/camps3.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# .red[Prediction] Camp
+
+- **Goal/Problem/Challenge**: Measure the ideology of a YouTube
+
+---
+
+# .red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of links shared on political subreddits
+
+--
+
+&lt;center&gt;&lt;img src="figs/hard_data_1.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of links shared on political subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_2.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of links shared on political subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_3.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of links shared on political subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_4.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Correspondence Analysis to estimate ideology scores for subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_5.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of YouTube videos shared on scored subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_6.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of YouTube videos shared on scored subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_7.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of YouTube videos shared on scored subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_8.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of 60k YouTube videos shared on scored subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_9.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Data Wrangling**: Calculate video ideology as weighted mean of subreddits
+
+&lt;center&gt;&lt;img src="figs/hard_data_10.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Model Training**: BERT transformer trained on 60k videos
+
+&lt;center&gt;&lt;img src="figs/hard_data_12.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+#.red[Prediction] Camp
+
+- **Prediction**: Measure the ideology of a YouTube video
+
+&lt;center&gt;&lt;img src="figs/hard_data_13.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+# Preview of Semester
+
+- This course is the menu, not the food
+
+--
+
+  - Look over many different fields, methods, and tools
+
+--
+
+  - You pick those you like, and take more advanced classes to dig into them
+
+--
+
+- But we are very **hands on**
+
+--
+
+  - You must download `R` and `RStudio` prior to next class (Problem Set 0)
+  
+--
+
+  - You must work through first HW using an `.Rmd` file
+  
+---
+
+# Grades
+
+&lt;center&gt;&lt;img src="figs/rubric.png" width="50%"&gt;&lt;/center&gt;
+
+---
+
+# Grades: PSets
+
+- 9 in total, only 8 are graded
+
+--
+
+  - Pset 0 doesn't count
+  
+--
+
+- Posted to **Brightspace** on Mondays at noon
+
+--
+
+- Due **Friday by midnight**
+
+  - Each day late is -1 point
+
+  - After 3 days, scored zero
+  
+--
+
+- Restrictions:
+
+  - Open book / open note / open Campuswire
+
+  - **Can collaborate but submissions must be your own**
+  
+---
+
+# Grades: Exams
+
+- 2 in total: midterm on March 8th, final on April 26th
+
+--
+
+- 20% of final grade
+
+--
+
+- Restrictions:
+
+  - Open book / open note / open Campuswire
+
+  - **Cannot collaborate**
+
+
+---
+
+# Grades: Quizzes
+
+- Taken at end of each lecture
+
+--
+
+- Password protected
+
+  - Only students in class can take them
+  
+  - 50% of quiz grade is just taking it (sign affidavit)
+  
+  - 50% of quiz grade is four questions related to lecture
+
+
+---
+
+# Not Graded: HW
+
+- You should work through the homeworks prior to each lecture
+
+--
+
+- Open the `.Rmd` file and Knit it
+
+--
+
+- Read the output and try and answer the prompts
+
+--
+
+- **Not graded**, but enormously helpful in preparing you to keep up with lectures
+
+
+---
+
+# The Syllabus
+
+&lt;center&gt;&lt;img src="figs/syllabus.png" width="100%"&gt;&lt;/center&gt;
+
+
+---
+
+# Honor Code
+
+--
+
+- Students are assumed to have read and agreed with the [Vanderbilt University Academic Honesty policy](https://www.vanderbilt.edu/student_handbook/the-honor-system/)
+
+--
+
+- Violations of this policy may result in:
+
+--
+
+  - An F for the semester (at minimum)
+  
+  - Suspension for a semester
+  
+  - Expulsion
+  
+--
+
+- However, except where **explicitly noted**, this course is collaborative
+
+--
+
+  - Open book, open note, open internet
+  
+  - Can rely on Campuswire for help
+  
+  - Can work together on problem sets (but must submit own work)
+  
+--
+
+- **Can't collaborate on exams**
+
+---
+
+# Resources
+
+- Campuswire (place for **questions**)
+
+  - Post questions on the class feed
+  
+--
+
+- Brightspace (place for **submissions**)
+
+  - Submit problem sets, quizzes, and exams
+  
+--
+
+- GitHub (place for **materials**)
+
+  - Find all in-class materials
+  
+--
+
+- TA recitations / labs (place for **hands-on help**)
+
+- Office hours (place for **hands-on help**)
+  
+---
+
+# Teaching Philosophy
+
+&lt;center&gt;&lt;img src="figs/responsibilities_teacher_student.png" width="100%"&gt;&lt;/center&gt;
+
+---
+
+# Teaching Philosophy
+
+- This course is **inherently** hard
+
+--
+
+  - Learning `R` is challenging
+  
+--
+
+- But the goal is to **encourage** you to pursue data science
+
+--
+
+- As such, the **nature** of the material is at odds with the **goal** of the class
+
+--
+
+- My solution: grade leniently
+
+--
+
+  - `+` lots of extra credit
+
+---
+
+# Previous Semester
+
+&lt;center&gt;&lt;img src="figs/grades_semester.png" width="100%"&gt;&lt;/center&gt;
+
+
+---
+
+# Conclusion
+
+- Go to Brightspace and take the **1st** quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 3326 --&gt;
+  
+--
+
+- Homework:
+
+--
+
+  1. Work through Intro_Data_Science_hw.Rmd
+  
+  2. Complete Problem Set 0 (on Brightspace)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
