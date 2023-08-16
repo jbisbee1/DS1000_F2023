@@ -29,7 +29,7 @@ This is the course management software used at Vanderbilt to support course lear
 Don’t forget to download the related app, which is called Pulse, to your phone and set it to alert you if there are new content or announcements for the course.
 
 ### Campuswire
-I have set up a Campuswire workspace for our use this semester to help us better communicate with each other and the TAs. You will need to create an account and join our workspace by following [this link](https://campuswire.com/c/GE61F4A99). You are encouraged to adopt these [Slack etiquette tips](https://slack.com/blog/collaboration/etiquette-tips-in-slack). 
+I have set up a Campuswire workspace for our use this semester to help us better communicate with each other and the TAs. You will need to create an account and join our workspace by following [this link](https://campuswire.com/c/G0D071C4A). You are encouraged to adopt these [Slack etiquette tips](https://slack.com/blog/collaboration/etiquette-tips-in-slack). 
 
 Here is the list of channels you should see upon joining the Campuswire workspace:
 
@@ -153,7 +153,7 @@ The observance of religious holidays (activities observed by a religious group o
 * TA Negi: TBA
 * TA Zha: TBA
 
-All these can also be found on the [Campuswire calendar](https://campuswire.com/c/GE61F4A99/calendar), along with the Zoom links for those hosting their office hours remotely.
+All these can also be found on the [Campuswire calendar](https://campuswire.com/c/G0D071C4A/calendar), along with the Zoom links for those hosting their office hours remotely.
 
 *[Back to ToC](#table-of-contents)*
 
