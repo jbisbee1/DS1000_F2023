@@ -3,7 +3,7 @@ title: "Intro to Data Science"
 subtitle: "What R we doing?"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Due Date: 2023-01-11"
+date: "Due Date: 2023-08-28"
 output: html_document
 ---
 
@@ -297,3 +297,11 @@ df%>%
 # INSERT CODE HERE
 ```
 
+```{r,message=F,echo=F,warning=F,results='hide'}
+dir <- getwd()
+type <- 'pdf'
+format <- 'portrait'
+f <- 'Intro_Data_Science_hw'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

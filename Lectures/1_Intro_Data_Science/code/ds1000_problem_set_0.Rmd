@@ -34,11 +34,11 @@ Download RStudio here: <https://rstudio.com/products/rstudio/download/>. You nee
 In each class, we're going to include some code and text in one file, and data in another file. You'll need 
 to download both of these files to your computer. You need to have a particular place to put these files. Computers are organized using named directories (sometimes called folders).  Don't just put the files in your Downloads directory. One common solution is to created a folder on your computer named after the class: `ds_1000`. 
 
-You could just throw everything related to the class into this folder. However, this will quickly get messy. I recommend you create a "sub-folder" (or "sub-directory") within `ds_1000` called `Lecture_2023_01_11`. (You might also want to create similar sub-folders for `Lecture_2023_01_09`.) Inside `Lecture_2023_01_11`, create two additional sub-folders: `code` and `data`. When you're done, your class directory should look like this:
+You could just throw everything related to the class into this folder. However, this will quickly get messy. I recommend you create a "sub-folder" (or "sub-directory") within `ds_1000` called `Lecture_1`. (You might also want to create similar sub-folders for `Lecture_2`.) Inside `Lecture_1`, create two additional sub-folders: `code` and `data`. When you're done, your class directory should look like this:
 
 ```
 - ds_1000
-  - Lecture_2023_01_11
+  - Lecture_1
     - code
     - data
 ```
@@ -96,3 +96,12 @@ and save it as `[Your Last Name]_ps0.pdf`.
 
 
 Finally, upload the PDF to Brightspace under the Problem Set 0 assignment!
+
+```{r,message=F,echo=F,warning=F,results='hide',error=T}
+dir <- getwd()
+type <- 'pdf'
+format <- 'portrait'
+f <- 'ds1000_problem_set_0'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

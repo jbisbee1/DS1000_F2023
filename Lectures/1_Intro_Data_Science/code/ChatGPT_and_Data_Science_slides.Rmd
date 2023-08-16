@@ -1,0 +1,234 @@
+---
+title: "Intro to Data Science"
+subtitle: "ChatGPT and the new frontier of data science"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/08/28\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+set.seed(123)
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+# Agenda
+
+1. ChatGPT overview
+
+2. Interactive examples with the homework
+
+---
+
+# ChatGPT overview
+
+- **L**arge **L**anguage **M**odel (LLM)
+
+--
+
+- Large:
+
+--
+
+  - Trained on the internet
+  
+  - Billions (trillions) of parameters
+  
+--
+
+- Language model:
+
+--
+
+  - A "transformer"
+  
+---
+
+# ChatGPT overview
+
+- Fill in the missing word: **"I drove my ___ to the supermarket."**
+
+--
+
+- How do we know this?
+
+--
+
+- Patterns!
+
+<center><img src="figs/neurons.jpg" width="90%"></center>
+
+---
+
+# ChatGPT overview
+
+<center><img src="figs/neurons_sentence.png" width="80%"></center>
+
+--
+
+<center><img src="figs/neurons_words.png" width="100%"></center>
+
+---
+
+# ChatGPT overview
+
+- Researchers have been trying to emulate the brain's ability for years
+
+--
+
+<center><img src="figs/neural_network.png" width="80%"></center>
+
+---
+
+# ChatGPT overview
+
+- Approach is fundamentally to **predict the next word**
+
+<center><img src="figs/neural_network_2.png" width="80%"></center>
+
+---
+
+# ChatGPT overview
+
+- Artificial intelligence (AI) has improved enormously over the last 20 years
+
+--
+
+- But even in 2017, "chatbots" would fail the "Turing Test"
+
+--
+
+<center><img src="figs/turing_test_real.png" width="80%"></center>
+
+---
+
+# ChatGPT overview
+
+- Artificial intelligence (AI) has improved enormously over the last 20 years
+
+- But even in 2017, "chatbots" would fail the "Turing Test"
+  
+<center><img src="figs/turing_test_joke.png" width="90%"></center>
+
+---
+
+# ChatGPT overview
+
+- Innovations in 2017 allowed dramatic improvements in **G**enerative **P**re-trained **T**ransformers (GPT)
+
+--
+
+  - (Actually, dramatic improvements in all types of transformers)
+  
+--
+
+- Interacting with ChatGPT can feel truly human
+
+--
+
+  - Passes the Turing Test
+  
+--
+
+- But under the hood, it is still simply predicting the next word
+
+--
+
+  - Importantly, it is doing so **probabilistically**
+  
+---
+
+# ChatGPT overview
+
+<center><img src="figs/chatgpt_1.png" width="90%"></center>
+
+---
+
+# ChatGPT overview
+
+<center><img src="figs/chatgpt_2.png" width="90%"></center>
+
+---
+
+# ChatGPT overview
+
+<center><img src="figs/chatgpt_3.png" width="90%"></center>
+
+---
+
+# ChatGPT overview
+
+<center><img src="figs/chatgpt_4.png" width="90%"></center>
+
+---
+
+# ChatGPT overview
+
+<center><img src="figs/chatgpt_5.png" width="90%"></center>
+
+---
+
+# So how can we use it?
+
+- Interactive time!
+
+---
+
+# Conclusion
+
+- Go to Brightspace and take the **2nd** quiz
+
+--
+
+  - The password to take the quiz is #### <!-- `r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
+  
+--
+
+- Homework:
+
+--
+
+  1. Work through Intro_Data_Science_hw.Rmd
+  
+  2. Complete Problem Set 0 (on Brightspace)
+  
+  3. Create an OpenAI account (https://auth0.openai.com/u/signup/)
+
+```{r,message=F,echo=F,warning=F,results='hide'}
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'ChatGPT_and_Data_Science_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
