@@ -158,6 +158,20 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 *[Back to ToC](#table-of-contents)*
 
 ## Syllabus
+
+### Tentative Spreadsheet
+![spreadsheet](http://https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/figs/syllabus.png)
+
+### Lecture Notes, Data and Code for Each Topic 
+Each lecture's materials will be released according to the following schedule:
+* Lecture Slides (PDF/html): Published the evening of the date of the class. PDFs can be downloaded. html slides can be viewed online.
+* Homework (.Rmd): Published following class. These should be read **interactively** via rmarkdown prior to the subsequent class.
+* Problem Sets (.Rmd): Published Monday after lecture. Due **Friday by 11:59PM on Brightspace**.
+
+**Note that these links will return a 404 error if clicked prior to this release schedule.**
+
+*To access lecture content and/or data sets use ctrl+click on a mac or right click on a pc, then click "save link as" and save to the class directory on your computer.*
+
 [1. Intro to Data Science](#1-intro-to-data-science): Aug 23 - Aug 28
 
 [2. Intro to `R`](#2-intro-to-r): Sep 4 - Sep 13
@@ -178,16 +192,6 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 
 [10. Final](#10-final-exam): Dec 11
 
-
-### Lecture Notes, Data and Code for Each Topic 
-Each lecture's materials will be released according to the following schedule:
-* Lecture Slides (PDF/html): Published the evening of the date of the class. PDFs can be downloaded. html slides can be viewed online.
-* Homework (.Rmd): Published following class. These should be read **interactively** via rmarkdown prior to the subsequent class.
-* Problem Sets (.Rmd): Published Monday after lecture. Due **Friday by 11:59PM on Brightspace**.
-
-**Note that these links will return a 404 error if clicked prior to this release schedule.**
-
-*To access lecture content and/or data sets use ctrl+click on a mac or right click on a pc, then click "save link as" and save to the class directory on your computer.*
 
 ### 1\. Intro to Data Science
 
