@@ -160,7 +160,7 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 ## Syllabus
 
 ### Tentative Spreadsheet
-![spreadsheet](http://https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/figs/syllabus.png)
+![spreadsheet](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/figs/syllabus.png)
 
 ### Lecture Notes, Data and Code for Each Topic 
 Each lecture's materials will be released according to the following schedule:
