@@ -1232,7 +1232,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
   
   2. Complete Problem Set 0 (on Brightspace)
   
-  3. Create an OpenAI account (https://auth0.openai.com/u/signup/)
+  3. Create an OpenAI account (https://platform.openai.com/signup)
 
 ```{r,message=F,echo=F,warning=F,results='hide'}
 dir <- getwd()
