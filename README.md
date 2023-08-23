@@ -149,8 +149,10 @@ The observance of religious holidays (activities observed by a religious group o
 * TA Brych: TBA
 * TA Fang: TBA
 * TA Gupta: TBA
-* TA Li: TBA
+* TA Manda Li: TBA
+* TA Qifan Li: TBA
 * TA Negi: TBA
+* TA Quagliata: TBA
 * TA Zha: TBA
 
 All these can also be found on the [Campuswire calendar](https://campuswire.com/c/G0D071C4A/calendar), along with the Zoom links for those hosting their office hours remotely.
@@ -197,14 +199,15 @@ Each lecture's materials will be released according to the following schedule:
 
 Lecture Content (2023/08/23): Welcome to the world of data science!
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1); [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2953333/View)
 * Homework (due 2023/01/11): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd); [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.pdf)
+* **Problem Set 0 (due 2023-08-28):** [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf)
 
 Lecture Content (2023/08/28): ChatGPT and the new frontier of data science
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1)
 * Homework (due 2023/09/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd); [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.pdf)
-* **Problem Set 0 (due 2023-09-04):** [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf)
+
 
 *[Back to ToC](#table-of-contents)*
 
