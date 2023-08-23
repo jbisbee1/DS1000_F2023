@@ -40,7 +40,6 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
   ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
-require(renderthis)
 ```
 
 # Agenda
@@ -760,25 +759,6 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <center><img src="figs/emptrav_14.png" width="90%"></center>
 
----
-
-# .blue[Research] Camp
-
-<ol start = 4>
-
-<li> **.red[Results]** &rarr; **.blue[Conclusion]**
-
---
-
-  - Results fall out naturally from the analysis...
-  
-  - ...and must be interpreted in terms of the theory and hypotheses...
-  
-  - ...to draw conclusions
-  
---
-
-<center><img src="figs/ideo_dist_1.png" width="80%"></center>
 
 ---
 
@@ -822,7 +802,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 # .red[Prediction] Camp
 
-- **Goal/Problem/Challenge**: Measure the ideology of a YouTube
+- **Goal/Problem/Challenge**: Measure the ideology of a YouTube video
 
 ---
 
@@ -831,14 +811,6 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 - **Data Wrangling**: Get matrix of links shared on political subreddits
 
 --
-
-<center><img src="figs/hard_data_1.png" width="100%"></center>
-
----
-
-#.red[Prediction] Camp
-
-- **Data Wrangling**: Get matrix of links shared on political subreddits
 
 <center><img src="figs/hard_data_2.png" width="100%"></center>
 
@@ -921,6 +893,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 - **Prediction**: Measure the ideology of a YouTube video
 
 <center><img src="figs/hard_data_13.png" width="100%"></center>
+
 
 ---
 
@@ -1076,13 +1049,17 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
   - Open book / open note / open Campuswire
 
-  - **Can collaborate but submissions must be your own**
+  - Can collaborate but submissions must be your own
+  
+--
+
+- **Must submit a record of ChatGPT work with the problem set**
   
 ---
 
 # Grades: Exams
 
-- 2 in total: midterm on March 8th, final on April 26th
+- 2 in total: midterm on October 25th, final on December 11th
 
 --
 
@@ -1092,9 +1069,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 - Restrictions:
 
-  - Open book / open note / open Campuswire
-
-  - **Cannot collaborate**
+  - **In-class with pen and paper**
 
 
 ---
@@ -1137,7 +1112,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 # The Syllabus
 
-<center><img src="figs/syllabus.png" width="100%"></center>
+<center><img src="figs/syllabus.png" width="80%"></center>
 
 
 ---
@@ -1245,12 +1220,8 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 # Conclusion
 
-- Go to Brightspace and take the **1st** quiz
+- Let's have a great semester!
 
---
-
-  - The password to take the quiz is #### <!-- `r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
-  
 --
 
 - Homework:
