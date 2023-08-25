@@ -206,7 +206,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
 # Conclusion
 
-- Go to Brightspace and take the **2nd** quiz
+- Go to Brightspace and take the quiz
 
 --
 
@@ -219,10 +219,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 --
 
   1. Work through Intro_Data_Science_hw.Rmd
-  
-  2. Complete Problem Set 0 (on Brightspace)
-  
-  3. Create an OpenAI account (https://auth0.openai.com/u/signup/)
+
 
 ```{r,message=F,echo=F,warning=F,results='hide'}
 dir <- getwd()

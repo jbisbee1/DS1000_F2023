@@ -150,7 +150,7 @@ The observance of religious holidays (activities observed by a religious group o
 * TA Fang: TBA
 * TA Gupta: TBA
 * TA Manda Li: TBA
-* TA Qifan Li: TBA
+* TA Qifan Lin: TBA
 * TA Negi: TBA
 * TA Quagliata: TBA
 * TA Zha: TBA
