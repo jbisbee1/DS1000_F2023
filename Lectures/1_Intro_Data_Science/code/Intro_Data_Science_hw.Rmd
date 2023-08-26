@@ -59,7 +59,7 @@ You will then be asked to determine a bunch of settings for this `.Rmd` document
 
 <center><img src="figs/create_rmd_2.png" width = 70%></center>
 
-Copy the raw code from the [`Intro_Data_Science_hw.Rmd`](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd) file by clicking on the copy button as shown in the image below.
+Copy the raw code from the [`Intro_Data_Science_hw.Rmd`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd) file by clicking on the copy button as shown in the image below.
 
 <center><img src="figs/copy_raw.png" width = 70%></center>
 
@@ -107,16 +107,20 @@ It's a good practice to shutdown R/Rstudio once you're no longer working on it, 
 
 ## Loading Datasets
 
-Now we're ready to load in data. The data frame will be our basic way of interacting with everything in this class. The `sc_debt.Rds ` data frame contains information from the college scorecard on different colleges and universities.
+Now we're ready to load in data. The data frame will be our basic way of interacting with everything in this class. The `sc_debt.Rds` (found here: https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/data/sc_debt.Rds) data frame contains information from the college scorecard on different colleges and universities.
 
 However, we first need to make sure that R is looking in the right place. Because we keep our files in a particular directory, we need to point R to the right place. If this `.Rmd` file is stored in a folder called `code`, and there is another folder called `data` in the same directory as `code`, we would need to tell `R`:
 
 1. Leave the `code` and go back to the parent directory: `../`
 2. Go into the `data` folder: `data/`
-3. Open the dataset `sc_debt.Rds`: `readRDS("../data/sc_debt.Rds")`
+3. Open the dataset `sc_debt.Rds`: `read_rds("../data/sc_debt.Rds")`
+
 
 ```{r}
-df<-readRDS("../data/sc_debt.Rds") 
+df<-read_rds("../data/sc_debt.Rds") 
+
+# NB: you can also open directly from GitHub by copying the link to the raw data
+df <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/1_Intro_Data_Science/data/sc_debt.Rds')
 ```
 
 You'll notice that the code above starts with `df`. This is just an arbitrary name for an object. You could name it `dat` or `raw` or `debt` or whatever you want. Then there's an arrow `<-`. This is an assignment operator. Then there's a  function, `readRDS`, with parentheses, and an argument "sc_debt.Rds". Here's how to think about this.
