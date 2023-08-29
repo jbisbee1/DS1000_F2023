@@ -204,7 +204,7 @@ Lecture Content (2023/08/23): Welcome to the world of data science!
 
 Lecture Content (2023/08/28): ChatGPT and the new frontier of data science
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.html#1); [Recording Part 1](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2967884/View); [Recording Part 2](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2967883/View)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.html#1)
 * Homework (due 2023/09/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd); [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.pdf)
 
 
@@ -217,7 +217,6 @@ Lecture Content (2023/08/28): ChatGPT and the new frontier of data science
 Lecture Content (2023/09/04): Part 1 - Install and open `R`, packages, `tidyverse`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2693128/View)
 * Homework (due 2023/09/06): [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.pdf);  [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.Rmd)
 * Data: [sc_debt.Rds](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/data/sc_debt.Rds)
 
@@ -226,19 +225,16 @@ Lecture Content (2023/09/04): Part 1 - Install and open `R`, packages, `tidyvers
 Lecture Content (2023/09/06): Part 2 - Objects, functions, and `<-`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2705775/View)
 * Homework (due 2023/09/11): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_hw.Rmd)
 
 Lecture Content (2023/09/11): Part 3 - Visualization in `R`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2710468/View)
 * Homework (due 2023/09/18): [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.pdf); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd)
 * **Problem Set 1 (due 2023-09-15 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Problem_Set_1.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Problem_Set_1_AK.pdf)
 
 **Review Session (2023/09/13): Review of Intro to `R` section.**
 * In-Class Notes: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/example_rmd_for_pdf.pdf); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/example_rmd_for_pdf.Rmd)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2713402/View)
 * Homework (same as Monday): [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.pdf); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd)
 
 *[Back to ToC](#table-of-contents)*
@@ -248,7 +244,6 @@ Lecture Content (2023/09/11): Part 3 - Visualization in `R`
 Lecture Content (2023/09/18): Replicability in `R`, tabular data
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2717639/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/lecture_notes_1_30_2023.Rmd)
 * Homework (due 2023/09/20): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.Rmd)
 * **Problem Set 2 (due 2023-09-22 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/3_Data_Wrangling_PS2.Rmd), [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/3_Data_Wrangling_PS2.Rmd)
@@ -263,7 +258,6 @@ Lecture Content (2023/09/18): Replicability in `R`, tabular data
 Lecture Content (2023/09/20): Univariate - Summaries of a single variable
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2720132/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_notes_02_01_2023.Rmd)
 * Homework (due 2023/09/25): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_hw.Rmd)
 * Data: [Basketball Data](https://github.com/jbisbee1/DS1000_F2023/tree/main/Lectures/4_Uni_Multivariate/data)
@@ -271,7 +265,6 @@ Lecture Content (2023/09/20): Univariate - Summaries of a single variable
 Lecture Content (2023/09/25): Multivariate Part 1 - Summaries of multiple variables
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2724236/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_02_06_2023_notes.Rmd)
 * Homework (due 2023/09/27): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_hw.Rmd)
 * Data: [Michigan Survey (prepped)](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/MI2020_ExitPoll_small.rds); [Presidential Vote](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/Pres2020_PV.Rds)
@@ -281,21 +274,18 @@ Lecture Content (2023/09/25): Multivariate Part 1 - Summaries of multiple variab
 Lecture Content (2023/09/27): Multivariate Part 2 - Visualizations of multiple variables
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2726934/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_notes_02_08_2023.Rmd)
 * Homework (due 2023/10/02): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_hw.Rmd)
 
 Lecture Content (2023/10/02): Multivariate Part 3 - Uncertainty and bootstrapping
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2730311/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_02_13_2023_notes.Rmd)
 * Homework (due 2023/10/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
 * **Problem Set 4 (due 2023-10-06 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4.Rmd)
 [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4_AK.pdf)
 
 **Review Session (2023/10/04): Review of Uni & Multivariate section.**
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2732740/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Review_notes_02_15_2023.Rmd)
 * Homework (due 2023/10/09): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
 
@@ -307,7 +297,6 @@ Lecture Content (2023/10/02): Multivariate Part 3 - Uncertainty and bootstrappin
 Lecture Content (2023/10/09): Regression Part 1 - The concept of a linear regression
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part1_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2736703/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_20_2023.Rmd)
 * Homework (due 2023/10/11): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_hw.Rmd)
 * **Problem Set 5 (due 2023-10-13 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5_AK.Rmd)
@@ -315,19 +304,16 @@ Lecture Content (2023/10/09): Regression Part 1 - The concept of a linear regres
 Lecture Content (2023/10/11): Regression Part 2 - Interpreting model output and evaluating performance
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part2_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2739081/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_22_2023.Rmd)
 * Homework (due 2023/10/16): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_hw.Rmd)
 
 Lecture Content (2023/10/16): Regression Part 3 - Multiple regression and categorical predictors
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part3_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2742131/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_27_2023.Rmd)
 * Practice Problem Set: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_Practice_PSset.Rmd)
 
 **Review Session (2023/10/18): Review of Regression section.**
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2744668/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/review_notes_03_01_2023.Rmd)
 
 
@@ -335,7 +321,6 @@ Lecture Content (2023/10/16): Regression Part 3 - Multiple regression and catego
 
 **Review Session (2023/10/23): Review of first half of semester.**
 * Previous Midterm: [F2022](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/DS1000_F2022_midterm_exam_AK.pdf)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2749907/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/midterm_review_notes.Rmd)
 * [Midterm Exam](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/DS1000_midterm.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/DS1000_midterm_AK.Rmd)
 
@@ -349,7 +334,6 @@ Lecture Content (2023/10/16): Regression Part 3 - Multiple regression and catego
 Lecture Content (2023/10/30): Classification Part 1 - The concept of a logistic Classification
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2760407/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_20_2023.Rmd)
 * Homework (due 2023/11/01): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_parts_1_and_2_hw.Rmd)
 * **Problem Set 6 (due 2023-11-03 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS6.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS6_AK.Rmd)
@@ -357,19 +341,16 @@ Lecture Content (2023/10/30): Classification Part 1 - The concept of a logistic 
 Lecture Content (2023/11/01): Classification Part 2 - Interpreting model output and evaluating performance
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part2_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2764617/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_22_2023.Rmd)
 * Homework (due 2023/11/06): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part3_hw.Rmd)
 
 Lecture Content (2023/11/06): Classification Part 3 - Using models for prediction
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part3_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2767992/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_27_2023.Rmd)
 * **Problem Set 7 (due 2023-11-10 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS7.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS7_AK.Rmd)
 
 **Review Session (2023/11/08): Review of Classification section.**
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2770682/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_29_2023.Rmd)
 * Homework (due 2023/11/13): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part1_hw.Rmd)
 
@@ -380,7 +361,6 @@ Lecture Content (2023/11/06): Classification Part 3 - Using models for predictio
 Lecture Content (2023/11/13): Clustering & NLP Part 1 - *k*-means clustering
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part1_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2774715/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_03_2023.Rmd)
 * Homework (due 2023/11/15): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part1_hw.Rmd)
 * **Problem Set 8 (due 2023-11-17 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8.Rmd); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8_AK.Rmd)
@@ -388,7 +368,6 @@ Lecture Content (2023/11/13): Clustering & NLP Part 1 - *k*-means clustering
 Lecture Content (2023/11/15): Clustering & NLP Part 2 - *k*-means clustering on text
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part2_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2777344/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_05_2023.Rmd)
 * Homework (due 2023/11/27): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part2_hw.Rmd)
 
@@ -400,7 +379,6 @@ Lecture Content (2023/11/15): Clustering & NLP Part 2 - *k*-means clustering on 
 Lecture Content (2023/11/27): Clustering & NLP Part 3 - Sentiment analysis
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2781234/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_10_2023.Rmd)
 * Homework (due 2023/11/29): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part3_hw.Rmd)
 * **Problem Set 9 (due 2023-12-01 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8.Rmd); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8_AK.Rmd)
@@ -408,7 +386,6 @@ Lecture Content (2023/11/27): Clustering & NLP Part 3 - Sentiment analysis
 
 **Review Session (2023/11/29): Review of Clustering section.**
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2782869/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_12_2023.Rmd)
 
 *[Back to ToC](#table-of-contents)*
@@ -418,7 +395,6 @@ Lecture Content (2023/11/27): Clustering & NLP Part 3 - Sentiment analysis
 Lecture Content (2023/12/04): Ethics in data science
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/9_Advanced_Topics/code/Ethics_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/9_Advanced_Topics/code/Ethics_slides.html#1)
-* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/403347/viewContent/2787774/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/9_Advanced_Topics/code/lecture_notes_04_19_2023.Rmd)
 
 *[Back to ToC](#table-of-contents)*
