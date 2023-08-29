@@ -1,0 +1,204 @@
+---
+title: "Incremental Slides with xaringan / remark.js"
+author: "Yihui Xie"
+date: "2017/08/31"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+# Three ways to build incremental slides
+
+In remark.js, you may use
+
+--
+
+- two dashes
+
+--
+
+- layout slides
+
+--
+
+- template slides
+
+---
+
+# Two dashes
+
+The easiest way to build incremental slides is...
+--
+ to use two dashes `--` to separate content on a slide.
+
+--
+
+You can divide a slide in _any way you want_.
+
+--
+
+- One bullet
+
+- Another bullet
+
+--
+
+- And one more
+
+--
+
+.center[
+![Saw](https://slides.yihui.org/gif/saw-branch.gif)
+
+Don't saw your slides too hard.
+]
+
+---
+layout: true
+class: inverse
+
+# Layout slides
+
+---
+
+### What is a layout slide
+
+A layout slide (with the slide property `layout: true`) is good for a series of slides that share some common elements, such as the top-level heading.
+
+---
+
+### It is hidden behind the scenes
+
+The layout slide itself is not displayed. It is only used as the base to build latter slides.
+
+---
+background-image: url(https://slides.yihui.org/images/jellyfish.jpg)
+
+### Slide properties are inheritted
+
+Most slide properties are inheritted from the layout slide, such as `class`. You can override or add more properties, such as `background-image`.
+
+---
+
+### Stop the layout
+
+To stop the layout slide, use the property `layout: false` on the next slide.
+
+---
+layout: false
+
+# Template slides
+
+The methods "two dashes" and "layout slides" are automatic, and good for consecutive pages of slides. If you need more control, you may use the more explicit method. That is, template slides.
+
+A template slide should be named, so that you can refer to this template on another slide.
+
+---
+name: karl-yolo
+class: inverse, bottom
+background-image: url(`r xaringan:::karl`)
+background-size: contain
+
+# Define a template
+
+This slide is named `karl-yolo`, with a few properties (`class` and `background-image`).
+
+Use the property `template: karl-yolo` on other slides to use this template.
+
+---
+
+# A slide that does not use the template
+
+Nothing here. I didn't use any template for this slide.
+
+---
+template: karl-yolo
+
+### A slide that uses the karl-yolo template
+
+Everything was inheritted from the template. The content of this slide was appended to the template slide.
+
+---
+name: template-placeholder
+
+# Placeholders in template slides
+
+{{content}}
+
+If you want a new slide to be embedded in a particular position on a template slide, you can insert `{{content}}` as a placeholder in the template.
+
+This slide has a placeholder and was named `template-placeholder`.
+
+---
+template: template-placeholder
+class: inverse
+
+### Let's use the placeholder template now!
+
+![Cat in meercats](https://slides.yihui.org/gif/impossible-parking.gif)
+
+---
+template: karl-yolo
+
+### I'm using the karl-yolo template one more time just in case you want to see Karl again!
+
+---
+
+# Conclusion
+
+remark.js has provided flexible ways to build incremental slides. You can take advantage of these features to hide your best GIFs and surprise your audience till the last minute.
+
+---
+class: center, bottom, inverse
+
+# More info
+
+--
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+--
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](https://yihui.org/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+
+--
+
+You can read the HTML source of this presentation to learn how it was built.
+
+--
+
+Or check out the R Markdown source at http://slides.yihui.org/xaringan/incremental.Rmd.
+
+--
+
+Have fun.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+THE END

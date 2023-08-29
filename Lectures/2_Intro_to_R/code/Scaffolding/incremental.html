@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Incremental Slides with xaringan / remark.js</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Yihui Xie" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Incremental Slides with xaringan / remark.js
+]
+.author[
+### Yihui Xie
+]
+.date[
+### 2017/08/31
+]
+
+---
+
+
+
+
+# Three ways to build incremental slides
+
+In remark.js, you may use
+
+--
+
+- two dashes
+
+--
+
+- layout slides
+
+--
+
+- template slides
+
+---
+
+# Two dashes
+
+The easiest way to build incremental slides is...
+--
+ to use two dashes `--` to separate content on a slide.
+
+--
+
+You can divide a slide in _any way you want_.
+
+--
+
+- One bullet
+
+- Another bullet
+
+--
+
+- And one more
+
+--
+
+.center[
+![Saw](https://slides.yihui.org/gif/saw-branch.gif)
+
+Don't saw your slides too hard.
+]
+
+---
+layout: true
+class: inverse
+
+# Layout slides
+
+---
+
+### What is a layout slide
+
+A layout slide (with the slide property `layout: true`) is good for a series of slides that share some common elements, such as the top-level heading.
+
+---
+
+### It is hidden behind the scenes
+
+The layout slide itself is not displayed. It is only used as the base to build latter slides.
+
+---
+background-image: url(https://slides.yihui.org/images/jellyfish.jpg)
+
+### Slide properties are inheritted
+
+Most slide properties are inheritted from the layout slide, such as `class`. You can override or add more properties, such as `background-image`.
+
+---
+
+### Stop the layout
+
+To stop the layout slide, use the property `layout: false` on the next slide.
+
+---
+layout: false
+
+# Template slides
+
+The methods "two dashes" and "layout slides" are automatic, and good for consecutive pages of slides. If you need more control, you may use the more explicit method. That is, template slides.
+
+A template slide should be named, so that you can refer to this template on another slide.
+
+---
+name: karl-yolo
+class: inverse, bottom
+background-image: url(https://github.com/yihui/xaringan/releases/download/v0.0.2/karl-moustache.jpg)
+background-size: contain
+
+# Define a template
+
+This slide is named `karl-yolo`, with a few properties (`class` and `background-image`).
+
+Use the property `template: karl-yolo` on other slides to use this template.
+
+---
+
+# A slide that does not use the template
+
+Nothing here. I didn't use any template for this slide.
+
+---
+template: karl-yolo
+
+### A slide that uses the karl-yolo template
+
+Everything was inheritted from the template. The content of this slide was appended to the template slide.
+
+---
+name: template-placeholder
+
+# Placeholders in template slides
+
+{{content}}
+
+If you want a new slide to be embedded in a particular position on a template slide, you can insert `{{content}}` as a placeholder in the template.
+
+This slide has a placeholder and was named `template-placeholder`.
+
+---
+template: template-placeholder
+class: inverse
+
+### Let's use the placeholder template now!
+
+![Cat in meercats](https://slides.yihui.org/gif/impossible-parking.gif)
+
+---
+template: karl-yolo
+
+### I'm using the karl-yolo template one more time just in case you want to see Karl again!
+
+---
+
+# Conclusion
+
+remark.js has provided flexible ways to build incremental slides. You can take advantage of these features to hide your best GIFs and surprise your audience till the last minute.
+
+---
+class: center, bottom, inverse
+
+# More info
+
+--
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+--
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](https://yihui.org/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+
+--
+
+You can read the HTML source of this presentation to learn how it was built.
+
+--
+
+Or check out the R Markdown source at http://slides.yihui.org/xaringan/incremental.Rmd.
+
+--
+
+Have fun.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+.
+
+--
+
+THE END
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

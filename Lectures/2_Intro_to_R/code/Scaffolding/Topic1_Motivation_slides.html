@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>What is data science?</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="James Bisbee" />
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# What is data science?
+]
+.subtitle[
+## Know it when you see it
+]
+.author[
+### James Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### 2022/07/30 (updated: 2022-08-04)
+]
+
+---
+
+
+# Testing
+
+--
+
+.leftcol[
+
+&lt;img src="figs/robot_mccarthy.PNG" width = "100%"&gt;
+]
+
+--
+
+.rightcol[
+
+--
+
+- bullet 3
+
+--
+
+- bullet 4
+
+]
+
+---
+
+# Agenda
+
+1. Meet the instructor
+
+--
+
+  - Prof. Bisbee: _jhb362@nyu.edu_
+  
+--
+
+2. Course Motivation
+
+--
+
+  - What is data science (DS) &amp; why should we care?
+
+--
+
+3. Course Objectives
+
+--
+
+  - **Content:** Critical thinking, analysis, presentation
+
+--
+
+  - **Skills:** Computing and analysis in R
+  
+--
+
+4. Course Expectations &amp; Syllabus review
+
+---
+
+# Meet the instructor
+
+--
+
+- PhD from NYU Politics in 2019
+
+--
+
+- Postdocs at Princeton Niehaus &amp; NYU CSMaP
+
+--
+
+- Published some things
+
+--
+
+  - Methods-ey: external validity [1](https://www.journals.uchicago.edu/doi/full/10.1086/691280?af=R), [2](https://www.cambridge.org/core/journals/american-political-science-review/article/testing-social-science-network-theories-with-online-network-data-an-evaluation-of-external-validity/4BF517F10F38DFB574FED4A3D805B613); measurement [3](https://www.cambridge.org/core/journals/american-political-science-review/article/barp-improving-mister-p-using-bayesian-additive-regression-trees/630866EB47F9366EDB3C22CFD951BB6F), [4](https://www.cambridge.org/core/journals/political-analysis/article/geographic-boundaries-and-local-economic-conditions-matter-for-views-of-the-economy/32C8C058B8E16CAD48374F95B2B1B3EF)
+
+--
+
+  - Substantive: economics &amp; populism [1](https://www.tandfonline.com/doi/full/10.1080/13501763.2019.1678662); Covid-19 &amp; U.S. politics [2](https://www.journals.uchicago.edu/doi/10.1086/716969),  [3](https://www.cambridge.org/core/journals/american-political-science-review/article/flight-to-safety-covidinduced-changes-in-the-intensity-of-status-quo-preference-and-voting-behavior/AE84D93BAF8B27284DD8F6A75DE5D18A); IPE [4](https://doi.org/10.1017/S0020818319000109); academic naval-gazing [5](https://www.cambridge.org/core/journals/perspectives-on-politics/article/abs/polisci-twitter-a-descriptive-analysis-of-how-political-scientists-use-twitter-in-2019/C8A193C3E939C1ABCD4600DFE8AEF79A?utm_source=hootsuite&amp;utm_medium=twitter&amp;utm_campaign=PPS_Dec20)
+  
+--
+
+- Popular press
+
+--
+
+  - Monkey Cage articles [1](https://www.washingtonpost.com/news/monkey-cage/wp/2018/04/04/losing-jobs-to-free-trade-makes-americans-more-protectionist-and-nativist/), [2](https://www.washingtonpost.com/politics/2020/04/02/sanders-was-losing-biden-anyway-he-lost-more-areas-with-coronavirus-cases/?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=wp_monkeycage)
+  - [Podcast](https://www.niskanencenter.org/did-chinese-trade-competition-increase-nativism-and-elect-trump/) / Radio interviews
+
+---
+
+# Meet the instructor
+
+- Current research
+
+--
+
+  - .red[YouTube] + .blue[polarization]
+
+--
+
+  - .red[Twitter] + .blue[misinformation]
+  
+--
+
+  - .red[Telegram] + .blue[white supremacists]
+  
+--
+
+- Is my current research agenda .red[data] .blue[science]?
+
+---
+
+# What is ".red[data] .blue[science]"?
+
+--
+
+- What is .red[data]?
+
+--
+
+- What is .blue[science]?
+
+---
+
+# What is .red[data]?
+
+--
+
+- "It is a capital mistake to theorize before one has data." Sherlock Holmes
+  
+--
+
+  - Data **informs**
+    
+--
+
+-  "Torture the data, and it will confess to anything." Ronald Coase, Nobel Prize Laureate in Economics 
+
+--
+
+  - Data **lies**
+    
+--
+
+- “Here’s an open secret of the big data world: all data is dirty. All of it.” Meredith Broussard, _Artificial Unintelligence: How Computers Misunderstand the World_
+
+--
+
+  - Data is **invalid**
+
+
+---
+
+# What is .blue[science]?
+
+--
+
+- Simplification, codification, abstraction
+
+--
+
+  - Science identifies patterns in data...
+  
+--
+
+  - ...to make predictions about the future
+  
+--
+  
+- As such, it is inherently:
+
+--
+
+  - Causal
+  
+--
+
+  - Empirical
+  
+--
+
+  - Theoretical
+
+---
+
+# What is data science?
+
+--
+
+- Data: informs / lies / invalid
+
+--
+
+- Science: simplification / codification / abstraction
+
+--
+
+- Data + science = ?
+
+--
+
+background-image: url(https://us.123rf.com/450wm/snak/snak2102/snak210200007/164459427-jolly-roger-white-skull-and-crossbones-on-a-red-sign-warning-of-the-danger-of-landmines.jpg?ver=6)
+background-size: 30%
+background-position: 50% 80%
+
+---
+
+# Why are you here?
+
+--
+
+background-image: url(./figs/DataScienceVCompProgramming.png)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_econ.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_ps.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_cs.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_stats.PNG)
+background-size: contain
+
+--
+
+background-image: url(./figs/fight_ds_stem.PNG)
+background-size: contain
+
+---
+
+# Is this all just a fad?
+
+--
+
+- No
+
+--
+
+.center[&lt;img src="figs/datagrowth.png" width = "75%"&gt;]
+
+
+---
+
+class: center, bottom, inverse
+
+# Data at a scale commensurate to our capacity for wonder
+
+--
+
+background-image: url(./figs/DOMO_2020.jpg)
+background-size: contain
+
+---
+
+# Is this all just a fad?
+
+--
+
+- But there are faddish qualities
+
+--
+
+.center[&lt;img src="figs/hype_cycle.png" width = "75%"&gt;]
+
+
+---
+
+
+# Wait so WHAT is data science?
+
+--
+
+- A series of examples
+
+--
+
+- Data science is for **everybody**
+
+
+---
+
+# Historians: Identify Shakespear
+
+--
+
+.leftcol[
+
+- Use .red[original texts] written by Shakespeare and Marlowe (among others)
+
+- Apply .blue[natural language processing (NLP)] to characterize styles of writing
+
+- Demonstrate that Shakespeare was at least heavily influenced by collaborators
+
+]
+
+
+.rightcol[
+&lt;img src="figs/shakespeare_marlowe.png" width="100%"&gt;
+]
+
+
+---
+
+# Biologists: Identify Cancer
+
+--
+
+.leftcol[
+
+- Use .red[x-rays] of patients
+
+- Apply .blue[image analysis] to identify cancerous areas
+
+- Reproduce expert analysis, facilitating early detection
+
+]
+
+
+.rightcol[
+&lt;img src="figs/cancer_ML.PNG" width="100%"&gt;
+]
+
+
+---
+
+# Astronomers: Detect Dark Matter
+
+--
+
+.leftcol[
+
+- Use .red[satellite photos] of deep space
+
+- Apply .blue[machine learning] to detect gravitational lensing
+
+- Streamline analysis
+
+]
+
+
+.rightcol[
+&lt;img src="figs/gravitational_lensing.jpg" width="100%"&gt;
+]
+
+---
+
+# Economists: Predict stock prices
+
+--
+
+.leftcol[
+
+- Use .red[time series data] of stock prices
+
+- Apply .blue[Long Short Term Memory Networks (LSTM)] to predict future prices
+
+- Make KEE$SH!!
+
+]
+
+
+.rightcol[
+&lt;img src="figs/ScaryParallel.png" width="100%"&gt;
+]
+
+---
+
+# Social Scientists: Measure Poverty
+
+--
+
+.leftcol[
+
+- Use .red[cell phone data]
+
+- Apply .blue[machine learning] to learn relationships between calling and wealth
+
+- Empower aid agencies around the globe
+
+]
+
+
+.rightcol[
+&lt;img src="figs/poverty_ML.jpg" width="100%"&gt;
+]
+
+
+
+---
+
+# Musicologists: Describe Music
+
+--
+
+.leftcol[
+
+- Use .red[audio recordings] and ethnographic labels
+
+- Apply .blue[factor analysis] to distill labels to three dimensions
+
+- Bring the world closer together / anger traditional musicologists
+
+]
+
+
+.rightcol[
+&lt;img src="figs/musicology_ML.PNG" width="100%"&gt;
+]
+
+---
+
+# Political Scientists: Predict Polls
+
+--
+
+.leftcol[
+
+- Use .red[tweets] written by candidates
+
+- Apply .blue[basic algebra] to predict winner
+
+- Start a blog
+
+]
+
+
+.rightcol[
+&lt;img src="figs/TwitterPredict.png" width="100%"&gt;
+]
+
+
+
+---
+
+
+# WHAT IS DATA SCIENCE?!
+
+--
+
+- How is data science different from science that uses data?
+
+--
+
+- .red[Readymade] versus .blue[custommade]
+
+
+---
+
+# Poverty Measure Example
+
+&lt;img src="figs/download.png" width="100%"&gt;
+
+---
+
+# Analysis
+
+&lt;img src="figs/blumenstock_predicting_2015_schematic_1.png" width="85%"&gt;
+
+---
+
+# Analysis
+
+&lt;img src="figs/blumenstock_predicting_2015_schematic_2.png" width="85%"&gt;
+
+---
+
+# Analysis
+
+&lt;img src="figs/blumenstock_predicting_2015_schematic_3.png" width="85%"&gt;
+
+---
+
+# Analysis
+
+&lt;img src="figs/blumenstock_predicting_2015_schematic_4.png" width="85%"&gt;
+
+---
+
+# Analysis
+
+&lt;img src="figs/blumenstock_predicting_2015_schematic_5.png" width="85%"&gt;
+
+---
+
+# Analysis
+
+&lt;img src="figs/blumenstock_predicting_2015_schematic_6.png" width="85%"&gt;
+
+---
+
+# Results
+
+&lt;img src="figs/blumenstock_predicting_2015_fig3a.png" width="100%"&gt;
+
+
+---
+
+# Results
+
+&lt;img src="figs/blumenstock_predicting_2015_fig3ab.png" width="100%"&gt;
+
+---
+
+# Results
+
+--
+
+- 10 times faster
+
+--
+
+- 50 times cheaper
+
+---
+
+# DS Vs. Science with Data
+
+--
+
+.leftcol[
+Readymade
+&lt;img src="figs/bisbee_nails.jpg" width="100%"&gt;
+]
+
+.rightcol[
+Custommade
+&lt;img src="figs/michelangelo.jpg" width="100%"&gt;
+]
+
+---
+
+# DS Vs. Science with Data
+
+
+&lt;img src="figs/blumenstock_predicting_2015_schematic_6.png" width="85%"&gt;
+
+---
+
+# Course Objectives
+
+--
+
+&gt; - **Content**: Critical thinking, analysis, presentation
+
+--
+
+&gt;     - How to think about data
+  
+--
+
+&gt;         - Data --&gt; theory; Theory --&gt; data
+  
+--
+
+&gt;     - How to use data
+  
+--
+
+&gt;         - Structured vs. unstructured
+    
+--
+
+&gt;     - How to analyze data
+  
+--
+
+&gt;         - The basics (but the basics are EVERYTHING)
+
+---
+
+# Course Objectives
+
+--
+
+- **Skills**: Computing and analysis in `R`
+
+--
+
+  - Introduction: no prior experience necessary
+  
+--
+
+  - Opening tabular data
+  
+--
+
+  - Plotting with base `R` and `ggplot`
+  
+--
+
+  - Writing functions
+  
+---
+
+# Course Objectives
+  
+--
+
+- **Perspective**: How to read empirical research
+
+--
+
+.leftcol[
+&lt;img src="figs/HowTheEconomyIsDoingNYT.png" width="100%"&gt;
+]
+
+--
+
+.rightcol[
+&lt;img src="figs/Trump2020ElectionMath.png" width="100%"&gt;
+]
+
+---
+
+# What does "introduction" mean?
+
+- This is not a "foundations" course
+- Will give you experience running code (copy, paste, &amp; **tweak**)
+- Will not go through every function in detail
+- Will not go through the math behind analysis choices
+- Focus on intuition and motivation
+
+---
+
+# A preview of the substantive stuff
+
+--
+
+- Predict U.S. elections using survey data (`linear regression`)
+
+--
+
+- Understand why some movies make more money (`linear regression`)
+
+--
+
+- Predict college admissions and enrollment (`linear regression`)
+
+--
+
+- Identify "clusters" of voters (`unsupervised learning`)
+
+--
+
+- Analyze Twitter data (`sentiment analysis`)
+
+--
+
+- Predict who wrote contested documents (`natural language processing`)
+
+---
+
+# How to succeed
+
+&gt; - Before class
+
+--
+
+&gt;   - Download lecture notes &amp; data
+&gt;   - Try to `knit` the code
+&gt;   - Review lecture notes
+
+--
+
+&gt; - During class
+&gt;   - Be a prediction algorithm! (i.e., try to predict what code will do)
+&gt;   - Ask questions
+&gt;     - Start from assumption that if you have a question, everyone does
+&gt;     - 5 hours at home vs 5 minutes in class
+
+--
+
+&gt; - After class
+&gt;   - Tweak code
+&gt;   - Be patient with yourself
+---
+
+# Parting Question &amp; HW
+
+- Is the internet better today than in 2009? Worse?
+
+--
+
+  - Why?
+  
+--
+
+  - Email paragraph response to your TA
+  
+--
+
+&gt; - `A-D:` Mubarak Ganiyu (mubarak.a.ganiyu@vanderbilt.edu)
+&gt; - `E-H:` Quishi Yan (qiushi.yan@vanderbilt.edu)
+&gt; - `I-L:` Mehnaaz Asad (mehnaaz.asad@vanderbilt.edu)
+&gt; - `M-P:` Enya Tan (enya.tan@vanderbilt.edu)
+&gt; - `Q-T:` Amongh Vig (amogh.vig@vanderbilt.edu)
+&gt; - `U-Z:` Sriram Kannan (sriram.kannan@vanderbilt.edu)
+  
+--
+
+  - "Better" &amp; "Worse" suggest ethics / morals / normative thinking
+    - Never **EVER** *EVER* lose this lens
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

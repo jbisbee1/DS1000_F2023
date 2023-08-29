@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Intro to R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Intro to <code>R</code>
+]
+.subtitle[
+## Part 1: A Microcosm of Data Science
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/09/04
+Slides Updated: 2023-08-28
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Getting set up
+
+--
+
+  - Folder structure + `setwd()`
+  
+--
+
+2. Installing software
+
+--
+
+  - [`R: https://cran.r-project.org/`](https://cran.r-project.org/)
+  
+--
+
+  - [`RStudio: https://rstudio.com/products/rstudio/download/`](https://rstudio.com/products/rstudio/download/)
+
+--
+
+3. Requiring packages
+
+--
+
+  - `install.packages("tidyverse")` 
+
+--
+
+  - `require(tidyverse)`
+  
+--
+
+4. Loading and manipulating data
+
+--
+
+  - `readRDS()`
+  
+--
+
+  - `%&gt;%`
+
+---
+
+# Getting set up
+
+--
+
+- Folder structure + `setwd()`
+
+--
+
+  - Concept: keep everything together...
+  
+--
+
+  - ...and **related**
+
+--
+
+.center[&lt;img src="figs/directory_1.png" width = "75%"&gt;]
+
+
+---
+
+# Getting set up
+
+- Folder structure + `setwd()`
+
+  - Concept: keep everything together...
+
+  - ...and **related**
+
+.center[&lt;img src="figs/directory_2.png" width = "75%"&gt;]
+
+
+
+---
+
+# Installing software
+
+--
+
+- [`R: https://cran.r-project.org/`](https://cran.r-project.org/)
+
+  - Accept all defaults
+  
+--
+
+- [`RStudio: https://rstudio.com/products/rstudio/download/`](https://rstudio.com/products/rstudio/download/)
+
+  - Download the version for your OS
+  
+--
+
+- Open `RStudio` and create a new rmarkdown (`.Rmd`) file
+
+--
+
+  - Accept defaults, give it a sensible name, delete the default text, then save it to your folder (again with a sensible name)
+  
+--
+
+  - You should follow along with the lecture in this file! Take notes here! Try code here!
+
+---
+
+# How to type in `.Rmd`
+
+```markdown
+# This is a header
+
+## This is a subheader
+
+### This is a subsubheader
+
+This is plain text.
+```
+--
+
+# This is a header
+
+## This is a subheader
+
+### This is a subsubheader
+
+This is plain text.
+
+
+---
+
+# How to type in `.Rmd`
+
+```markdown
+- This is
+
+- a bulleted
+
+  - List
+
+1. This is
+
+2. a numbered list
+```
+
+--
+
+- This is
+
+- a bulleted
+
+  - List
+
+1. This is
+
+2. a numbered list
+
+---
+
+# How to type in `.Rmd`
+
+
+```markdown
+**Bold font**, *italic font*, `code font`
+```
+--
+
+**Bold font**, *italic font*, `code font`
+
+--
+
+- Most Importantly! `R` code!
+
+
+````markdown
+```{r}
+2+2
+```
+````
+
+--
+
+
+```r
+2+2
+```
+
+```
+## [1] 4
+```
+
+---
+
+# How `R` Works
+
+--
+
+- **O**bject **O**riented **L**anguage (**OOL**)
+
+--
+
+  - Objects are created with the `&lt;-` command
+  
+--
+
+  - You *can* run code directly...
+  
+
+
+```r
+2+2
+```
+
+```
+## [1] 4
+```
+
+---
+
+# How `R` Works
+
+
+- **O**bject **O**riented **L**anguage (**OOL**)
+
+  - Objects are created with the `&lt;-` command
+
+  - ...but most of what we'll do involves objects
+  
+
+
+```r
+object1 &lt;- 2+2
+```
+
+--
+
+- Object assignment operator **saves** the output
+
+- It **does not print** the output
+
+--
+
+- To see, just call the object
+
+
+```r
+object1
+```
+
+```
+## [1] 4
+```
+
+---
+
+# How `R` Works
+
+
+- **O**bject **O**riented **L**anguage (**OOL**)
+
+  - Objects are created with the `&lt;-` command
+
+  - They can be named anything (so be intuitive!)
+  
+
+
+```r
+three_plus_three &lt;- 2+2
+three_plus_three
+```
+
+```
+## [1] 4
+```
+
+---
+
+# How `R` Works
+
+- **O**bject **O**riented **L**anguage (**OOL**)
+
+  - Objects are created with the `&lt;-` command
+
+  - Objects can store many different things
+  
+
+```r
+an_element &lt;- 2+2
+a_vector &lt;- c(1,2,3)
+a_list &lt;- list('element1' = 2+2,
+               'element2' = "hello world!",
+               'element3' = runif(n = 10,min = 0,max = 10))
+a_function &lt;- function(x) {
+  avg_of_x &lt;- sum(x) / length(x)
+  return(avg_of_x)
+}
+```
+
+---
+
+# How `R` Works
+
+- Objects **persist!**
+
+```r
+an_element # This object stores 2+2
+```
+
+```
+## [1] 4
+```
+
+```r
+a_vector   # This object stores the integers 1, 2, and 3
+```
+
+```
+## [1] 1 2 3
+```
+
+```r
+an_element*a_vector
+```
+
+```
+## [1]  4  8 12
+```
+
+```r
+an_element-a_vector
+```
+
+```
+## [1] 3 2 1
+```
+
+---
+
+# A comment on comments
+
+- If you use a # sign inside a code chunk, you can write a comment
+
+
+```r
+# This is a comment. If I compile the code, nothing will happen.
+
+# This is another comment. These are helpful for annotating my code.
+```
+
+---
+
+# How `R` Works
+
+- Objects **persist!**
+
+```r
+# This object stores:
+  # 1) 2+2 (named "element1")
+  # 2) the text "hello world!" (named "element2")
+  # 3) 10 numbers randomly drawn between 0 and 10
+a_list
+```
+
+```
+## $element1
+## [1] 4
+## 
+## $element2
+## [1] "hello world!"
+## 
+## $element3
+##  [1] 2.875775 7.883051 4.089769 8.830174 9.404673 0.455565
+##  [7] 5.281055 8.924190 5.514350 4.566147
+```
+
+---
+
+# How `R` Works
+
+- Objects **persist!**
+
+```r
+# Let's apply our function ("a_function") to "element3" in "a_list"
+a_function(x = a_list[['element3']])
+```
+
+```
+## [1] 5.782475
+```
+
+--
+
+- We could also call `element3` from `a_list` with a dollar sign
+
+
+```r
+# This does the same thing as the previous slide...it just accesses element3 differently.
+a_function(x = a_list$element3)
+```
+
+```
+## [1] 5.782475
+```
+
+---
+
+# How `RStudio` Works
+
+--
+
+- `RStudio` is a powerful way to interact with `R`
+
+--
+
+- In base `R`, you interact with the program via the "command line"
+
+--
+
+  - For example...
+  
+--
+
+- But to save your work, you can write "scripts"
+
+--
+
+  - For example...
+  
+--
+
+- *This is all cumbersome!*
+
+--
+
+- Enter, `RStudio`
+
+---
+
+# How `RStudio` Works
+
+--
+
+- `RStudio` allows us to:
+
+--
+
+  1. Write scripts
+  2. Run scripts
+  3. See results
+
+--
+
+- It is **deeply interactive**
+
+--
+
+  - We can highlight a line and press `ctrl+enter` / `cmd+enter` and see the result
+  
+--
+
+  - **We can even do this with single objects!**
+  
+---
+
+# Give it a try
+
+- Comment **everything**
+
+--
+
+- Create two objects
+
+  - `a` contains the product of 3 and 5 (`3*5`)
+  
+  - `b` contains five numbers `c(10,21,43,87,175)`
+  
+--
+
+- Now create object `c` which is `a - b`
+
+
+```r
+# INSERT CODE HERE
+```
+
+---
+
+# Functions &amp; Packages
+
+--
+
+- What are `packages`?
+
+--
+
+  - Basically, **functions** that someone else wrote
+  
+--
+
+- `R` has many functions already installed
+
+--
+
+  - These are known as "base `R`" and contain many useful functions
+
+--
+
+  - For example, `sum()` will add up a vector of numbers
+
+--
+
+
+```r
+sum(object1)
+```
+  
+--
+
+  - Quiz: What does the `mean()` function do? The `median()`? The `range()`?
+  
+--
+
+- Other base `R` functions interact with other files
+
+--
+
+  - For example, `read.csv()` will load a `.csv` file
+  
+--
+
+- And there are MANY **MANY** more
+
+---
+
+# Installing Packages
+
+--
+
+- In addition to the functions included in base `R`, we want more
+
+--
+
+- For this class, we want one called `tidyverse`
+
+--
+
+  - `tidyverse` contains many (hundreds?) of functions that make `R` easier
+  
+--
+
+  - But it is NOT included in the base `R` set of functions
+  
+--
+
+  - Therefore, we need to add it
+  
+--
+
+- Use the base `R` function `install.packages("[PACKAGE NAME]")`
+
+--
+
+  - Specifically, `install.packages("tidyverse")`
+  
+---
+
+# Requiring Packages
+
+--
+
+- Once installed, a package will live somewhere on your computer
+
+--
+
+- However, any new *instance* of `R` will not automatically load the packages
+
+--
+
+- We need to `require()` them to tell `R` to load them
+
+--
+
+  - Alternatively, we can use `library()` (but it's the same result)
+  
+--
+
+- So load the `tidyverse` package with `require(tidyverse)`
+
+
+
+--
+
+  - NB: you need quotes for the `install.packages()` function...
+  
+--
+
+    - i.e., `install.packages("tidyverse")`
+    
+--
+
+  - but NOT for the `require()` function
+  
+--
+
+    - i.e., `require(tidyverse)`
+  
+---
+
+# Loading Data
+
+--
+
+- So you should be using `R` via `RStudio` with the `tidyverse` package loaded
+
+--
+
+- Now let's load some data
+
+--
+
+- First, download the `sc_debt.Rds` file from the course [github page](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/data/sc_debt.Rds)
+
+--
+
+  - Save it to the `./data` folder that you created
+  
+--
+
+- Second, load the data with `readRDS("[PATH TO DATA]/sc_debt.Rds")`
+
+--
+
+  - NB: `R` is an "object-oriented language" (OOL)
+
+--
+
+  - We **create** an "object" to store the data using a left-arrow: `&lt;-`
+
+--
+
+
+```r
+df&lt;-readRDS("../data/sc_debt.Rds")
+```
+
+--
+
+  - `../` means "go up one folder"
+
+---
+
+# Loading Data
+
+--
+
+- We now have the contents of `sc_debt.Rds` stored in the object `df`
+
+--
+
+  - This is a "tabular data frame", aka a `tibble`
+  
+  - **Rows** are observations
+  
+  - **Columns** are values
+
+--
+
+- We can look at this object directly
+
+
+```r
+df
+```
+
+```
+## # A tibble: 2,546 × 16
+##    unitid instnm       stabbr grad_…¹ control region preddeg
+##     &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  
+##  1 100654 Alabama A &amp;… AL       33375 Public  South… Bachel…
+##  2 100663 University … AL       22500 Public  South… Bachel…
+##  3 100690 Amridge Uni… AL       27334 Private South… Associ…
+##  4 100706 University … AL       21607 Public  South… Bachel…
+##  5 100724 Alabama Sta… AL       32000 Public  South… Bachel…
+##  6 100751 The Univers… AL       23250 Public  South… Bachel…
+##  7 100760 Central Ala… AL       12500 Public  South… Associ…
+##  8 100812 Athens Stat… AL       19500 Public  South… Bachel…
+##  9 100830 Auburn Univ… AL       24826 Public  South… Bachel…
+## 10 100858 Auburn Univ… AL       21281 Public  South… Bachel…
+## # … with 2,536 more rows, 9 more variables: openadmp &lt;int&gt;,
+## #   adm_rate &lt;dbl&gt;, ccbasic &lt;int&gt;, sat_avg &lt;int&gt;,
+## #   md_earn_wne_p6 &lt;int&gt;, ugds &lt;int&gt;, costt4_a &lt;int&gt;,
+## #   selective &lt;dbl&gt;, research_u &lt;dbl&gt;, and abbreviated
+## #   variable name ¹​grad_debt_mdn
+```
+
+---
+
+# Loading Data
+
+--
+
+- Or we can look at its columns
+
+
+```r
+names(df)
+```
+
+```
+##  [1] "unitid"         "instnm"         "stabbr"        
+##  [4] "grad_debt_mdn"  "control"        "region"        
+##  [7] "preddeg"        "openadmp"       "adm_rate"      
+## [10] "ccbasic"        "sat_avg"        "md_earn_wne_p6"
+## [13] "ugds"           "costt4_a"       "selective"     
+## [16] "research_u"
+```
+
+---
+
+# Loading Data
+
+--
+
+
+
+&lt;table class=" lightable-paper lightable-hover" style='font-size: 13px; font-family: "Arial Narrow", arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Definition &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; unitid &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Unit ID &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; instnm &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Institution Name &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; stabbr &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; State Abbreviation &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; grad_debt_mdn &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Median Debt of Graduates &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; control &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Control Public or Private &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; region &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Census Region &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; preddeg &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Predominant Degree Offered: Assocates or Bachelors &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; openadmp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Open Admissions Policy: 1=Yes, 2=No, 3=No 1st time students &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; adm_rate &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Admissions Rate: proportion of applications accepted &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ccbasic &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Type of institution* &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; sat_avg &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Average SAT scores &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; md_earn_wne_p6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Average Earnings of Recent Graduates &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ugds &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Number of undergraduates &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; costt4_a &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Average cost of attendance (tuition-grants) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; selective &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Institution admits fewer than 10% of applications, 1=Yes, 0=No &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; research_u &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Institution is a research university, 1=Yes, 0=No &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&amp;ast;&lt;font size="2"&gt;See [here](https://data.ed.gov/dataset/9dc70e6b-8426-4d71-b9d5-70ce6094a3f4/resource/658b5b83-ac9f-4e41-913e-9ba9411d7967/download/collegescorecarddatadictionary_01192021.xlsx)&lt;/font&gt;
+
+---
+
+# Manipulating the Data
+
+--
+
+- These data are cool!
+
+--
+
+- But TMI at first
+
+--
+
+- I want to know...
+
+--
+
+  - Where is `Vanderbilt University`?
+  
+--
+
+  - Who is the most selective?
+  
+--
+
+  - Which schools produce the richest grads?
+  
+--
+
+- There are `tidyverse` functions to answer all of these questions
+
+---
+
+# Manipulating with `tidyverse`
+
+- The code process of `tidyverse` relies on a "pipe" symbol: `%&gt;%`
+
+--
+
+  - I don't like this name
+  
+  - I think it should be called a "chain" because it **links code together**
+  
+  - Or maybe a "do" symbol because it tells `R` what to do
+  
+--
+
+- The basic grammar of `R` is: object, `%&gt;%`, verb
+
+
+```r
+object %&gt;%  # This is the object
+   function() # This is the verb
+```
+
+---
+
+# Manipulating with `tidyverse`
+
+- `tidyverse` has many useful "verbs" (i.e., functions)
+
+  - `filter()`: subsets **rows**
+  
+  - `select()`: subsets **columns**
+  
+  - `arrange()`: sorts **rows** based on **columns**
+  
+  - `summarise()`: collapses **rows**
+  
+  - `group_by()`: groups **rows** by **columns**
+  
+---
+
+# Manipulating: `filter()`
+
+- So let's look at Vandy
+
+--
+
+- `filter` will select **rows** of the data based on some criteria
+
+--
+
+
+```r
+df %&gt;%
+  filter(instnm == "Vanderbilt University") # Only select rows with Vandy
+```
+
+```
+## # A tibble: 1 × 16
+##   unitid instnm        stabbr grad_…¹ control region preddeg
+##    &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  
+## 1 221999 Vanderbilt U… TN       14962 Private South… Bachel…
+## # … with 9 more variables: openadmp &lt;int&gt;, adm_rate &lt;dbl&gt;,
+## #   ccbasic &lt;int&gt;, sat_avg &lt;int&gt;, md_earn_wne_p6 &lt;int&gt;,
+## #   ugds &lt;int&gt;, costt4_a &lt;int&gt;, selective &lt;dbl&gt;,
+## #   research_u &lt;dbl&gt;, and abbreviated variable name
+## #   ¹​grad_debt_mdn
+```
+
+---
+
+# Manipulating: `select()`
+
+- Still TMI!
+
+--
+
+- I only care about the admissions rate (`adm_rate`), the SAT scores (`sat_avg`), and the future earnings (`md_earn_wne_p6`)
+
+--
+
+- `select` will select **columns**
+
+
+```r
+df %&gt;%
+  filter(instnm == "Vanderbilt University") %&gt;%
+  select(instnm,adm_rate,sat_avg,md_earn_wne_p6) # Only select four columns
+```
+
+```
+## # A tibble: 1 × 4
+##   instnm                adm_rate sat_avg md_earn_wne_p6
+##   &lt;chr&gt;                    &lt;dbl&gt;   &lt;int&gt;          &lt;int&gt;
+## 1 Vanderbilt University   0.0912    1515          53400
+```
+
+---
+
+# Manipulating: `arrange()`
+
+- How does Vandy compare...?
+
+--
+
+  - to other schools in terms of SAT scores?
+  
+  - to other schools in terms of future earnings?
+  
+  - to other schools in terms of admissions rates?
+
+--
+
+- `arrange` will sort the data based on a column (ascending!)
+
+
+```r
+df %&gt;%
+  arrange(sat_avg) %&gt;% # Sort data by SAT scores
+  select(instnm,sat_avg) # Only look at name and SAT scores
+```
+
+```
+## # A tibble: 2,546 × 2
+##    instnm                        sat_avg
+##    &lt;chr&gt;                           &lt;int&gt;
+##  1 Morgan State University           737
+##  2 Saint Augustine's University      847
+##  3 Albany State University           849
+##  4 Holy Names University             851
+##  5 Livingstone College               854
+##  6 Virginia Union University         855
+##  7 Manor College                     861
+##  8 Saint Louis Christian College     865
+##  9 Bacone College                    875
+## 10 Paine College                     876
+## # … with 2,536 more rows
+```
+
+---
+
+# Manipulating: `arrange()`
+
+- Vandy is not in the bottom 10 schools
+
+
+```r
+df %&gt;%
+  arrange(sat_avg) %&gt;% # Sort data by SAT scores
+  select(instnm,sat_avg) # Only look at name and SAT scores
+```
+
+```
+## # A tibble: 2,546 × 2
+##    instnm                        sat_avg
+##    &lt;chr&gt;                           &lt;int&gt;
+##  1 Morgan State University           737
+##  2 Saint Augustine's University      847
+##  3 Albany State University           849
+##  4 Holy Names University             851
+##  5 Livingstone College               854
+##  6 Virginia Union University         855
+##  7 Manor College                     861
+##  8 Saint Louis Christian College     865
+##  9 Bacone College                    875
+## 10 Paine College                     876
+## # … with 2,536 more rows
+```
+
+---
+
+# Manipulating: `arrange()`
+
+- Use `desc()` to order in descending values...Vandy not in top 10 either
+
+
+```r
+df %&gt;%
+  arrange(desc(sat_avg)) %&gt;% # Sort data by SAT scores (descending)
+  select(instnm,sat_avg) # Only look at name and SAT scores
+```
+
+```
+## # A tibble: 2,546 × 2
+##    instnm                                 sat_avg
+##    &lt;chr&gt;                                    &lt;int&gt;
+##  1 California Institute of Technology        1557
+##  2 Massachusetts Institute of Technology     1547
+##  3 University of Chicago                     1528
+##  4 Harvey Mudd College                       1526
+##  5 Duke University                           1522
+##  6 Franklin W Olin College of Engineering    1522
+##  7 Washington University in St Louis         1520
+##  8 Rice University                           1520
+##  9 Yale University                           1517
+## 10 Harvard University                        1517
+## # … with 2,536 more rows
+```
+
+---
+
+# Manipulating: `arrange()`
+
+- What if we look only at "selective" schools (i.e., those who accept less than 10% of applicants)?
+
+--
+
+
+```r
+df %&gt;%
+  filter(adm_rate &lt; .1) %&gt;% # Only look at schools who accept less than 10%
+  arrange(sat_avg,adm_rate) %&gt;% # Sort data by SAT scores AND THEN admissions rates (breaks ties)
+  select(instnm,adm_rate,sat_avg) # Only look at name, admissions rate, and SAT scores
+```
+
+```
+## # A tibble: 25 × 3
+##    instnm                                    adm_r…¹ sat_avg
+##    &lt;chr&gt;                                       &lt;dbl&gt;   &lt;int&gt;
+##  1 Colby College                              0.0967    1456
+##  2 Swarthmore College                         0.0893    1469
+##  3 Pomona College                             0.074     1480
+##  4 Dartmouth College                          0.0793    1500
+##  5 Stanford University                        0.0434    1503
+##  6 Northwestern University                    0.0905    1506
+##  7 Columbia University in the City of New Y…  0.0545    1511
+##  8 Brown University                           0.0707    1511
+##  9 University of Pennsylvania                 0.0766    1511
+## 10 Vanderbilt University                      0.0912    1515
+## # … with 15 more rows, and abbreviated variable name
+## #   ¹​adm_rate
+```
+
+
+---
+
+# How does Vandy compare?
+
+--
+
+- `arrange` in descending order
+
+
+```r
+df %&gt;%
+  filter(adm_rate &lt; .1) %&gt;%
+  arrange(desc(sat_avg),adm_rate) %&gt;%
+  select(instnm,adm_rate,sat_avg)
+```
+
+```
+## # A tibble: 25 × 3
+##    instnm                                    adm_r…¹ sat_avg
+##    &lt;chr&gt;                                       &lt;dbl&gt;   &lt;int&gt;
+##  1 California Institute of Technology         0.0642    1557
+##  2 Massachusetts Institute of Technology      0.067     1547
+##  3 University of Chicago                      0.0617    1528
+##  4 Duke University                            0.076     1522
+##  5 Rice University                            0.0872    1520
+##  6 Harvard University                         0.0464    1517
+##  7 Princeton University                       0.0578    1517
+##  8 Yale University                            0.0608    1517
+##  9 Vanderbilt University                      0.0912    1515
+## 10 Columbia University in the City of New Y…  0.0545    1511
+## # … with 15 more rows, and abbreviated variable name
+## #   ¹​adm_rate
+```
+
+
+
+---
+
+# More complicated? More `%&gt;%`!
+
+--
+
+- Less selective schools by SAT with debt and state
+
+
+```r
+df %&gt;%
+  filter(adm_rate &gt; .2 &amp; adm_rate &lt; .3) %&gt;% # Less selective schools (accept between 20% and 30%)
+  arrange(stabbr,desc(sat_avg)) %&gt;% # Sort by state name, then by SAT scores
+  select(instnm,sat_avg,grad_debt_mdn,stabbr) # Only look at some columns
+```
+
+```
+## # A tibble: 37 × 4
+##    instnm                             sat_avg grad_…¹ stabbr
+##    &lt;chr&gt;                                &lt;int&gt;   &lt;int&gt; &lt;chr&gt; 
+##  1 Heritage Christian University           NA      NA AL    
+##  2 University of California-Santa Ba…    1370   15000 CA    
+##  3 California Polytechnic State Univ…    1342   19501 CA    
+##  4 University of California-Irvine       1306   15488 CA    
+##  5 California Institute of the Arts        NA   27000 CA    
+##  6 University of Miami                   1371   17125 FL    
+##  7 Georgia Institute of Technology-M…    1418   23000 GA    
+##  8 Point University                       986   26000 GA    
+##  9 Grinnell College                      1457   17500 IA    
+## 10 St Luke's College                       NA   17750 IA    
+## # … with 27 more rows, and abbreviated variable name
+## #   ¹​grad_debt_mdn
+```
+
+---
+
+# A quick aside on missingness
+
+--
+
+- Some rows have `NA` in some columns
+
+--
+
+  - `NA` is the standard code for **missing data** in `R`
+  
+  - Data can be missing for many different reasons (i.e., some schools don't require SAT scores or record them)
+  
+  - We can use a base `R` function called `is.na()` which will be `TRUE` if the value is `NA` or `FALSE` otherwise
+  
+--
+
+  - And we can combine `is.na()` with the `filter()` function from `tidyverse`
+
+--
+
+- We will return to this in the lectures on **data wrangling**
+  
+--
+
+- For now, how many schools don't report SAT scores?
+
+
+```r
+df %&gt;%
+  filter(is.na(sat_avg)) %&gt;% # Only look at schools that DON'T report SATs
+  select(instnm,stabbr) # Only look at the name and the state
+```
+
+```
+## # A tibble: 1,317 × 2
+##    instnm                                         stabbr
+##    &lt;chr&gt;                                          &lt;chr&gt; 
+##  1 Amridge University                             AL    
+##  2 Central Alabama Community College              AL    
+##  3 Athens State University                        AL    
+##  4 Chattahoochee Valley Community College         AL    
+##  5 Coastal Alabama Community College              AL    
+##  6 Gadsden State Community College                AL    
+##  7 George C Wallace State Community College-Selma AL    
+##  8 Heritage Christian University                  AL    
+##  9 Jefferson State Community College              AL    
+## 10 Lurleen B Wallace Community College            AL    
+## # … with 1,307 more rows
+```
+
+
+---
+
+# Stepping back
+
+--
+
+- Thus far, lots of .red[data]
+
+--
+
+- Not a lot of .blue[science]
+
+--
+
+- But remember the .blue[Research] camp!
+
+--
+
+  1. .red[Observation] &amp;rarr; .blue[Question]
+
+  2. .blue[Theory] &amp;rarr; .blue[Hypothesis]
+
+  3. .red[Data Collection / Wrangling] &amp;rarr; .red[Analysis]
+
+  4. .red[Results] &amp;rarr; .blue[Conclusion]
+  
+--
+
+- We have been doing lots of .red[Observation]!
+
+--
+
+- Do we have any good .blue[Research questions]?
+
+---
+
+# Stepping back
+
+- .blue[RQ]: How might admissions and SAT scores be **related**?
+
+--
+
+  - .blue[Theory]: selective schools have stricter criteria
+  
+--
+
+  - .blue[Hypothesis]: admissions and SAT scores should be **negatively** related
+  
+--
+
+- How can we test this hypothesis?
+
+
+---
+
+# Summarizing Data: `summarise()` + `mean()`
+
+--
+
+- We can combine base `R` functions with `tidyverse` functions!
+
+--
+
+  - Base `R`: `mean()`
+  
+  - `tidyverse`: `summarise()` (aka `summarize()`)
+  
+- Overall average SAT scores
+
+
+```r
+df %&gt;%
+  summarise(mean_sat = mean(sat_avg,na.rm=T)) # Average SAT scores for entire data
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat
+##      &lt;dbl&gt;
+## 1    1141.
+```
+
+---
+
+# Summarizing Data
+
+--
+
+- Let's unpack this
+
+
+```r
+df %&gt;%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+--
+
+  - Create new variable `mean_sat` that contains the `mean()` of every school's average SAT score
+  
+--
+
+  - `na.rm=T` means we want to ignore missing data. If not?
+  
+--
+  
+
+```r
+df %&gt;%
+  summarise(mean_sat = mean(sat_avg))
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat
+##      &lt;dbl&gt;
+## 1       NA
+```
+
+---
+
+# Summarizing Data
+
+--
+
+- Recall we want see if more selective schools have higher SAT scores
+
+--
+
+
+```r
+df %&gt;%
+  filter(adm_rate &lt; .1) %&gt;% # Only look at schools who accept less than 10% of applicants
+  summarise(mean_sat_LT10 = mean(sat_avg,na.rm=T)) # Calculate the average SAT score
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat_LT10
+##           &lt;dbl&gt;
+## 1         1510.
+```
+
+
+```r
+df %&gt;%
+  filter(adm_rate &gt; .1) %&gt;% # Only look at schools who accept more than 10% of applicants
+  summarise(mean_sat_GT20 = mean(sat_avg,na.rm=T)) # Calculate the average SAT score
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat_GT20
+##           &lt;dbl&gt;
+## 1         1135.
+```
+
+---
+
+# Summarizing Data: `group_by()`
+
+--
+
+- One final `tidyverse` function: `group_by()`
+
+--
+
+- There is a column called `selective` which is either 1 or 0
+
+--
+
+  - 1: the admissions rate is less than 10%
+  
+  - 0: otherwise
+  
+--
+
+
+```r
+df %&gt;%
+  select(instnm,selective,adm_rate)
+```
+
+```
+## # A tibble: 2,546 × 3
+##    instnm                              selective adm_rate
+##    &lt;chr&gt;                                   &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Alabama A &amp; M University                    0    0.918
+##  2 University of Alabama at Birmingham         0    0.737
+##  3 Amridge University                         NA   NA    
+##  4 University of Alabama in Huntsville         0    0.826
+##  5 Alabama State University                    0    0.969
+##  6 The University of Alabama                   0    0.827
+##  7 Central Alabama Community College          NA   NA    
+##  8 Athens State University                    NA   NA    
+##  9 Auburn University at Montgomery             0    0.904
+## 10 Auburn University                           0    0.807
+## # … with 2,536 more rows
+```
+
+---
+
+# Summarizing Data: `group_by()`
+
+- Instead of running two separate `filter()` commands, use `group_by()`
+
+--
+
+
+```r
+df %&gt;%
+  group_by(selective) %&gt;% # Group the data by selective (either 1 or 0)
+  summarise(mean_sat = mean(sat_avg,na.rm=T)) # Calculate average SAT for each group
+```
+
+```
+## # A tibble: 3 × 2
+##   selective mean_sat
+##       &lt;dbl&gt;    &lt;dbl&gt;
+## 1         0    1135.
+## 2         1    1510.
+## 3        NA     NaN
+```
+
+---
+
+# Results
+
+- Do more selective schools have higher SAT scores?
+
+--
+
+- Yes
+
+--
+
+- This .red[Result] **confirms** our .blue[Hypothesis] and **answers** our .blue[Research Question]
+
+---
+
+# Conclusion
+
+--
+
+- What we've done today is a microcosm of data science
+
+--
+
+  1. Opened .red[data] (`readRDS`)
+  
+--
+  
+  2. Looked at .red[data] (`tidyverse` + `select()`, `filter()`, `arrange()`)
+    
+--
+
+  3. Generated .blue[hypotheses] (Admissions versus SAT scores)
+  
+--
+
+  4. .red[Tested] .blue[hypotheses] (`summarise()` + `mean()`)
+
+---
+
+# Quiz &amp; Homework
+
+- Go to Brightspace and take the **2nd** quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 4695 --&gt;
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Intro_to_R_Part1_hw.Rmd
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,298 @@
+---
+title: "Intro to `R` Part 1"
+subtitle: "Homework"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-09-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,error=TRUE,warning = FALSE,message = FALSE)
+```
+
+## Agenda
+
+We're going to go quickly back over loading data and then return to the topic of filtering, selecting and arranging data. We'll then turn to some calculations using the concepts of summarizing (self explanatory) and mutating (creating new variables). 
+
+
+## Rmarkdown
+
+As mentioned last time, an Rmarkdown file contains two basic elements: text and code. That text and code can be combined or "knitted" into a variety of different document formats. Lets get you started by creating your own Rmarkdown file and knitting it. 
+
+## Load relevant libraries
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+## Load The Data
+Remember to download the data from [GitHub](https://github.com/jbisbee1/DS1000-F2022/blob/master/Lectures/Topic3_HelloWorld/data/sc_debt.Rds) and save it to the `data` folder you created. You should then open it in `R` by assigning it to an object with the `<-` command.
+
+```{r}
+df<-readRDS("../data/sc_debt.Rds") 
+names(df)
+```
+
+| Name           | Definition                                                                                                                                                                                             |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| unitid         | Unit ID                                                                                                                                                                                                |
+| instnm         | Institution Name                                                                                                                                                                                       |
+| stabbr         | State Abbreviation                                                                                                                                                                                     |
+| grad_debt_mdn  | Median Debt of Graduates                                                                                                                                                                               |
+| control        | Control Public or Private                                                                                                                                                                              |
+| region         | Census Region                                                                                                                                                                                          |
+| preddeg        | Predominant Degree Offered: Associates or Bachelors                                                                                                                                                    |
+| openadmp       | Open Admissions Policy: 1= Yes, 2=No,3=No 1st time students                                                                                                                                            |
+| adm_rate       | Admissions Rate: proportion of applications accepted                                                                                                                                                   |
+| ccbasic        | Type of institution-- see [here](https://data.ed.gov/dataset/9dc70e6b-8426-4d71-b9d5-70ce6094a3f4/resource/658b5b83-ac9f-4e41-913e-9ba9411d7967/download/collegescorecarddatadictionary_01192021.xlsx) |
+| selective      | Institution admits fewer than 10 % of applicants, 1=Yes, 0=No                                                                                                                                          |
+| research_u     | Institution is a research university 1=Yes, 0=No                                                                                                                                                      |
+| sat_avg        | Average Sat Scores                                                                                                                                                                                     |
+| md_earn_wne_p6 | Average Earnings of Recent Graduates                                                                                                                                                                   |
+|ugds  | Number of undergraduates |
+
+## Looking at datasets
+
+We can use "glimpse" to see what's in a dataset. This gives a very quick rundown of the variables and the first few observations.  
+```{r}
+glimpse(df)
+```
+
+## Types of Variables
+
+Notice that for each variable, it shows a different type, in angle brackets `<>`. So for instance, `instnm` has a type of `<chr>`. This is short for character-- it's also called a string variable. 
+
+Here are the types of data in this dataset
+
+- `<int>` Integer data
+- `<chr>` Character or string data
+- `<dbl>` Double, (double-precisiono floating point) or just numeric data-- can be measured down to an arbitrary number of data points. 
+
+This information is useful, because we wouldn't want to try to run some kind of numeric analysis on string data. The average of institution names wouldn't make a lot of sense (but it would probably be Southeast North State University College). 
+
+We'll talk more about data  types later, but we should also quickly note that there are some variables in this dataset where the numbers represent a characteristic, rather and a measurement. For instance, the variable `research_u` is set up---coded--- such that a "1" indicates that the college is a research university and a "0" indicates that  it is not a research university. The 1 and 0 don't measure anything, they just indicate a characteristic.
+
+
+## Filter, Select, Arrange
+
+Today, we'll pick up where we left off-- with the key commands of filter, select, and arrange. 
+
+In exploring data, many times we want to look at smaller parts of the dataset. There are three commands we'll use today that help with this.
+
+\-`filter` selects only those cases or rows that meet some logical criteria.
+
+\-`select` selects only those variables or columns that meet some criteria
+
+\-`arrange` arranges the rows of a dataset in the way we want.
+
+For more on these, please see this [vignette](https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html).
+
+
+We can look at the first 5 rows:
+```{r}
+head(df)
+```
+
+Or the last 5 rows:
+
+```{r}
+tail(df)
+```
+
+
+## Using filter in combination with other commands
+
+`filter` can be used with any command that retruns true or false. This can be really powerful, for instance the command `str_detect` "detects" the relevant string in the data, so we can look for any college with the word "Colorado" in its name. 
+
+```{r}
+df%>%
+  filter(str_detect(instnm,"Colorado"))%>%
+  select(instnm,adm_rate,sat_avg)
+```
+
+
+We can combine this with the `|` operator, which remember stands for "or." Let's say we want all the institutions in Colorado OR California. 
+
+```{r}
+df%>%
+  filter(str_detect(instnm,"Colorado") | str_detect(instnm,"California"))%>%
+  select(instnm,adm_rate,sat_avg)
+```
+
+We can also put this together in one (notice that everything goes inside the quotes)
+
+```{r}
+df%>%
+  filter(str_detect(instnm,"Colorado|California"))%>%
+  select(instnm,adm_rate,sat_avg)
+```
+
+
+## Reminder: logical operators
+
+Here are (many of) the logical operators that we use in R:
+
+-   `>`, `<`: greater than, less than
+-   `>=`, `<=`: greater than or equal to, less than or equal to
+-   `!` :not, as in `!=` not equal to
+-   `&` AND
+-   `|` OR
+
+*Quick Exercise* Select colleges that are from Texas AND have the word "community" in their name (the name variable is `instnm`).
+
+```{r}
+# INSERT CODE HERE
+```
+
+## Extending Select
+
+Select can also be used with other characteristics. 
+
+For quick guide on this: https://dplyr.tidyverse.org/reference/select.html
+
+For example, we can select just variables that contain the word "region"
+
+```{r}
+df%>%
+  select(contains("region"))
+```
+
+`contains()` and `matches()` are equivalent functions
+
+```{r}
+df %>%
+  select(matches('region'))
+```
+
+We can augment these with the logical operators listed above
+
+```{r}
+# Removes columns with "inst" in their names
+df %>%
+  select(!matches('inst'))
+
+# Selects columns with either "inst" or an underline in their names
+df %>%
+  select(matches('inst|_'))
+```
+
+We can also select just variables by their type using `where()`
+
+```{r}
+# Select only numeric variables
+df%>%
+  select(where(is.numeric))
+```
+
+
+
+*Quick Exercise* Use the same setup to select only character variables (`is.character`)
+
+```{r}
+# INSERT CODE HERE
+```
+
+## Summarizing Data
+
+To summarize data, we use the `summarize` command. Inside that command, we tell R two things: what to call the new object (a data frame, really) that we're creating, and what numerical summary we would like. The code below summarizes median debt for the colleges in the dataset by calculating the average of median debt for all institutions.
+
+Notice that inside the `mean` command 
+
+```{r summarize}
+df%>%
+  summarize(mean_debt=mean(grad_debt_mdn,na.rm=TRUE))
+```
+
+*Quick Exercise* Summarize the average entering SAT scores in this dataset.
+
+```{r}
+# INSERT CODE HERE
+```
+
+## Combining Commands
+
+We can also combine commands, so that summaries are done on only a part of the dataset. Below, we summarize median debt for selective schools, and not very selective schools.
+
+```{r combining commands}
+df%>%
+  filter(stabbr=="CA")%>%
+  summarize(mean_adm_rate=mean(adm_rate,na.rm=TRUE))
+```
+
+*Quick Exercise* Calculate average earnings for schools where SAT\>1200 & the admissions rate is between 10 and 20 percent. 
+
+```{r}
+# INSERT CODE HERE
+```
+
+## Mutate
+
+`mutate` is the verb for changing variables in R. Let's say we want to create a variable that's set to 1 if the college admits less than 10 percent of the students who apply. 
+
+```{r}
+df<-df%>%
+  mutate(selective=ifelse(adm_rate<=.1,1,0))
+```
+
+The `ifelse()` function is powerful. It allows us to create one value if a logical expression is `TRUE`, and another value if the logical expression is `FALSE`. The inputs are: `ifelse([LOGIC],[VALUE IF TRUE],[VALUE IF FALSE])`. In this example, the "logical expression" is `adm_rate <= 0.1`. For every row where this is `TRUE`, we get the value `1`. For every row where this is `FALSE`, we get the value `0`.
+
+*Quick Exercise* Create a new variable that's set to 1 if the college has more than 10,000 undergraduate students
+
+```{r}
+# INSERT CODE HERE
+```
+
+
+Or what if we want to create another new variable that changes the admissions rate from its current proportion to a percent?
+
+```{r}
+df<-df%>%
+  mutate(adm_rate_pct=adm_rate*100)
+```
+
+To figure out if that worked we can use `summarize`
+```{r}
+df%>%
+  summarize(mean_adm_rate_pct=mean(adm_rate_pct,na.rm=TRUE))
+```
+
+## Grouping
+
+Above, we calculated the `mean_adm_rate` for schools in California by combining a `filter()` command with a `summarise()` command. Let's use the same approach to calculate the average SAT score for schools that are selective and for those that aren't.
+
+```{r}
+# Mean SAT for selective schools
+df %>%
+  filter(selective == 1) %>%
+  summarise(SATavg = mean(sat_avg,na.rm=T))
+
+# Mean SAT for non-selective schools
+df %>%
+  filter(selective == 0) %>%
+  summarise(SATavg = mean(sat_avg,na.rm=T))
+```
+
+This works, but requires two separate chunks of code. We can streamline this analysis with the `group_by()` function, which tells `R` to run a command on each group separately. Thus:
+
+```{r}
+df %>%
+  group_by(selective) %>%
+  summarise(SATavg = mean(sat_avg,na.rm=T))
+```
+
+*Quick Exercise* Do the same, but calculate the average SAT score for each state, using `group_by()`.
+
+```{r}
+# INSERT CODE HERE
+```
+
+
+```{r,message=F,echo=F,warning=F,results='hide'}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF
+dir <- getwd()
+type <- 'pdf'
+format <- 'portrait'
+f <- 'Intro_to_R_Part1_hw'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

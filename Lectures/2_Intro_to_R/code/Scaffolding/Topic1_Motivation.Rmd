@@ -1,0 +1,35 @@
+---
+title: 'Lecture 1: Data Science'
+author: "Jim Bisbee"
+output:
+  ioslides_presentation:
+    widescreen: true
+    incremental: true
+    transition: faster
+  
+  beamer_presentation: default
+---
+
+# Today's Agenda
+
+1. Meet the Instructor:
+- Prof. Bisbee: _jhb362@nyu.edu_
+
+2. Course Motivation & Objectives
+- Content: Critical Thinking, Analysis, Presentation
+
+- Skills: Computing and Analysis using R
+
+# Too Much Information? 
+![](./figs/DOMO_2020.jpg)
+
+
+# Course Motivation
+- "It is a capital mistake to theorize before one has data." Sherlock Holmes
+
+- "Torture the data, and it will confess to anything." Ronald Coase, Nobel Prize Laureate in Economics 
+
+- “All data is dirty. All of it.” Meredith Broussard, _Artificial Unintelligence: How Computers Misunderstand the World_
+
+- “Big Data processes codify the past. They do not invent the future.” Cathy O'Neil, _Weapons of Math Destruction: How Big Data Increases Inequality and Threatens Democracy_
+
