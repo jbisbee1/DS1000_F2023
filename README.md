@@ -146,14 +146,14 @@ The observance of religious holidays (activities observed by a religious group o
 
 ## Office Hours (OH) / Labs
 * Prof. Bisbee: OH M & W at 3PM in Commons #353
-* TA Brych: TBA
-* TA Fang: TBA
-* TA Gupta: TBA
-* TA Manda Li: TBA
-* TA Qifan Lin: TBA
-* TA Negi: TBA
-* TA Quagliata: TBA
-* TA Zha: TBA
+* TA Brych: OH T from 1PM to 3PM on Zoom (see Campuswire for link)
+* TA Fang: OH TH from 3PM to 5PM in FGH 201
+* TA Gupta: OH W from 11AM to 1PM on Zoom (see Campuswire for link)
+* TA Manda Li: Lab TH from 2PM to 3PM in Stevenson 2212
+* TA Qifan Lin: OH W from 5PM to 7PM in DSI Building Suite 208
+* TA Negi: OH T from 4PM to 6PM on Zoom (see Campuswire for link)
+* TA Quagliata: OH TH from 8:30AM to 9:30AM, and 5:15PM to 6:15PM in Sarratt Student Center Lounge
+* TA Zha: OH T & TH from 12PM to 1PM on Zoom (see Campuswire for link)
 
 All these can also be found on the [Campuswire calendar](https://campuswire.com/c/G0D071C4A/calendar), along with the Zoom links for those hosting their office hours remotely.
 
