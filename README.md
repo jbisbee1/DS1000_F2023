@@ -205,6 +205,7 @@ Lecture Content (2023/08/23): Welcome to the world of data science!
 Lecture Content (2023/08/28): ChatGPT and the new frontier of data science
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.html#1)
+* Recording [Part 1](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2967884/View); [Part 2](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2967883/View)
 * Homework (due 2023/09/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd); [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.pdf)
 
 
