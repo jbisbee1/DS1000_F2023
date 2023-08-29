@@ -1,0 +1,23 @@
+---
+title: "Lecture 2 Notes"
+output: html_document
+date: "2023-08-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Example of ChatGPT
+
+The professor has been talking a GREAT LENGTH about ChatGPT.
+
+```{r}
+2 + 2
+```
+
+Here are some more notes
+
+```{r}
+1 + "1"
+```
