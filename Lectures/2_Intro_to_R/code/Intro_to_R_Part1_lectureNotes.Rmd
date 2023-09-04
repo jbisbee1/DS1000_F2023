@@ -1,0 +1,81 @@
+---
+title: "Intro to R: Part 1"
+output: html_document
+date: "2023-09-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here is an example of a simple sentence.
+
+ -   Here is a bullet
+
+- Here is another bullet
+
+# Coding Demonstration
+
+```{r}
+317+518/34.5
+
+demonstration <- 1001 - 812
+
+```
+
+
+## Demonstration of object types
+
+```{r}
+an_element <- 2+2
+
+an_element
+
+a_vector <- c(1,2,3)
+
+a_vector
+
+# We can run mathematical operations ON OBJECTS
+
+an_element * a_vector
+
+# This is a HUGE vector
+a_huge_vector <- runif(n = 10)
+
+a_huge_vector
+
+# A different type of element
+a_string_element <- "Hello world!"
+
+a_string_element
+
+```
+
+# Example time from slide 19
+
+```{r}
+a <- 3*5
+
+b <- c(10,21,43,87,175)
+
+c <- a - b
+
+c
+
+# Demonstrate mean() function
+mean(c)
+mean(c(1,2,3))
+
+range(c)
+```
+
+# Installing packages
+
+```{r}
+# install.packages("tidyverse")
+require(tidyverse)
+
+dat <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/2_Intro_to_R/data/sc_debt.Rds")
+
+dat
+```

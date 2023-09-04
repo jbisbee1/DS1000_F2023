@@ -219,6 +219,7 @@ Lecture Content (2023/08/28): ChatGPT and the new frontier of data science
 Lecture Content (2023/09/04): Part 1 - Install and open `R`, packages, `tidyverse`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1)
+* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2978281/View)
 * Homework (due 2023/09/06): [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.pdf);  [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.Rmd)
 * Data: [sc_debt.Rds](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/data/sc_debt.Rds)
 
