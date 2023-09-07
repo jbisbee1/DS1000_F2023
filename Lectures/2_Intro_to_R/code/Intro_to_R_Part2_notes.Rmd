@@ -1,0 +1,88 @@
+---
+title: "Intro to R Part 2 Notes"
+output: html_document
+date: "2023-09-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# First step: require tidyverse
+
+```{r}
+require(tidyverse)
+```
+
+# Loading data
+
+We can load data either by downloading it to our computer, or just loading it directly from the internet with the function `read_rds()`.
+
+```{r}
+df <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/2_Intro_to_R/data/sc_debt.Rds")
+
+df
+```
+
+# Functions for looking at data
+
+The first step of the scientific method is **OBSERVATION**
+
+```{r}
+df %>% # Pipes or "do operators"
+  select(instnm,ugds,costt4_a,control)
+
+# Looking at column names
+colnames(df)
+
+# Using filter() to look at ROWS
+df %>%
+  filter(instnm == "Vanderbilt University") %>%
+  select(ugds,costt4_a,sat_avg,md_earn_wne_p6)
+```
+
+# Comparing us to others
+
+We want to know where we stand relative to other schools.
+
+```{r}
+df %>%
+  arrange(sat_avg) %>% # Default is lowest to highest
+  select(instnm,sat_avg)
+
+df %>%
+  arrange(desc(sat_avg)) %>% # Use desc() to flip sorting
+  select(instnm,sat_avg) %>%
+  print(n = 20)
+```
+
+# Creating a new variable
+
+We use the function `mutate()` to create new variables.
+
+```{r}
+df %>%
+  mutate(new_variable = 1) %>%
+  select(unitid,new_variable)
+
+df %>%
+  mutate(sel = ifelse(test = adm_rate < .1,
+                      yes = 1,
+                      no = 0)) %>%
+  arrange(adm_rate) %>%
+  select(instnm,adm_rate,sel) %>%
+  print(n = 20)
+
+# Assign the new column with <- 
+df <- df %>%
+  mutate(sel = ifelse(adm_rate < .1,1,0))
+```
+
+# Compare with a filter
+
+```{r}
+df %>%
+  filter(sel == 1) %>%
+  arrange(desc(sat_avg)) %>%
+  select(instnm,sat_avg)
+```
