@@ -228,6 +228,7 @@ Lecture Content (2023/09/04): Part 1 - Install and open `R`, packages, `tidyvers
 Lecture Content (2023/09/06): Part 2 - Objects, functions, and `<-`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.html#1)
+* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2981061/View)
 * Homework (due 2023/09/11): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_hw.Rmd)
 
 Lecture Content (2023/09/11): Part 3 - Visualization in `R`
