@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Intro to R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Intro to <code>R</code>
+]
+.subtitle[
+## Part 3: Visualization
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/09/11
+Slides Updated: 2023-09-10
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Recap of last lecture
+
+--
+
+  - Using packages: `install.packages()` &amp; `require()`
+  
+  - Loading and manipulating data: `readRDS()` and `%&gt;%`
+  
+--
+
+2. Plotting in `R`
+
+--
+
+  - `ggplot` (`+` instead of `%&gt;%`)
+
+---
+
+# Loading Packages &amp; Data
+
+--
+
+- Create an `.Rmd` file and save to your `code` folder
+
+--
+
+  - Accept defaults, Save As... (with a good name), then `knit`
+
+--
+
+- Load the `tidyverse` package
+
+
+```r
+require(tidyverse)
+```
+
+--
+
+- Download `sc_debt.Rds` from  [GitHub](https://github.com/jbisbee1/DS1000-F2022/blob/master/Lectures/Topic3_HelloWorld/data/sc_debt.Rds) and save to your `./data` folder
+  
+--
+
+- Now load the data with `readRDS("[PATH TO DATA]/sc_debt.Rds")`
+
+--
+
+  - We **create** an "object" to store the data using a left-arrow: `&lt;-`
+
+--
+
+
+```r
+df &lt;- readRDS("../data/sc_debt.Rds")
+```
+
+--
+
+  - NB: `../` means "go up one folder"
+
+---
+
+# The Two Camps
+
+&lt;center&gt;&lt;img src="figs/camps3.png" width="80%"&gt;&lt;/center&gt;
+
+
+---
+
+# The .blue[Research] Camp
+
+- .blue[RQ]: How might admissions and SAT scores be **related**?
+
+--
+
+  - .blue[Theory]: selective schools have stricter criteria
+  
+--
+
+  - .blue[Hypothesis]: admissions and SAT scores should be **negatively** related
+  
+--
+
+- How can we test this hypothesis?
+
+---
+
+# Previously: `summarise()`
+
+--
+
+- We can combine base `R` functions with `tidyverse` functions!
+
+--
+
+  - Base `R`: `mean()`
+  
+  - `tidyverse`: `summarise()` (aka `summarize()`)
+  
+--
+  
+- Overall average SAT scores
+
+
+```r
+df %&gt;%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat
+##      &lt;dbl&gt;
+## 1    1141.
+```
+
+---
+
+# Previously: `summarise()`
+
+--
+
+- Let's unpack this
+
+
+```r
+df %&gt;%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+--
+
+  - Create new variable `mean_sat` that contains the `mean()` of every school's average SAT score
+  
+--
+
+  - `na.rm=T` means we want to ignore missing data. If not?
+  
+--
+  
+
+```r
+df %&gt;%
+  summarise(mean_sat = mean(sat_avg))
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat
+##      &lt;dbl&gt;
+## 1       NA
+```
+
+---
+
+#`summarise()` + `filter()`
+
+--
+
+- Recall we want see if more selective schools have higher SAT scores
+
+--
+
+
+```r
+df %&gt;%
+  filter(adm_rate &lt; .1) %&gt;%
+  summarise(mean_sat_LT10 = mean(sat_avg,na.rm=T))
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat_LT10
+##           &lt;dbl&gt;
+## 1         1510.
+```
+
+
+```r
+df %&gt;%
+  filter(adm_rate &gt; .1 &amp; adm_rate &lt; .2) %&gt;%
+  summarise(mean_sat_1020 = mean(sat_avg,na.rm=T))
+```
+
+```
+## # A tibble: 1 × 1
+##   mean_sat_1020
+##           &lt;dbl&gt;
+## 1         1424.
+```
+
+---
+
+# `summarise()` + `group_by()`
+
+--
+
+- One final `tidyverse` function: `group_by()`
+
+--
+
+
+```r
+df %&gt;%
+  group_by(selective) %&gt;%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+```
+## # A tibble: 3 × 2
+##   selective mean_sat
+##       &lt;dbl&gt;    &lt;dbl&gt;
+## 1         0    1135.
+## 2         1    1510.
+## 3        NA     NaN
+```
+
+
+---
+
+# Plotting data
+
+--
+
+- Let's plot the data instead of writing many of these `summarise()` functions
+
+--
+
+- Visualization in `R` uses `ggplot()` function
+
+--
+
+  - Inputs: `aes(x,y,...)` (elipses `...` indicates many more inputs)
+  
+  - `x` is the x-axis (horizontal)
+  
+  - `y` is the y-axis (vertical)
+  
+
+---
+
+# `ggplot()`
+
+- Attach `ggplot()` to your data with `%&gt;%`
+
+
+```r
+*df %&gt;%
+  ggplot()
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# `ggplot()`
+
+- Then tell it what to put in the x-axis and y-axis
+
+--
+
+- What should go on these axes?
+
+--
+
+- .blue[Theory]: Selective schools choose higher scoring students
+
+--
+
+  - Selective schools **explain** higher scores
+  
+  - Selective schools: **independent variable** / **explanatory variable** / **predictor** / `\(X\)`
+  
+  - Higher scores: **dependent variable** / **outcome variable** / `\(Y\)`
+  
+--
+
+- Selective schools go on the x-axis, SAT scores go on the y-axis
+
+---
+
+# `ggplot()`
+
+
+```r
+df %&gt;%
+* ggplot(aes(x = adm_rate,y = sat_avg))
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# `ggplot()`
+
+- This gives us an empty plot
+
+--
+
+- We have the correct variables on the correct axes...
+
+--
+
+- ...but we need to choose how to display them
+
+--
+
+- There are many different `ggplot()` functions to choose from
+
+--
+
+  - `geom_point()` creates one point for each x and y coordinate
+  
+  - `geom_bar()` creates a barplot
+  
+  - `geom_histogram()` creates a histogram
+  
+  - `geom_density()` creates a density plot
+  
+  - `geom_boxplot()` creates a box-and-whisker plot
+  
+---
+
+# `ggplot()`
+
+- We **add** a second `ggplot()` function to the first with a plus sign `+`
+
+--
+
+  - **NB:** This is JUST LIKE THE PIPE OPERATOR `%&gt;%` in `tidyverse`!
+  
+--
+
+- Since `adm_rate` (the x-axis variable) and `sat_avg` (the y-axis variable) are both numeric ("continuous") measures, we will use `geom_point()`
+
+--
+
+  - We will come back to **variable types** and how to visualize them later
+  
+---
+
+# `ggplot()`
+
+
+```r
+df %&gt;%
+  ggplot(aes(x = adm_rate,y = sat_avg)) + 
+* geom_point()
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Plotting data
+
+--
+
+- Let's unpack this
+
+--
+
+  - `aes(x,y)` sets the basic aesthetics for the plot
+  
+--
+
+  - `geom_point()` tells `ggplot()` how to visualize those aesthetics
+  
+--
+
+  - These two parts are linked with the `+`. Similar to...?
+
+--
+
+  - ...the `%&gt;%` in `tidyverse`!
+
+---
+
+# Interpreting the plot
+
+--
+
+- We **hypothesized** that admissions and SAT scores are negatively related
+
+--
+
+  - Is this supported in the data?
+  
+--
+
+- Let's add a line of best fit with `geom_smooth()`
+
+
+```r
+df %&gt;%
+  ggplot(aes(x = adm_rate,y = sat_avg)) + 
+  geom_point() + 
+* geom_smooth(method = 'lm',se = F)
+```
+
+---
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# The .blue[Research] Camp
+
+- .blue[RQ]: How might future earnings and SAT scores be **related**?
+
+--
+
+  - .blue[Theory]: SATs measure student ability.
+  
+  - .blue[Theory]: Student ability is valued by the labor market.
+  
+  - .blue[Theory]: Firms pay more for students with higher SAT scores.
+  
+--
+
+  - .blue[Hypothesis]: Earnings and SAT scores should be **positively** related
+  
+---
+
+# Plotting Quiz
+
+- Which variable goes on the x-axis?
+
+--
+
+  - **SAT scores**
+  
+--
+
+- Which variable goes on the y-axis?
+
+  - **Earnings**
+  
+--
+
+- In our theory, SAT scores **cause** earnings
+
+--
+
+- Why might this **not** be the case?
+
+--
+
+  - Spurious 1: SAT scores **and** earnings are caused by student ability
+  
+  - Spurious 2: SAT scores **and** earnings are caused by socio-economic privilege
+  
+---
+
+# Let's Plot!
+
+
+```r
+df %&gt;%
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6)) + # Build axes
+  geom_point() +  # Add points
+  geom_smooth(method = 'lm',se = F) # Add line of best fit
+```
+
+---
+
+# Outliers
+
+- Which schools are furthest from the line?
+
+--
+
+  - These are **outliers**
+  
+--
+
+  - These schools are the **furthest** from our .blue[theory]
+
+--
+
+
+```r
+df %&gt;%
+  mutate(out = ifelse(md_earn_wne_p6 &gt; 100000,
+                          instnm,  # Value if TRUE
+                          NA)) %&gt;% # Value if FALSE
+  drop_na(out,sat_avg) %&gt;%
+  select(instnm,md_earn_wne_p6,sat_avg)
+```
+
+```
+## # A tibble: 2 × 3
+##   instnm                                     md_ea…¹ sat_avg
+##   &lt;chr&gt;                                        &lt;int&gt;   &lt;int&gt;
+## 1 University of Health Sciences and Pharmac…  120400    1262
+## 2 Albany College of Pharmacy and Health Sci…  112100    1242
+## # … with abbreviated variable name ¹​md_earn_wne_p6
+```
+
+---
+
+# Plotting data
+
+- We can add these as labels!
+
+
+```r
+df %&gt;%
+   mutate(out = ifelse(md_earn_wne_p6 &gt; 100000,
+                          instnm,  # Value if TRUE
+                          NA)) %&gt;% # Value if FALSE
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6,
+*            label = out)) +
+  geom_point() + 
+* geom_text()
+```
+
+---
+
+# Plotting data
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Plotting data
+
+- Let's accentuate the outlier more with color
+
+
+```r
+p &lt;- df %&gt;%
+   mutate(out = ifelse(md_earn_wne_p6 &gt; 100000,
+                          instnm,  # Value if TRUE
+                          NA)) %&gt;% # Value if FALSE
+  drop_na(sat_avg) %&gt;%
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6,
+*            label = out,color = out)) +
+  geom_point() + 
+* scale_color_manual(name = "Outlier",values = c('red','red','black')) +
+  geom_text(hjust = .5,vjust = 1,color = 'black',size = 3)
+```
+
+---
+
+# Plotting data
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# Categorical Data
+
+- Thus far, plotting two continuous variables with `geom_point()`
+
+--
+
+- What if we wanted to see which state has the most selective schools?
+
+--
+
+- Use `group_by()` and `summarise()`
+  
+--
+
+
+```r
+df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T))
+```
+
+```
+## # A tibble: 51 × 2
+##    stabbr selective_avg
+##    &lt;chr&gt;          &lt;dbl&gt;
+##  1 AK             0.827
+##  2 AL             0.654
+##  3 AR             0.676
+##  4 AZ             0.843
+##  5 CA             0.592
+##  6 CO             0.768
+##  7 CT             0.589
+##  8 DC             0.529
+##  9 DE             0.627
+## 10 FL             0.620
+## # … with 41 more rows
+```
+
+---
+
+# Categorical Data
+
+- Two variables (`stabbr` and `selective_avg`), but one of them is now a `character` type
+
+--
+
+- Can we plot this as a scatterplot?
+
+--
+
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+  geom_point()
+```
+
+---
+
+# Categorical Data
+
+- Yes...but it isn't very pretty
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Categorical Data: `geom_bar()`
+
+- NB: `geom_bar()` will automatically count the values on the x-axis
+  
+--
+
+
+```r
+df %&gt;%
+  ggplot(aes(x = stabbr)) + 
+  geom_bar()
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Categorical Data: `geom_bar()`
+
+- This is fine if we just want to know which states have the most schools in our data
+
+--
+
+- But we want to put the average admissions rate on the y-axis instead
+
+--
+
+  - Need to **override** `geom_bar()` default behavior
+  
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+* geom_bar(stat = 'identity')
+```
+
+---
+
+# Categorical Data
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Categorical Data
+
+- Getting a little better, but still ugly
+
+--
+
+- Use `reorder()` to sort the x-axis values by the y-axis
+
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+* ggplot(aes(x = reorder(stabbr,selective_avg),y = selective_avg)) +
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Categorical Data
+
+- Even better!
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Plot Tweaking
+
+- We could go even further and swap the x and y-axes (although this isn't always a good idea!)
+
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+* ggplot(aes(y = reorder(stabbr,selective_avg),x = selective_avg)) +
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Plot Tweaking
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /&gt;
+
+--
+
+- Still ugly though! We want to tweak the labels with `labs()`
+
+---
+
+# Plot Tweaking
+
+
+```r
+p + 
+  labs(title = "Average Admissions by State",
+       x = "Admissions Rate",
+       y = "State")
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Conclusion
+
+--
+
+- What to take away
+
+--
+
+  1. Which variables go on which axes
+  
+  2. How to put these on a `ggplot()` figure
+  
+  3. How to create a visualization of these variables
+  
+--
+
+- This wraps up the crash course in `R`
+
+--
+
+  - **REMEMBER**: This class is *inherently* challenging because of `R`
+  
+--
+
+  - The course is graded leniently to reflect the inherent difficulty of the material
+
+---
+
+# Quiz &amp; Homework
+
+- Go to Brightspace and take the fourth quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 1176 --&gt;
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Intro_to_R_Part3_hw.Rmd
+  
+  2. Complete Problem Set 1
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

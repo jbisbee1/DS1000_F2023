@@ -1,0 +1,105 @@
+---
+title: "Problem Set 1"
+subtitle: "Intro to `R`"
+author: "[YOUR NAME]"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-09-15"
+output:
+  html_document: default
+---
+
+```{r,include=F}
+knitr::opts_chunk$set(error=TRUE)
+```
+
+
+## Getting Set Up
+
+Open `RStudio` and create a new RMarkDown file (`.Rmd`) by going to `File -> New File -> R Markdown...`.
+Accept defaults and save this file as `[LAST NAME]_ps1.Rmd` to your `code` folder.
+
+Copy and paste the contents of this `Problem_Set_1.Rmd` file into your `[LAST NAME]_ps1.Rmd` file. Then change the `author: [Your Name]` to your name.
+
+If you haven't already, download the `sc_debt.Rds` file from the course [github page](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/data/sc_debt.Rds) and save it to your `data` folder.
+
+All of the following questions should be answered in this `.Rmd` file. There are code chunks with incomplete code that need to be filled in. 
+
+This problem set is worth 10 total points, plus three extra credit points (one explicit and two hidden). The point values for each question are indicated in brackets below. To receive full credit, you must have the correct code. In addition, some questions ask you to provide a written response in addition to the code.
+
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace on 2023/09/15 by midnight. Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
+
+**Good luck!**
+
+
+## Question 1 [1 point]
+*Require `tidyverse` and load the `sc_debt.Rds` data by assigning it to an object named `df`.*
+```{r}
+require() # Load tidyverse
+df <- read_rds("") # Load the dataset
+```
+
+
+## Question 2 [1 point + 1 EC (hidden)]
+*Which school has the lowest admission rate (`adm_rate`) and which state is it in (`stabbr`)?*
+```{r}
+df %>% 
+  arrange() %>% # Arrange by the admission rate
+  select() # Select the school name, the admission rate, and the state
+```
+
+> - Write response here.
+
+## Question 3 [1 point + 1 EC point (hidden)]
+*Which are the top 10 schools by average SAT score (`sat_avg`)?*
+```{r}
+df %>%
+  arrange() %>% # arrange by SAT scores in descending order
+  select() %>% # Select the school name and SAT score
+  print() # Print the first X rows
+```
+
+> - Write response here.
+
+
+## Question 4 [1 point]
+*Which state is home to the school with the largest median earnings of recent graduates, and how much did they make?*
+```{r}
+df %>%
+  arrange() %>% # arrange by earnings in descending order
+  select() # select the school name and earnings and the state
+```
+
+> - Write response here.
+
+## Question 5 [1 point]
+*What is the average SAT score of the school with the highest median earnings identified in question 4?*
+```{r}
+df %>%
+  filter() %>% # Filter to the school identified above
+  select() # select the school name and the SAT score
+```
+
+> - Write response here.
+
+## Question 6 [1 point]
+*Calculate the average SAT score and median earnings of recent graduates by state.*
+```{r}
+df %>%
+  group_by() %>% # Calculate state-by-state with group_by()
+  summarise(, # Summarise the average SAT
+            ) # Summarise the average earnings
+```
+
+## Question 7 [2 points + 1 EC]
+*Plot the average SAT score (x-axis) against the median earnings of recent graduates (y-axis) by school.* **EC: Plot the line of best fit**
+```{r}
+df %>%
+  ggplot(aes(x = ,y = )) +  # Build the plot with SAT scores on the x-axis and earnings on the y-axis
+  geom_point() # Add the points
+```
+
+## Question 8 [2 points + 1 EC]
+*What relationship do you observe? Why do you think this relationship exists? EC: Is there any reason to be suspicious of this pattern?*
+
+> - Write answer here
+

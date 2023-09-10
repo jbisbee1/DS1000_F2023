@@ -1,0 +1,761 @@
+---
+title: "Intro to `R`"
+subtitle: "Part 3: Visualization"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/09/11\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+set.seed(20230123)
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+# Agenda
+
+1. Recap of last lecture
+
+--
+
+  - Using packages: `install.packages()` & `require()`
+  
+  - Loading and manipulating data: `readRDS()` and `%>%`
+  
+--
+
+2. Plotting in `R`
+
+--
+
+  - `ggplot` (`+` instead of `%>%`)
+
+---
+
+# Loading Packages & Data
+
+--
+
+- Create an `.Rmd` file and save to your `code` folder
+
+--
+
+  - Accept defaults, Save As... (with a good name), then `knit`
+
+--
+
+- Load the `tidyverse` package
+
+```{r,message=F}
+require(tidyverse)
+```
+
+--
+
+- Download `sc_debt.Rds` from  [GitHub](https://github.com/jbisbee1/DS1000-F2022/blob/master/Lectures/Topic3_HelloWorld/data/sc_debt.Rds) and save to your `./data` folder
+  
+--
+
+- Now load the data with `readRDS("[PATH TO DATA]/sc_debt.Rds")`
+
+--
+
+  - We **create** an "object" to store the data using a left-arrow: `<-`
+
+--
+
+```{r}
+df <- readRDS("../data/sc_debt.Rds")
+```
+
+--
+
+  - NB: `../` means "go up one folder"
+
+---
+
+# The Two Camps
+
+<center><img src="figs/camps3.png" width="80%"></center>
+
+
+---
+
+# The .blue[Research] Camp
+
+- .blue[RQ]: How might admissions and SAT scores be **related**?
+
+--
+
+  - .blue[Theory]: selective schools have stricter criteria
+  
+--
+
+  - .blue[Hypothesis]: admissions and SAT scores should be **negatively** related
+  
+--
+
+- How can we test this hypothesis?
+
+---
+
+# Previously: `summarise()`
+
+--
+
+- We can combine base `R` functions with `tidyverse` functions!
+
+--
+
+  - Base `R`: `mean()`
+  
+  - `tidyverse`: `summarise()` (aka `summarize()`)
+  
+--
+  
+- Overall average SAT scores
+
+```{r}
+df %>%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+---
+
+# Previously: `summarise()`
+
+--
+
+- Let's unpack this
+
+```{r,eval=F}
+df %>%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+--
+
+  - Create new variable `mean_sat` that contains the `mean()` of every school's average SAT score
+  
+--
+
+  - `na.rm=T` means we want to ignore missing data. If not?
+  
+--
+  
+```{r,eval=T}
+df %>%
+  summarise(mean_sat = mean(sat_avg))
+```
+
+---
+
+#`summarise()` + `filter()`
+
+--
+
+- Recall we want see if more selective schools have higher SAT scores
+
+--
+
+```{r,eval=T}
+df %>%
+  filter(adm_rate < .1) %>%
+  summarise(mean_sat_LT10 = mean(sat_avg,na.rm=T))
+```
+
+```{r,eval=T}
+df %>%
+  filter(adm_rate > .1 & adm_rate < .2) %>%
+  summarise(mean_sat_1020 = mean(sat_avg,na.rm=T))
+```
+
+---
+
+# `summarise()` + `group_by()`
+
+--
+
+- One final `tidyverse` function: `group_by()`
+
+--
+
+```{r,eval=T}
+df %>%
+  group_by(selective) %>%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+
+---
+
+# Plotting data
+
+--
+
+- Let's plot the data instead of writing many of these `summarise()` functions
+
+--
+
+- Visualization in `R` uses `ggplot()` function
+
+--
+
+  - Inputs: `aes(x,y,...)` (elipses `...` indicates many more inputs)
+  
+  - `x` is the x-axis (horizontal)
+  
+  - `y` is the y-axis (vertical)
+  
+
+---
+
+# `ggplot()`
+
+- Attach `ggplot()` to your data with `%>%`
+
+```{r}
+df %>% #<<
+  ggplot()
+```
+
+---
+
+# `ggplot()`
+
+- Then tell it what to put in the x-axis and y-axis
+
+--
+
+- What should go on these axes?
+
+--
+
+- .blue[Theory]: Selective schools choose higher scoring students
+
+--
+
+  - Selective schools **explain** higher scores
+  
+  - Selective schools: **independent variable** / **explanatory variable** / **predictor** / $X$
+  
+  - Higher scores: **dependent variable** / **outcome variable** / $Y$
+  
+--
+
+- Selective schools go on the x-axis, SAT scores go on the y-axis
+
+---
+
+# `ggplot()`
+
+```{r}
+df %>%
+  ggplot(aes(x = adm_rate,y = sat_avg)) #<<
+```
+
+---
+
+# `ggplot()`
+
+- This gives us an empty plot
+
+--
+
+- We have the correct variables on the correct axes...
+
+--
+
+- ...but we need to choose how to display them
+
+--
+
+- There are many different `ggplot()` functions to choose from
+
+--
+
+  - `geom_point()` creates one point for each x and y coordinate
+  
+  - `geom_bar()` creates a barplot
+  
+  - `geom_histogram()` creates a histogram
+  
+  - `geom_density()` creates a density plot
+  
+  - `geom_boxplot()` creates a box-and-whisker plot
+  
+---
+
+# `ggplot()`
+
+- We **add** a second `ggplot()` function to the first with a plus sign `+`
+
+--
+
+  - **NB:** This is JUST LIKE THE PIPE OPERATOR `%>%` in `tidyverse`!
+  
+--
+
+- Since `adm_rate` (the x-axis variable) and `sat_avg` (the y-axis variable) are both numeric ("continuous") measures, we will use `geom_point()`
+
+--
+
+  - We will come back to **variable types** and how to visualize them later
+  
+---
+
+# `ggplot()`
+
+```{r,warning=F}
+df %>%
+  ggplot(aes(x = adm_rate,y = sat_avg)) + 
+  geom_point() #<<
+```
+
+---
+
+# Plotting data
+
+--
+
+- Let's unpack this
+
+--
+
+  - `aes(x,y)` sets the basic aesthetics for the plot
+  
+--
+
+  - `geom_point()` tells `ggplot()` how to visualize those aesthetics
+  
+--
+
+  - These two parts are linked with the `+`. Similar to...?
+
+--
+
+  - ...the `%>%` in `tidyverse`!
+
+---
+
+# Interpreting the plot
+
+--
+
+- We **hypothesized** that admissions and SAT scores are negatively related
+
+--
+
+  - Is this supported in the data?
+  
+--
+
+- Let's add a line of best fit with `geom_smooth()`
+
+```{r,eval = F}
+df %>%
+  ggplot(aes(x = adm_rate,y = sat_avg)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm',se = F) #<<
+```
+
+---
+
+```{r,echo=F,warning=F,message = F}
+df %>%
+  ggplot(aes(x = adm_rate,y = sat_avg)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm',se = F)
+```
+
+
+---
+
+# The .blue[Research] Camp
+
+- .blue[RQ]: How might future earnings and SAT scores be **related**?
+
+--
+
+  - .blue[Theory]: SATs measure student ability.
+  
+  - .blue[Theory]: Student ability is valued by the labor market.
+  
+  - .blue[Theory]: Firms pay more for students with higher SAT scores.
+  
+--
+
+  - .blue[Hypothesis]: Earnings and SAT scores should be **positively** related
+  
+---
+
+# Plotting Quiz
+
+- Which variable goes on the x-axis?
+
+--
+
+  - **SAT scores**
+  
+--
+
+- Which variable goes on the y-axis?
+
+  - **Earnings**
+  
+--
+
+- In our theory, SAT scores **cause** earnings
+
+--
+
+- Why might this **not** be the case?
+
+--
+
+  - Spurious 1: SAT scores **and** earnings are caused by student ability
+  
+  - Spurious 2: SAT scores **and** earnings are caused by socio-economic privilege
+  
+---
+
+# Let's Plot!
+
+```{r,eval = F}
+df %>%
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6)) + # Build axes
+  geom_point() +  # Add points
+  geom_smooth(method = 'lm',se = F) # Add line of best fit
+```
+
+---
+
+# Outliers
+
+- Which schools are furthest from the line?
+
+--
+
+  - These are **outliers**
+  
+--
+
+  - These schools are the **furthest** from our .blue[theory]
+
+--
+
+```{r}
+df %>%
+  mutate(out = ifelse(md_earn_wne_p6 > 100000,
+                          instnm,  # Value if TRUE
+                          NA)) %>% # Value if FALSE
+  drop_na(out,sat_avg) %>%
+  select(instnm,md_earn_wne_p6,sat_avg)
+```
+
+---
+
+# Plotting data
+
+- We can add these as labels!
+
+```{r,eval=F}
+df %>%
+   mutate(out = ifelse(md_earn_wne_p6 > 100000,
+                          instnm,  # Value if TRUE
+                          NA)) %>% # Value if FALSE
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6,
+             label = out)) + #<<
+  geom_point() + 
+  geom_text() #<<
+```
+
+---
+
+# Plotting data
+
+```{r,echo=F,warning=F}
+df %>%
+   mutate(out = ifelse(md_earn_wne_p6 > 100000,instnm,NA)) %>%
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6,label = out)) + 
+  geom_point() + geom_text()
+```
+
+---
+
+# Plotting data
+
+- Let's accentuate the outlier more with color
+
+```{r}
+p <- df %>%
+   mutate(out = ifelse(md_earn_wne_p6 > 100000,
+                          instnm,  # Value if TRUE
+                          NA)) %>% # Value if FALSE
+  drop_na(sat_avg) %>%
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6,
+             label = out,color = out)) + #<<
+  geom_point() + 
+  scale_color_manual(name = "Outlier",values = c('red','red','black')) + #<<
+  geom_text(hjust = .5,vjust = 1,color = 'black',size = 3)
+```
+
+---
+
+# Plotting data
+
+```{r,echo=F,warning=F}
+p + 
+  theme(legend.position = 'none')
+```
+
+
+
+---
+
+# Categorical Data
+
+- Thus far, plotting two continuous variables with `geom_point()`
+
+--
+
+- What if we wanted to see which state has the most selective schools?
+
+--
+
+- Use `group_by()` and `summarise()`
+  
+--
+
+```{r}
+df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T))
+```
+
+---
+
+# Categorical Data
+
+- Two variables (`stabbr` and `selective_avg`), but one of them is now a `character` type
+
+--
+
+- Can we plot this as a scatterplot?
+
+--
+
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+  geom_point()
+```
+
+---
+
+# Categorical Data
+
+- Yes...but it isn't very pretty
+
+```{r}
+p
+```
+
+---
+
+# Categorical Data: `geom_bar()`
+
+- NB: `geom_bar()` will automatically count the values on the x-axis
+  
+--
+
+```{r}
+df %>%
+  ggplot(aes(x = stabbr)) + 
+  geom_bar()
+```
+
+---
+
+# Categorical Data: `geom_bar()`
+
+- This is fine if we just want to know which states have the most schools in our data
+
+--
+
+- But we want to put the average admissions rate on the y-axis instead
+
+--
+
+  - Need to **override** `geom_bar()` default behavior
+  
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+  geom_bar(stat = 'identity') #<<
+```
+
+---
+
+# Categorical Data
+
+```{r}
+p
+```
+
+---
+
+# Categorical Data
+
+- Getting a little better, but still ugly
+
+--
+
+- Use `reorder()` to sort the x-axis values by the y-axis
+
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(x = reorder(stabbr,selective_avg),y = selective_avg)) + #<<
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Categorical Data
+
+- Even better!
+
+```{r}
+p
+```
+
+---
+
+# Plot Tweaking
+
+- We could go even further and swap the x and y-axes (although this isn't always a good idea!)
+
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(y = reorder(stabbr,selective_avg),x = selective_avg)) + #<<
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Plot Tweaking
+
+```{r}
+p
+```
+
+--
+
+- Still ugly though! We want to tweak the labels with `labs()`
+
+---
+
+# Plot Tweaking
+
+```{r}
+p + 
+  labs(title = "Average Admissions by State",
+       x = "Admissions Rate",
+       y = "State")
+```
+
+---
+
+# Conclusion
+
+--
+
+- What to take away
+
+--
+
+  1. Which variables go on which axes
+  
+  2. How to put these on a `ggplot()` figure
+  
+  3. How to create a visualization of these variables
+  
+--
+
+- This wraps up the crash course in `R`
+
+--
+
+  - **REMEMBER**: This class is *inherently* challenging because of `R`
+  
+--
+
+  - The course is graded leniently to reflect the inherent difficulty of the material
+
+---
+
+# Quiz & Homework
+
+- Go to Brightspace and take the fourth quiz
+
+--
+
+  - The password to take the quiz is #### <!-- `r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Intro_to_R_Part3_hw.Rmd
+  
+  2. Complete Problem Set 1
+
+```{r,message=F,echo=F,warning=F,results='hide'}
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Intro_to_R_Part3_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
