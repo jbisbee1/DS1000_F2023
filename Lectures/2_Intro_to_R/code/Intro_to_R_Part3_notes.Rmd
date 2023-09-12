@@ -1,0 +1,104 @@
+---
+title: "Intro to R Part 3 Notes"
+output: html_document
+date: "2023-09-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Getting started
+
+```{r}
+require(tidyverse)
+
+df <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/2_Intro_to_R/data/sc_debt.Rds')
+```
+
+# Taking averages
+
+- `mean()`: function for taking the average of some numbers
+
+```{r}
+# Example with mutate()
+df %>%
+  mutate(avg_avg_sat = mean(sat_avg,na.rm = TRUE)) %>%
+  select(avg_avg_sat,sat_avg)
+
+# Example using summarise() / summarize()
+df %>%
+  summarise(avg_avg_sat = mean(sat_avg,na.rm=T))
+
+# Average admissions rate
+df %>%
+  summarise(adm_avg = mean(adm_rate,na.rm=T))
+```
+
+# Using filter() to look at different schools
+
+- Use `filter()` to first calculate average SAT for selective schools
+
+```{r}
+df %>%
+  filter(adm_rate < .1) %>%
+  summarise(avg_sat_selective = mean(sat_avg,na.rm=T))
+
+df %>%
+  filter(adm_rate >= .1) %>%
+  summarise(avg_sat_nonselective = mean(sat_avg,na.rm=T))
+```
+
+# Introducing the `group_by()` function
+
+```{r}
+df %>%
+  mutate(sel = ifelse(adm_rate <.1,1,0)) %>%
+  group_by(sel) %>%
+  summarise(sat_avg_RQanswer = mean(sat_avg,na.rm=T))
+```
+
+# More fine-grained "selective" schools
+
+```{r}
+df <- df %>%
+  mutate(sel_3levels = ifelse(adm_rate > .5,"Not Selective",
+                              ifelse(adm_rate > .2,"Somewhat Selective","Very Selective")))
+
+df %>%
+  select(adm_rate,selective,sel_3levels)
+
+df %>%
+  group_by(sel_3levels) %>%
+  summarise(sat_avg = mean(sat_avg,na.rm=T))
+
+
+```
+
+# Visualizing in `R`
+
+```{r}
+df %>%
+  ggplot(aes(x = adm_rate,y = sat_avg,label = instnm)) +
+  geom_point() +
+  geom_smooth(method = 'lm') + 
+  geom_text(size = 2)
+```
+
+# Other types of plots
+
+- What region has the highest average SAT score? What about the lowest?
+
+```{r}
+df %>%
+  group_by(region) %>%
+  summarise(avg_sat = mean(sat_avg,na.rm=T)) %>%
+  arrange(avg_sat) %>%
+  ggplot(aes(y = reorder(region,avg_sat),x = avg_sat)) + # Trick #1: reorder the axes
+  geom_bar(stat = 'identity')
+
+df %>%
+  ggplot(aes(x = region)) + 
+  geom_bar()
+```
+

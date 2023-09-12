@@ -24,11 +24,15 @@ If you haven't already, download the `sc_debt.Rds` file from the course [github 
 
 All of the following questions should be answered in this `.Rmd` file. There are code chunks with incomplete code that need to be filled in. 
 
-This problem set is worth 10 total points, plus three extra credit points (one explicit and two hidden). The point values for each question are indicated in brackets below. To receive full credit, you must have the correct code. In addition, some questions ask you to provide a written response in addition to the code.
+This problem set is worth 10 total points, plus four extra credit points (two explicit and two hidden). The point values for each question are indicated in brackets below. To receive full credit, you must have the correct code. In addition, some questions ask you to provide a written response in addition to the code.
 
 You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace on 2023/09/15 by midnight. Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
 
 **Good luck!**
+
+## Question 0 [Optional]
+
+*Copy the link to ChatGPT you used here: _______________________.
 
 
 ## Question 1 [1 point]

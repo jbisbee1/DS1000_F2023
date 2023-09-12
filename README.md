@@ -234,6 +234,7 @@ Lecture Content (2023/09/06): Part 2 - Objects, functions, and `<-`
 Lecture Content (2023/09/11): Part 3 - Visualization in `R`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1)
+* Recording (apologies for technical issues) [Part 1](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2985573/View); [Part 2](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2985575/View); [Part 3](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2985577/View)
 * Homework (due 2023/09/18): [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.pdf); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd)
 * **Problem Set 1 (due 2023-09-15 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Problem_Set_1.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Problem_Set_1_AK.pdf)
 
