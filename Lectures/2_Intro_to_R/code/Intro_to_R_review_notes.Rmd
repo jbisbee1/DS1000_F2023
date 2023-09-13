@@ -1,0 +1,45 @@
+---
+title: "Intro to R Review Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-09-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Start with the basic
+
+```{r}
+require(tidyverse)
+df <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/2_Intro_to_R/data/sc_debt.Rds")
+```
+
+# Visualize
+
+- Show the relationship between SAT scores and admissions rates
+
+```{r}
+df %>%
+  mutate(label_outlier = ifelse(adm_rate < .2 & sat_avg < 1000,instnm,NA)) %>%
+  ggplot(aes(x = adm_rate,y = sat_avg,label = label_outlier)) +
+  geom_point(aes(color = label_outlier,size = sat_avg)) + 
+  geom_text() +
+  labs(x = "Admissions Rate",
+       y = "Average SAT score of students",
+       title = "Relationship between SAT scores and admissions") +
+  scale_color_manual(values = c('green','black'))
+```
+
+# Filter work
+
+```{r}
+df %>%
+  filter((stabbr == "TX") & grepl("Community",instnm)) %>%
+  select(instnm,stabbr)
+
+df %>%
+  filter(stabbr == "TX") %>%
+  filter(str_detect(instnm,"Community"))
+```

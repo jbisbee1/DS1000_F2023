@@ -239,7 +239,7 @@ Lecture Content (2023/09/11): Part 3 - Visualization in `R`
 * **Problem Set 1 (due 2023-09-15 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Problem_Set_1.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Problem_Set_1_AK.pdf)
 
 **Review Session (2023/09/13): Review of Intro to `R` section.**
-* In-Class Notes: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/example_rmd_for_pdf.pdf); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/example_rmd_for_pdf.Rmd)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_review_notes.Rmd)
 * Homework (same as Monday): [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.pdf); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd)
 
 *[Back to ToC](#table-of-contents)*
