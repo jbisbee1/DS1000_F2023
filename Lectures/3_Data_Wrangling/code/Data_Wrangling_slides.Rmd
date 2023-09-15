@@ -1160,3 +1160,12 @@ load('../output/MI_prepped.RData')
   1. Work through Data_Wrangling_hw.Rmd
   
   2. Problem Set 2 (on Brightspace)
+
+```{r,message=F,echo=F,warning=F,results='hide'}
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Data_Wrangling_Slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
