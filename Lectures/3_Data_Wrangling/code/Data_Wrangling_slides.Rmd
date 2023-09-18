@@ -225,11 +225,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
 --
 
-- Set up a new folder for `Lecture_2023_01_30`
-
---
-
-  - Three subfolders
+- Set up three subfolders
   
 --
   
@@ -337,6 +333,8 @@ require(tidyverse)
 
 ```{r}
 MI_raw <- readRDS('../data/MI2020_ExitPoll.rds')
+# OR
+MI_raw  <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/3_Data_Wrangling/data/MI2020_ExitPoll.rds')
 ```
 
 --
@@ -494,7 +492,7 @@ glimpse(MI_raw)
 - To identify `NA`-style missingness, use `summary()`
 
 ```{r,error=TRUE}
-# summary(MI_raw %>% select(LALVOTERID,SEX,AGE10,PARTYID,LGBT,QLT20))
+summary(MI_raw %>% select(LALVOTERID,SEX,AGE10,PARTYID,LGBT,QLT20))
 ```
 
 ---
