@@ -250,6 +250,8 @@ Lecture Content (2023/09/11): Part 3 - Visualization in `R`
 Lecture Content (2023/09/18): Replicability in `R`, tabular data
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.html#1)
+* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2992452/View)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/lecture_6_notes.Rmd)
 * Homework (due 2023/09/20): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.Rmd)
 * **Problem Set 2 (due 2023-09-22 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/Problem_Set_2.Rmd), [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/Problem_Set_2_AK.Rmd)
 * Data: [Two versions of exit polls](https://github.com/jbisbee1/DS1000_F2023/tree/main/Lectures/3_Data_Wrangling/data)
