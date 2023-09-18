@@ -1,0 +1,48 @@
+---
+title: "Lecture 6 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-09-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# read in the data
+
+```{r}
+require(tidyverse)
+require(haven)
+
+MI_raw <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/3_Data_Wrangling/data/MI2020_ExitPoll.rds")
+
+MI_raw
+
+# Method 1 to look: glimpse()
+glimpse(MI_raw)
+
+# Method 2 to look: summary() [works best with continuous]
+summary(MI_raw %>% select(SENMI20,PRSMI20,WEIGHT))
+
+# Method 3 to look: count() [works best with categorical]
+MI_raw %>%
+  count(AGE10)
+
+# Replacing unit non-response for AGE10
+MI_raw %>%
+  mutate(AGE10_clean = ifelse(AGE10 == 99,NA,AGE10)) %>%
+  select(AGE10,AGE10_clean) %>%
+  summarise(avgAge_cat = mean(AGE10_clean,na.rm=T))
+
+MI_raw <- MI_raw %>%
+  mutate(AGE10_clean = ifelse(AGE10 == 99,NA,AGE10))
+
+MI_raw %>%
+  ggplot(aes(x = AGE10_clean)) + 
+  geom_bar()
+
+
+
+
+```
