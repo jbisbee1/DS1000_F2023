@@ -1,0 +1,900 @@
+---
+title: "Univariate Analysis"
+subtitle: "Description and Visualization"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/02/01\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+set.seed(123)
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+# Agenda
+
+1. Definitions and scope
+
+2. Opening and defining the data
+
+3. Variable classes
+
+4. Univariate description
+
+---
+
+# Definition
+
+--
+
+- .red[Uni] + .blue[variate]
+
+--
+
+  - .red[One] + .blue[variable]
+  
+--
+
+  - Analysis of one variable
+  
+---
+
+# Scope
+
+- How to analyze a single variable?
+
+--
+
+- How to think .blue[scientifically]?
+
+--
+
+  - Typically, scientific theories concern more than one variable
+  
+--
+
+  - I.e., education + wages; gender + voting
+
+--
+
+  - What might be a theory about education in isolation?
+  
+--
+
+- Is there no point to univariate analysis?
+
+---
+
+# Univariate Analysis is **ESSENTIAL**
+
+--
+
+- Both from a .red[practical data] perspective...
+
+--
+
+  - Informs how we "wrangle" the data
+
+--
+
+- ...and from a .blue[scientific theory] perspective
+
+--
+
+  - Generates hypotheses
+  
+--
+
+<center><img src="figs/The_Scientific_Method.png" width=35%></centering>
+
+---
+
+# Set-up and Load Data
+
+--
+
+- As always, create your topic folder first
+
+<center><img src="figs/folder.png" width=90%></center>
+
+--
+
+- Open `R` via `RStudio` and `require(tidyverse)`
+
+```{r,message = F}
+require(tidyverse)
+```
+
+- Download `nba_players_2018.Rds` and save to the `data` folder
+
+--
+
+- Open with `readRDS()` function + `<-` assignment
+
+```{r}
+nba <- readRDS('../data/nba_players_2018.Rds')
+```
+
+---
+
+# Introducing the data
+
+--
+
+- Data on every NBA player active in the 2018-2019 season
+
+--
+
+
+| Name               |                          Definition |
+|--------------------|------------------------------------:|
+| namePlayer         |                         Player name |
+| idPlayer           |                    Unique player id |
+| slugSeason         |                Season start and end |
+| numberPlayerSeason |        Which season for this player |
+| isRookie           |        Rookie season, true or false |
+| slugTeam           |                     Team short name |
+| idTeam             |                      Unique team id |
+| gp                 |                        Games Played |
+| ...                |                                 ... |
+
+--
+
+- [`Data_Wrangling_hw.pdf`](https://jbisbee1.github.io/DS1000-S2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.pdf) has the full codebook
+
+---
+
+# Thinking like a .blue[scientist]
+
+--
+
+- What questions do we have? What hypotheses might we want answered?
+
+--
+
+- Overwhelming? Let's start simpler
+
+--
+
+- Total points (`pts`)
+
+--
+
+  - What does this measure?
+  - What kind of variable is it?
+
+```{r}
+glimpse(nba %>% select(pts))
+```
+
+
+---
+
+# Thinking like a .blue[scientist]
+
+- How can we analyze a single variable?
+
+--
+
+- Want to **summarize** it somehow
+
+--
+
+  - For example, look at the `mean()` and the `median()`
+  
+```{r}
+nba %>%
+  summarise(mean_pts = mean(pts,na.rm=T),
+            med_pts = median(pts,na.rm=T))
+```
+
+---
+
+# Thinking like a .blue[scientist]
+
+- Or we could summarise the overall distribution with `summary()`
+
+--
+
+```{r}
+summary(nba$pts)
+```
+
+--
+
+- In English:
+
+--
+
+  - There is at least one player who didn't score at all (`Min.`)
+  
+  - At least one player scored 2,818 points (`Max.`)
+  
+  - 25% of players scored less than 115 points (`1st Qu.`)
+  
+--
+
+  - 25% of players scored more than ???
+  
+--
+
+- What does a decimal mean here?
+  
+---
+
+# Visualization
+
+--
+
+- We could try and remember all these statements
+
+--
+
+- Or we could just visualize the data
+
+--
+
+```{r,fig.height=4,fig.width=9,warning=F,message=F}
+nba %>%
+  ggplot(aes(x = pts)) + 
+  geom_histogram()
+```
+
+---
+
+# Visualization
+
+- Plotting the histogram reveals some things!
+
+--
+
+  - There are **MANY** players who didn't score any points
+  - There are **VERY FEW** who scored many
+  
+--
+
+- We can combine the substantive interpretation with the visualization by plotting vertical lines for the quartiles
+
+--
+
+  - A "quartile" is 25% increments
+  
+--
+
+  - A "decile" is 10% increments, a "quantile" is 20% increments
+  
+--
+
+  - A "percentile" is 1% increments
+
+---
+
+# Visualization
+
+```{r,fig.height=5,fig.width=9,warning=F,message=F}
+nba %>%
+  ggplot(aes(x = pts)) + 
+  geom_histogram() + 
+  geom_vline(xintercept = quantile(nba$pts,c(.25,.5,.75))) #<<
+```
+
+---
+
+# Visualization
+
+- We can save and update plots using the object assignment operator `<-`
+
+```{r}
+p <- nba %>%
+  ggplot(aes(x = pts)) + 
+  geom_histogram()
+
+p <- p + geom_vline(xintercept = quantile(nba$pts,c(.25,.5,.75)),linetype = 'dashed',color = 'red')
+
+p <- p + xlab('Total Points') + ylab('Number of Players')
+
+p <- p + theme(panel.background = element_rect(fill = 'white'))
+
+p <- p + labs(title = 'Points by Players',subtitle = '2018-2019 NBA Season')
+```
+
+---
+
+# Visualization
+
+```{r,fig.height=6,fig.width=10,warning=F,message=F}
+p
+```
+
+---
+
+# Visualization informs .blue[science]
+
+--
+
+- Looking at the data can help generate research questions, theories, and hypotheses
+
+--
+
+  - **Question:** Why do some players not score any points?
+  
+--
+
+  - **Theory:** Players need minutes to score points.
+  
+--
+
+  - **Hypothesis:** The number of points a player scores should be positively correlated with their minutes.
+
+---
+
+# Univariate Description
+
+--
+
+- Testing this hypothesis comes later
+
+--
+
+- For now, let's also describe the minutes variable
+
+```{r}
+summary(nba$minutes)
+```
+
+--
+
+  - At minimum, every player played at least 1 minute
+  
+--
+
+  - Does the distribution of this variable look similar to the points?
+  
+---
+
+```{r,fig.height=6,fig.width=10,warning=F,message=F}
+nba %>%
+  ggplot(aes(x = minutes)) + 
+  geom_histogram(alpha = .3) + 
+  geom_vline(xintercept = quantile(nba$minutes,c(.25,.5,.75))) + 
+  labs(title = 'Minutes by Players',subtitle = '2018-2019 NBA Season',x = 'Minutes Played',y = 'Number of Players')
+```
+
+---
+
+# Other Variables
+
+--
+
+- Thus far, `pts` and `minutes` are both `dbl`
+
+```{r}
+glimpse(nba %>% select(pts,minutes))
+```
+
+--
+
+- What about other variable types?
+
+---
+
+# Other Variabes
+
+```{r}
+glimpse(nba)
+```
+
+---
+
+# Categorical Variables
+
+--
+
+- Already introduced you to `dbl`, `fct`, `chr` and `int`
+
+--
+
+- Taking a step back: Outside `R`, data science uses "categorical" variables
+
+--
+
+  1. Mutually exclusive: observations can only be in one category
+  2. Exhaustive: every observation is assigned to a category
+  
+--
+
+- For example, `isRookie`
+
+--
+
+  1. Mutually exclusive: Players are either in their rookie season in 2018-2019, or are not
+  2. Exhaustive: these categories define every player in the data
+  
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+--
+
+- **Ordered:** There is a sensible order (i.e., education)
+
+--
+
+  - Should be arranged intuitively (i.e., LTHS, HS Degree, Some coll, etc.)
+  
+--
+
+  - To summarize, calculate the proportions for each category.
+  
+--
+
+  - If there are too many categories, use the "mode"
+
+  
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+- **Ordered, Binary:** An ordered categorical variable with just two levels
+
+--
+
+  - Should be arranged in intuitive order (i.e., is not a rookie / is a rookie)
+  
+--
+
+  - To summarize, just convert to a [0,1] number and take the mean
+
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+- **Unordered**: No sensible order of categories (i.e., major degree)
+
+--
+
+  - Order by most commonly occurring categories
+  
+--
+
+  - As before, use the mode for too many categories
+
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+- **Unordered, Binary**: No sensible order and only two levels (i.e., edible)
+
+---
+
+# Categorical Variables
+
+- Categorical variables are meaningfully different from continuous variables
+
+--
+
+  - Continuous variables are ordered and can theoretically be divided into arbitrarily small measures
+  
+--
+
+  - Technically can be defined as either **interval** or **ratio** variables
+  
+--
+
+  - In practice, we rarely worry about this distinction, but we **DO** care about continuous versus categorical variables
+
+---
+
+# Categorical Variables
+
+- `fct` is a class that is unique to `R`
+
+--
+
+  - Meant for ordered categorical variables
+  
+--
+
+  - `fct` stores the order and assigns a numeric value + a definition
+  
+--
+
+  - Most of the time, better to store as a `chr` (but not always)
+  
+---
+
+# Variables
+
+- `R` may store categorical variables as `chr`, `fct`, `lgl`, `int`, or even `dbl`
+
+--
+
+- Continuous variables typically stored as `int` or `dbl`
+
+--
+
+- Up to the data scientist to look at the data and determine
+
+--
+
+- Simple **process**
+
+--
+
+  1. Look at a few observations and make a guess about the variable type
+  2. Create a plot or table based on that guess
+  3. If the result is sensible, proceed. OTW go back to #1.
+  
+---
+
+# In Practice
+
+--
+
+- Let's look at field goals (`fgm`)
+
+--
+
+- What type of variable should this be?
+
+--
+
+  - *Technically* not continuous, since it can't be divided into fractions (i.e., what is 35.5 field goals?)
+  
+--
+
+  - But we typically don't care about this distinction
+  
+--
+
+  - We just want to make sure it is not a categorical variable (i.e., less than 20 FGs, 20-40 FGs...etc. would be categorical)
+  
+--
+
+- To check, follow the process!
+
+---
+
+# The Process: #1 Look
+
+```{r}
+nba %>% 
+  select(namePlayer,slugTeam,fgm) %>%
+  arrange(-fgm)
+```
+
+---
+
+# The Process: #2 Create
+
+```{r,fig.width=9,fig.height=5}
+nba %>%
+  ggplot(aes(x = fgm)) + 
+  geom_density()
+```
+
+---
+
+# The Process: #3 Evaluate
+
+--
+
+- Looks like a continuous variable to me!
+
+--
+
+- Summarize it!
+
+--
+
+```{r}
+nba %>%
+  summarise(mean_fg = mean(fgm,na.rm=T),
+            med_fg = median(fgm,na.rm=T))
+```
+
+--
+
+- `mean()` is more easily understood, but more sensitive to outliers
+
+- `median()` is harder to explain to a general audience, but more sensible when there are outliers
+
+---
+
+# Other Variables: Use the process!
+
+--
+
+- What kind of variable is field goal percentage?
+
+--
+
+- Follow the process!
+
+```{r}
+# INSERT CODE HERE
+```
+
+---
+
+# Another example
+
+--
+
+- Player age
+
+--
+
+- What kind of variable do we think this might be?
+
+--
+
+  - Continuous? It is ordered and divisible to arbitrary fractions! (Just ask any 6 and three quarters year old)
+  
+--
+
+  - But is it also useful to think of it as a categorical? In the context of NBA players, there aren't many categories!
+  
+--
+
+- Time for the **process**!
+
+---
+
+# The Process: #1 Look
+
+```{r}
+nba %>%
+  select(namePlayer,agePlayer) %>%
+  arrange(-agePlayer)
+```
+
+---
+
+# The Process: #2 Create
+
+```{r,fig.width=9,fig.height=5}
+nba %>%
+  ggplot(aes(x = agePlayer)) + 
+  geom_density()
+```
+
+---
+
+# The Process: #2 Create
+
+```{r,fig.width=9,fig.height=5}
+nba %>%
+  ggplot(aes(x = factor(agePlayer))) + 
+  geom_bar(stat = 'count')
+```
+
+---
+
+# The Process: #2 Create
+
+<center><img src="figs/no-country-for-old-men.jpg",width = 100%></center>
+
+---
+
+# The Process: #3 Evaluate
+
+```{r}
+quantile(nba$agePlayer,c(.1,.25,.5,.75,.9,.95))
+```
+
+--
+
+<center><img src="https://thumbs.gfycat.com/AffectionateWavyAmethystinepython-size_restricted.gif"></center>
+
+---
+
+# Some more examples!
+
+--
+
+- Which of these variables is an unordered categorical variable?
+
+--
+
+- Follow the process and calculate which category in this variable is the most commonly occurring
+
+```{r}
+# INSERT CODE HERE
+```
+
+---
+
+# Career Prior to NBA (`org`)
+
+--
+
+- If you chose this as your unordered categorical variable, you probably saw something like the following in step #1 of the process
+
+```{r}
+nba %>%
+  count(org) %>%
+  arrange(-n)
+```
+
+---
+
+# Career Prior to NBA (`org`)
+
+- The most commonly occurring categories are `NA` and `Other`!
+
+--
+
+- Wrangle some data and re-calculate
+
+```{r}
+nba %>%
+  filter(!is.na(org)) %>%
+  filter(org != 'Other') %>%
+  count(org) %>%
+  arrange(-n)
+```
+
+---
+
+# Categorical: Unordered, Binary
+
+--
+
+- Which variable is an unordered binary categorical?
+
+--
+
+- Follow the process and summarize it
+
+```{r}
+# INSERT CODE HERE
+```
+
+---
+
+# Categorical: Unordered, Binary (`idConference`)
+
+- Example of the default variable class (`dbl`) not corresponding to the type of variable (unordered binary)
+
+--
+
+- Should wrangle into something better
+
+```{r}
+nba <- nba %>%
+  mutate(west_conference = ifelse(idConference == 1,1,0))
+
+nba %>%
+  summarise(propWest = mean(west_conference))
+```
+
+---
+
+# A Preview of Multivariate Analysis
+
+--
+
+- Let's take a "conditional mean"
+
+--
+
+  - I.e., conditional on players going to Kentucky, how many points did NBA players score in the 2018-2019 season?
+  
+--
+
+  - (Simpler is just to say "how many points did NBA players who went to Kentucky score?")
+  
+- Recall the `group_by()` command
+
+---
+
+# A Preview of Multivariate Analysis
+
+```{r}
+nba %>%
+  filter(!is.na(org)) %>%
+  filter(org != 'Other') %>%
+  group_by(org) %>%
+  summarise(tot_pts = sum(pts,na.rm=T))
+```
+
+---
+
+# A Preview of Multivariate Analysis
+
+--
+
+- Some non-college organizations snuck in there
+
+--
+
+  - `Anadolu Efes S.K.` is a professional Turkish basketball team
+  
+---
+
+# A Preview of Multivariate Analysis
+
+```{r}
+nba %>%
+  filter(!is.na(org)) %>%
+  filter(org != 'Other') %>%
+  filter(!str_detect(org,"CB|KK|rytas|FC|B.C.|S.K.|Madrid")) %>%
+  group_by(org) %>%
+  summarise(tot_pts = sum(pts,na.rm=T))
+```
+
+---
+
+# Another Preview
+
+--
+
+- Do the same but for free throw percentage (`pctFT`)
+
+--
+
+- **NB**: should you summarise with `sum()` or `mean()`? Why?
+
+
+```{r}
+# INSERT CODE HERE
+```
+
+
+---
+
+# Quiz & Homework
+
+- Go to Brightspace and take the **6th** quiz
+
+--
+
+  - The password to take the quiz is `r paste(sample(1:9,size = 4,replace = T),collapse = '')`
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Univariate_Analysis_hw.Rmd

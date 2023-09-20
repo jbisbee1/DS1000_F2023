@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Univariate Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Univariate Analysis
+]
+.subtitle[
+## Description and Visualization
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/02/01
+Slides Updated: 2023-01-29
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Definitions and scope
+
+2. Opening and defining the data
+
+3. Variable classes
+
+4. Univariate description
+
+---
+
+# Definition
+
+--
+
+- .red[Uni] + .blue[variate]
+
+--
+
+  - .red[One] + .blue[variable]
+  
+--
+
+  - Analysis of one variable
+  
+---
+
+# Scope
+
+- How to analyze a single variable?
+
+--
+
+- How to think .blue[scientifically]?
+
+--
+
+  - Typically, scientific theories concern more than one variable
+  
+--
+
+  - I.e., education + wages; gender + voting
+
+--
+
+  - What might be a theory about education in isolation?
+  
+--
+
+- Is there no point to univariate analysis?
+
+---
+
+# Univariate Analysis is **ESSENTIAL**
+
+--
+
+- Both from a .red[practical data] perspective...
+
+--
+
+  - Informs how we "wrangle" the data
+
+--
+
+- ...and from a .blue[scientific theory] perspective
+
+--
+
+  - Generates hypotheses
+  
+--
+
+&lt;center&gt;&lt;img src="figs/The_Scientific_Method.png" width=35%&gt;&lt;/centering&gt;
+
+---
+
+# Set-up and Load Data
+
+--
+
+- As always, create your topic folder first
+
+&lt;center&gt;&lt;img src="figs/folder.png" width=90%&gt;&lt;/center&gt;
+
+--
+
+- Open `R` via `RStudio` and `require(tidyverse)`
+
+
+```r
+require(tidyverse)
+```
+
+- Download `nba_players_2018.Rds` and save to the `data` folder
+
+--
+
+- Open with `readRDS()` function + `&lt;-` assignment
+
+
+```r
+nba &lt;- readRDS('../data/nba_players_2018.Rds')
+```
+
+---
+
+# Introducing the data
+
+--
+
+- Data on every NBA player active in the 2018-2019 season
+
+--
+
+
+| Name               |                          Definition |
+|--------------------|------------------------------------:|
+| namePlayer         |                         Player name |
+| idPlayer           |                    Unique player id |
+| slugSeason         |                Season start and end |
+| numberPlayerSeason |        Which season for this player |
+| isRookie           |        Rookie season, true or false |
+| slugTeam           |                     Team short name |
+| idTeam             |                      Unique team id |
+| gp                 |                        Games Played |
+| ...                |                                 ... |
+
+--
+
+- [`Data_Wrangling_hw.pdf`](https://jbisbee1.github.io/DS1000-S2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.pdf) has the full codebook
+
+---
+
+# Thinking like a .blue[scientist]
+
+--
+
+- What questions do we have? What hypotheses might we want answered?
+
+--
+
+- Overwhelming? Let's start simpler
+
+--
+
+- Total points (`pts`)
+
+--
+
+  - What does this measure?
+  - What kind of variable is it?
+
+
+```r
+glimpse(nba %&gt;% select(pts))
+```
+
+```
+## Rows: 530
+## Columns: 1
+## $ pts &lt;dbl&gt; 1727, 17, 1108, 165, 729, 37, 211, 32, 108, 7,…
+```
+
+
+---
+
+# Thinking like a .blue[scientist]
+
+- How can we analyze a single variable?
+
+--
+
+- Want to **summarize** it somehow
+
+--
+
+  - For example, look at the `mean()` and the `median()`
+  
+
+```r
+nba %&gt;%
+  summarise(mean_pts = mean(pts,na.rm=T),
+            med_pts = median(pts,na.rm=T))
+```
+
+```
+## # A tibble: 1 × 2
+##   mean_pts med_pts
+##      &lt;dbl&gt;   &lt;dbl&gt;
+## 1     516.     419
+```
+
+---
+
+# Thinking like a .blue[scientist]
+
+- Or we could summarise the overall distribution with `summary()`
+
+--
+
+
+```r
+summary(nba$pts)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##     0.0   115.0   419.0   516.2   759.5  2818.0
+```
+
+--
+
+- In English:
+
+--
+
+  - There is at least one player who didn't score at all (`Min.`)
+  
+  - At least one player scored 2,818 points (`Max.`)
+  
+  - 25% of players scored less than 115 points (`1st Qu.`)
+  
+--
+
+  - 25% of players scored more than ???
+  
+--
+
+- What does a decimal mean here?
+  
+---
+
+# Visualization
+
+--
+
+- We could try and remember all these statements
+
+--
+
+- Or we could just visualize the data
+
+--
+
+
+```r
+nba %&gt;%
+  ggplot(aes(x = pts)) + 
+  geom_histogram()
+```
+
+&lt;img src="Univariate_Analysis_slides_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Visualization
+
+- Plotting the histogram reveals some things!
+
+--
+
+  - There are **MANY** players who didn't score any points
+  - There are **VERY FEW** who scored many
+  
+--
+
+- We can combine the substantive interpretation with the visualization by plotting vertical lines for the quartiles
+
+--
+
+  - A "quartile" is 25% increments
+  
+--
+
+  - A "decile" is 10% increments, a "quantile" is 20% increments
+  
+--
+
+  - A "percentile" is 1% increments
+
+---
+
+# Visualization
+
+
+```r
+nba %&gt;%
+  ggplot(aes(x = pts)) + 
+  geom_histogram() + 
+* geom_vline(xintercept = quantile(nba$pts,c(.25,.5,.75)))
+```
+
+&lt;img src="Univariate_Analysis_slides_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Visualization
+
+- We can save and update plots using the object assignment operator `&lt;-`
+
+
+```r
+p &lt;- nba %&gt;%
+  ggplot(aes(x = pts)) + 
+  geom_histogram()
+
+p &lt;- p + geom_vline(xintercept = quantile(nba$pts,c(.25,.5,.75)),linetype = 'dashed',color = 'red')
+
+p &lt;- p + xlab('Total Points') + ylab('Number of Players')
+
+p &lt;- p + theme(panel.background = element_rect(fill = 'white'))
+
+p &lt;- p + labs(title = 'Points by Players',subtitle = '2018-2019 NBA Season')
+```
+
+---
+
+# Visualization
+
+
+```r
+p
+```
+
+&lt;img src="Univariate_Analysis_slides_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Visualization informs .blue[science]
+
+--
+
+- Looking at the data can help generate research questions, theories, and hypotheses
+
+--
+
+  - **Question:** Why do some players not score any points?
+  
+--
+
+  - **Theory:** Players need minutes to score points.
+  
+--
+
+  - **Hypothesis:** The number of points a player scores should be positively correlated with their minutes.
+
+---
+
+# Univariate Description
+
+--
+
+- Testing this hypothesis comes later
+
+--
+
+- For now, let's also describe the minutes variable
+
+
+```r
+summary(nba$minutes)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##     1.0   322.8  1069.0  1121.6  1836.5  3028.0
+```
+
+--
+
+  - At minimum, every player played at least 1 minute
+  
+--
+
+  - Does the distribution of this variable look similar to the points?
+  
+---
+
+
+```r
+nba %&gt;%
+  ggplot(aes(x = minutes)) + 
+  geom_histogram(alpha = .3) + 
+  geom_vline(xintercept = quantile(nba$minutes,c(.25,.5,.75))) + 
+  labs(title = 'Minutes by Players',subtitle = '2018-2019 NBA Season',x = 'Minutes Played',y = 'Number of Players')
+```
+
+&lt;img src="Univariate_Analysis_slides_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Other Variables
+
+--
+
+- Thus far, `pts` and `minutes` are both `dbl`
+
+
+```r
+glimpse(nba %&gt;% select(pts,minutes))
+```
+
+```
+## Rows: 530
+## Columns: 2
+## $ pts     &lt;dbl&gt; 1727, 17, 1108, 165, 729, 37, 211, 32, 108…
+## $ minutes &lt;dbl&gt; 2687, 123, 2669, 588, 1913, 120, 416, 194,…
+```
+
+--
+
+- What about other variable types?
+
+---
+
+# Other Variabes
+
+
+```r
+glimpse(nba)
+```
+
+```
+## Rows: 530
+## Columns: 37
+## $ namePlayer         &lt;chr&gt; "LaMarcus Aldridge", "Quincy Ac…
+## $ idPlayer           &lt;dbl&gt; 200746, 203112, 203500, 203518,…
+## $ slugSeason         &lt;chr&gt; "2018-19", "2018-19", "2018-19"…
+## $ numberPlayerSeason &lt;dbl&gt; 12, 6, 5, 2, 1, 0, 0, 0, 0, 0, …
+## $ isRookie           &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FAL…
+## $ slugTeam           &lt;chr&gt; "SAS", "PHX", "OKC", "OKC", "MI…
+## $ idTeam             &lt;dbl&gt; 1610612759, 1610612756, 1610612…
+## $ gp                 &lt;dbl&gt; 81, 10, 80, 31, 82, 10, 38, 19,…
+## $ gs                 &lt;dbl&gt; 81, 0, 80, 2, 28, 1, 2, 3, 1, 0…
+## $ fgm                &lt;dbl&gt; 684, 4, 481, 56, 280, 13, 67, 1…
+## $ fga                &lt;dbl&gt; 1319, 18, 809, 157, 486, 39, 17…
+## $ pctFG              &lt;dbl&gt; 0.519, 0.222, 0.595, 0.357, 0.5…
+## $ fg3m               &lt;dbl&gt; 10, 2, 0, 41, 3, 3, 32, 6, 25, …
+## $ fg3a               &lt;dbl&gt; 42, 15, 2, 127, 15, 12, 99, 23,…
+## $ pctFG3             &lt;dbl&gt; 0.2380952, 0.1333333, 0.0000000…
+## $ pctFT              &lt;dbl&gt; 0.847, 0.700, 0.500, 0.923, 0.7…
+## $ fg2m               &lt;dbl&gt; 674, 2, 481, 15, 277, 10, 35, 5…
+## $ fg2a               &lt;dbl&gt; 1277, 3, 807, 30, 471, 27, 79, …
+## $ pctFG2             &lt;dbl&gt; 0.5277995, 0.6666667, 0.5960347…
+## $ agePlayer          &lt;dbl&gt; 33, 28, 25, 25, 21, 21, 23, 22,…
+## $ minutes            &lt;dbl&gt; 2687, 123, 2669, 588, 1913, 120…
+## $ ftm                &lt;dbl&gt; 349, 7, 146, 12, 166, 8, 45, 4,…
+## $ fta                &lt;dbl&gt; 412, 10, 292, 13, 226, 12, 60, …
+## $ oreb               &lt;dbl&gt; 251, 3, 391, 5, 165, 11, 3, 3, …
+## $ dreb               &lt;dbl&gt; 493, 22, 369, 43, 432, 15, 20, …
+## $ treb               &lt;dbl&gt; 744, 25, 760, 48, 597, 26, 23, …
+## $ ast                &lt;dbl&gt; 194, 8, 124, 20, 184, 13, 25, 5…
+## $ stl                &lt;dbl&gt; 43, 1, 117, 17, 71, 1, 6, 1, 14…
+## $ blk                &lt;dbl&gt; 107, 4, 76, 6, 65, 0, 6, 4, 5, …
+## $ tov                &lt;dbl&gt; 144, 4, 135, 14, 121, 8, 33, 6,…
+## $ pf                 &lt;dbl&gt; 179, 24, 204, 53, 203, 7, 47, 1…
+## $ pts                &lt;dbl&gt; 1727, 17, 1108, 165, 729, 37, 2…
+## $ urlNBAAPI          &lt;chr&gt; "https://stats.nba.com/stats/pl…
+## $ n                  &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ org                &lt;fct&gt; Texas, NA, Other, FC Barcelona …
+## $ country            &lt;chr&gt; NA, NA, NA, "Spain", NA, NA, NA…
+## $ idConference       &lt;int&gt; 2, 2, 2, 2, 1, 1, 2, 1, 1, 2, 2…
+```
+
+---
+
+# Categorical Variables
+
+--
+
+- Already introduced you to `dbl`, `fct`, `chr` and `int`
+
+--
+
+- Taking a step back: Outside `R`, data science uses "categorical" variables
+
+--
+
+  1. Mutually exclusive: observations can only be in one category
+  2. Exhaustive: every observation is assigned to a category
+  
+--
+
+- For example, `isRookie`
+
+--
+
+  1. Mutually exclusive: Players are either in their rookie season in 2018-2019, or are not
+  2. Exhaustive: these categories define every player in the data
+  
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+--
+
+- **Ordered:** There is a sensible order (i.e., education)
+
+--
+
+  - Should be arranged intuitively (i.e., LTHS, HS Degree, Some coll, etc.)
+  
+--
+
+  - To summarize, calculate the proportions for each category.
+  
+--
+
+  - If there are too many categories, use the "mode"
+
+  
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+- **Ordered, Binary:** An ordered categorical variable with just two levels
+
+--
+
+  - Should be arranged in intuitive order (i.e., is not a rookie / is a rookie)
+  
+--
+
+  - To summarize, just convert to a [0,1] number and take the mean
+
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+- **Unordered**: No sensible order of categories (i.e., major degree)
+
+--
+
+  - Order by most commonly occurring categories
+  
+--
+
+  - As before, use the mode for too many categories
+
+---
+
+# Categorical Variables
+
+- Categorical variables can be divided into the following sub-types
+
+- **Unordered, Binary**: No sensible order and only two levels (i.e., edible)
+
+---
+
+# Categorical Variables
+
+- Categorical variables are meaningfully different from continuous variables
+
+--
+
+  - Continuous variables are ordered and can theoretically be divided into arbitrarily small measures
+  
+--
+
+  - Technically can be defined as either **interval** or **ratio** variables
+  
+--
+
+  - In practice, we rarely worry about this distinction, but we **DO** care about continuous versus categorical variables
+
+---
+
+# Categorical Variables
+
+- `fct` is a class that is unique to `R`
+
+--
+
+  - Meant for ordered categorical variables
+  
+--
+
+  - `fct` stores the order and assigns a numeric value + a definition
+  
+--
+
+  - Most of the time, better to store as a `chr` (but not always)
+  
+---
+
+# Variables
+
+- `R` may store categorical variables as `chr`, `fct`, `lgl`, `int`, or even `dbl`
+
+--
+
+- Continuous variables typically stored as `int` or `dbl`
+
+--
+
+- Up to the data scientist to look at the data and determine
+
+--
+
+- Simple **process**
+
+--
+
+  1. Look at a few observations and make a guess about the variable type
+  2. Create a plot or table based on that guess
+  3. If the result is sensible, proceed. OTW go back to #1.
+  
+---
+
+# In Practice
+
+--
+
+- Let's look at field goals (`fgm`)
+
+--
+
+- What type of variable should this be?
+
+--
+
+  - *Technically* not continuous, since it can't be divided into fractions (i.e., what is 35.5 field goals?)
+  
+--
+
+  - But we typically don't care about this distinction
+  
+--
+
+  - We just want to make sure it is not a categorical variable (i.e., less than 20 FGs, 20-40 FGs...etc. would be categorical)
+  
+--
+
+- To check, follow the process!
+
+---
+
+# The Process: #1 Look
+
+
+```r
+nba %&gt;% 
+  select(namePlayer,slugTeam,fgm) %&gt;%
+  arrange(-fgm)
+```
+
+```
+## # A tibble: 530 × 3
+##    namePlayer            slugTeam   fgm
+##    &lt;chr&gt;                 &lt;chr&gt;    &lt;dbl&gt;
+##  1 James Harden          HOU        843
+##  2 Bradley Beal          WAS        764
+##  3 Kemba Walker          CHA        731
+##  4 Giannis Antetokounmpo MIL        721
+##  5 Kevin Durant          GSW        721
+##  6 Paul George           OKC        707
+##  7 Nikola Vucevic        ORL        701
+##  8 LaMarcus Aldridge     SAS        684
+##  9 Damian Lillard        POR        681
+## 10 Karl-Anthony Towns    MIN        681
+## # … with 520 more rows
+```
+
+---
+
+# The Process: #2 Create
+
+
+```r
+nba %&gt;%
+  ggplot(aes(x = fgm)) + 
+  geom_density()
+```
+
+&lt;img src="Univariate_Analysis_slides_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The Process: #3 Evaluate
+
+--
+
+- Looks like a continuous variable to me!
+
+--
+
+- Summarize it!
+
+--
+
+
+```r
+nba %&gt;%
+  summarise(mean_fg = mean(fgm,na.rm=T),
+            med_fg = median(fgm,na.rm=T))
+```
+
+```
+## # A tibble: 1 × 2
+##   mean_fg med_fg
+##     &lt;dbl&gt;  &lt;dbl&gt;
+## 1    191.    157
+```
+
+--
+
+- `mean()` is more easily understood, but more sensitive to outliers
+
+- `median()` is harder to explain to a general audience, but more sensible when there are outliers
+
+---
+
+# Other Variables: Use the process!
+
+--
+
+- What kind of variable is field goal percentage?
+
+--
+
+- Follow the process!
+
+
+```r
+# INSERT CODE HERE
+```
+
+---
+
+# Another example
+
+--
+
+- Player age
+
+--
+
+- What kind of variable do we think this might be?
+
+--
+
+  - Continuous? It is ordered and divisible to arbitrary fractions! (Just ask any 6 and three quarters year old)
+  
+--
+
+  - But is it also useful to think of it as a categorical? In the context of NBA players, there aren't many categories!
+  
+--
+
+- Time for the **process**!
+
+---
+
+# The Process: #1 Look
+
+
+```r
+nba %&gt;%
+  select(namePlayer,agePlayer) %&gt;%
+  arrange(-agePlayer)
+```
+
+```
+## # A tibble: 530 × 2
+##    namePlayer     agePlayer
+##    &lt;chr&gt;              &lt;dbl&gt;
+##  1 Vince Carter          42
+##  2 Dirk Nowitzki         41
+##  3 Jamal Crawford        39
+##  4 Udonis Haslem         39
+##  5 Pau Gasol             38
+##  6 Kyle Korver           38
+##  7 Jose Calderon         37
+##  8 Tony Parker           37
+##  9 Dwyane Wade           37
+## 10 Channing Frye         36
+## # … with 520 more rows
+```
+
+---
+
+# The Process: #2 Create
+
+
+```r
+nba %&gt;%
+  ggplot(aes(x = agePlayer)) + 
+  geom_density()
+```
+
+&lt;img src="Univariate_Analysis_slides_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The Process: #2 Create
+
+
+```r
+nba %&gt;%
+  ggplot(aes(x = factor(agePlayer))) + 
+  geom_bar(stat = 'count')
+```
+
+&lt;img src="Univariate_Analysis_slides_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The Process: #2 Create
+
+&lt;center&gt;&lt;img src="figs/no-country-for-old-men.jpg",width = 100%&gt;&lt;/center&gt;
+
+---
+
+# The Process: #3 Evaluate
+
+
+```r
+quantile(nba$agePlayer,c(.1,.25,.5,.75,.9,.95))
+```
+
+```
+## 10% 25% 50% 75% 90% 95% 
+##  21  23  26  29  32  34
+```
+
+--
+
+&lt;center&gt;&lt;img src="https://thumbs.gfycat.com/AffectionateWavyAmethystinepython-size_restricted.gif"&gt;&lt;/center&gt;
+
+---
+
+# Some more examples!
+
+--
+
+- Which of these variables is an unordered categorical variable?
+
+--
+
+- Follow the process and calculate which category in this variable is the most commonly occurring
+
+
+```r
+# INSERT CODE HERE
+```
+
+---
+
+# Career Prior to NBA (`org`)
+
+--
+
+- If you chose this as your unordered categorical variable, you probably saw something like the following in step #1 of the process
+
+
+```r
+nba %&gt;%
+  count(org) %&gt;%
+  arrange(-n)
+```
+
+```
+## # A tibble: 68 × 2
+##    org                        n
+##    &lt;fct&gt;                  &lt;int&gt;
+##  1 &lt;NA&gt;                     157
+##  2 Other                     85
+##  3 Kentucky                  25
+##  4 Duke                      17
+##  5 California-Los Angeles    15
+##  6 Kansas                    11
+##  7 Arizona                   10
+##  8 Texas                     10
+##  9 North Carolina             9
+## 10 Michigan                   8
+## # … with 58 more rows
+```
+
+---
+
+# Career Prior to NBA (`org`)
+
+- The most commonly occurring categories are `NA` and `Other`!
+
+--
+
+- Wrangle some data and re-calculate
+
+
+```r
+nba %&gt;%
+  filter(!is.na(org)) %&gt;%
+  filter(org != 'Other') %&gt;%
+  count(org) %&gt;%
+  arrange(-n)
+```
+
+```
+## # A tibble: 66 × 2
+##    org                        n
+##    &lt;fct&gt;                  &lt;int&gt;
+##  1 Kentucky                  25
+##  2 Duke                      17
+##  3 California-Los Angeles    15
+##  4 Kansas                    11
+##  5 Arizona                   10
+##  6 Texas                     10
+##  7 North Carolina             9
+##  8 Michigan                   8
+##  9 Villanova                  7
+## 10 Indiana                    6
+## # … with 56 more rows
+```
+
+---
+
+# Categorical: Unordered, Binary
+
+--
+
+- Which variable is an unordered binary categorical?
+
+--
+
+- Follow the process and summarize it
+
+
+```r
+# INSERT CODE HERE
+```
+
+---
+
+# Categorical: Unordered, Binary (`idConference`)
+
+- Example of the default variable class (`dbl`) not corresponding to the type of variable (unordered binary)
+
+--
+
+- Should wrangle into something better
+
+
+```r
+nba &lt;- nba %&gt;%
+  mutate(west_conference = ifelse(idConference == 1,1,0))
+
+nba %&gt;%
+  summarise(propWest = mean(west_conference))
+```
+
+```
+## # A tibble: 1 × 1
+##   propWest
+##      &lt;dbl&gt;
+## 1    0.508
+```
+
+---
+
+# A Preview of Multivariate Analysis
+
+--
+
+- Let's take a "conditional mean"
+
+--
+
+  - I.e., conditional on players going to Kentucky, how many points did NBA players score in the 2018-2019 season?
+  
+--
+
+  - (Simpler is just to say "how many points did NBA players who went to Kentucky score?")
+  
+- Recall the `group_by()` command
+
+---
+
+# A Preview of Multivariate Analysis
+
+
+```r
+nba %&gt;%
+  filter(!is.na(org)) %&gt;%
+  filter(org != 'Other') %&gt;%
+  group_by(org) %&gt;%
+  summarise(tot_pts = sum(pts,na.rm=T))
+```
+
+```
+## # A tibble: 66 × 2
+##    org                    tot_pts
+##    &lt;fct&gt;                    &lt;dbl&gt;
+##  1 Anadolu Efes S.K.         1270
+##  2 Arizona                   5467
+##  3 Baylor                     861
+##  4 Boston College            1659
+##  5 Butler                    1255
+##  6 California                1942
+##  7 California-Los Angeles    9061
+##  8 Cincinnati                 531
+##  9 Colorado                  2367
+## 10 Connecticut               3634
+## # … with 56 more rows
+```
+
+---
+
+# A Preview of Multivariate Analysis
+
+--
+
+- Some non-college organizations snuck in there
+
+--
+
+  - `Anadolu Efes S.K.` is a professional Turkish basketball team
+  
+---
+
+# A Preview of Multivariate Analysis
+
+
+```r
+nba %&gt;%
+  filter(!is.na(org)) %&gt;%
+  filter(org != 'Other') %&gt;%
+  filter(!str_detect(org,"CB|KK|rytas|FC|B.C.|S.K.|Madrid")) %&gt;%
+  group_by(org) %&gt;%
+  summarise(tot_pts = sum(pts,na.rm=T))
+```
+
+```
+## # A tibble: 57 × 2
+##    org                    tot_pts
+##    &lt;fct&gt;                    &lt;dbl&gt;
+##  1 Arizona                   5467
+##  2 Baylor                     861
+##  3 Boston College            1659
+##  4 Butler                    1255
+##  5 California                1942
+##  6 California-Los Angeles    9061
+##  7 Cincinnati                 531
+##  8 Colorado                  2367
+##  9 Connecticut               3634
+## 10 Creighton                 1230
+## # … with 47 more rows
+```
+
+---
+
+# Another Preview
+
+--
+
+- Do the same but for free throw percentage (`pctFT`)
+
+--
+
+- **NB**: should you summarise with `sum()` or `mean()`? Why?
+
+
+
+```r
+# INSERT CODE HERE
+```
+
+
+---
+
+# Quiz &amp; Homework
+
+- Go to Brightspace and take the **6th** quiz
+
+--
+
+  - The password to take the quiz is 3326
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Univariate_Analysis_hw.Rmd
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
