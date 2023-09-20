@@ -1,0 +1,87 @@
+---
+title: "Lecture 7 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-09-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Getting started
+
+```{r}
+require(tidyverse)
+
+MI_raw <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/3_Data_Wrangling/data/MI2020_ExitPoll.rds")
+
+# Demonstrating value of haven
+haven::as_factor(MI_raw$AGE10) %>% 
+  head()
+
+# Same ouput, different approach
+MI_raw %>%
+  mutate(AGE10_label = haven::as_factor(AGE10)) %>%
+  select(AGE10_label,AGE10)
+
+# Simple plot of AGE10
+MI_raw %>%
+  mutate(AGE10_label = haven::as_factor(AGE10)) %>%
+  ggplot(aes(y = AGE10_label)) + 
+  geom_bar()
+
+
+# Create new versions of variables PRSMI20, QLT20, and LGBT
+MI_raw %>%
+  mutate(preschoice = haven::as_factor(PRSMI20),
+         Qlty = haven::as_factor(QLT20),
+         LGBT_label = haven::as_factor(LGBT))
+
+# MI_raw %>%
+#   count(preschoice)
+
+
+MI_raw <- MI_raw %>%
+  mutate(preschoice = as.character(haven::as_factor(PRSMI20)),
+         Qlty = haven::as_factor(QLT20),
+         LGBT_label = haven::as_factor(LGBT))
+
+MI_raw %>%
+  count(preschoice) %>%
+  mutate(pct = n / sum(n))
+
+MI_raw %>%
+  group_by(preschoice) %>%
+  summarise(n = n())
+
+MI_raw %>%
+  filter(str_detect(preschoice,'Trump|Biden')) %>%
+  filter(!is.na(Qlty)) %>%
+  count(preschoice,Qlty) %>%
+  group_by(preschoice) %>%
+  mutate(total_voters = sum(n)) %>%
+  mutate(share = n / total_voters)
+
+# Same analysis for LGBT
+MI_raw %>%
+  filter(str_detect(preschoice,'Trump|Biden')) %>%
+  filter(!is.na(LGBT_label)) %>%
+  count(preschoice,LGBT_label) %>%
+  group_by(preschoice) %>%
+  mutate(total_voters = sum(n)) %>%
+  mutate(share = n / total_voters)
+
+# Saving our work
+MI_final <- MI_raw %>%
+  select(SEX,AGE10,PARTYID,WEIGHT,QRACEAI,EDUC18,LGBT,LGBT_label,
+         BRNAGAIN,LATINOS,RACISM20,QLT20,Qlty,PRSMI20,preschoice)
+
+write_rds(MI_final,file = "C:/Users/jimbi/Dropbox/2023_fall/DS1000_F2023/Lectures/3_Data_Wrangling/output/MI_final.rds")
+
+# Save mutiple objects
+save(MI_final,MI_raw,file = "C:/Users/jimbi/Dropbox/2023_fall/DS1000_F2023/Lectures/3_Data_Wrangling/output/MI_final_combined.RData")
+
+
+# 
+```

@@ -265,7 +265,8 @@ Lecture Content (2023/09/18): Replicability in `R`, tabular data
 Lecture Content (2023/09/20): Univariate - Summaries of a single variable
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_notes_02_01_2023.Rmd)
+* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2995159/View)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/lecture_7_notes.Rmd)
 * Homework (due 2023/09/25): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_hw.Rmd)
 * Data: [Basketball Data](https://github.com/jbisbee1/DS1000_F2023/tree/main/Lectures/4_Uni_Multivariate/data)
 
