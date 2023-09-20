@@ -3,7 +3,7 @@ title: "Univariate Analysis"
 subtitle: "Description and Visualization"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/02/01\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/09/20\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -889,7 +889,7 @@ nba %>%
 
 --
 
-  - The password to take the quiz is `r paste(sample(1:9,size = 4,replace = T),collapse = '')`
+  - The password to take the quiz is #### <!--`r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
   
 --
 
@@ -898,3 +898,13 @@ nba %>%
 --
   
   1. Work through Univariate_Analysis_hw.Rmd
+
+
+```{r,message=F,echo=F,warning=F,results='hide'}
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Univariate_Analysis_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
