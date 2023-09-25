@@ -1,0 +1,1128 @@
+---
+title: "Multivariate Analysis"
+subtitle: "Part 1: Conditional Relationships"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/09/25\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{r,include=F}
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+```
+
+# Agenda
+
+1. Mutivariate
+
+2. What is "conditional"?
+
+3. (Re-)Introducing the data
+
+4. Visualization Principles
+
+
+---
+
+# Definition
+
+--
+
+- .red[Multi] + .blue[variate]
+
+--
+
+  - .red[Many] + .blue[variables]
+  
+--
+
+  - Analysis of multiple variables
+  
+--
+
+- When we analyze **multiple** variables, we are in the world of "conditional analysis"
+
+
+---
+
+# What is .blue[conditional]?
+
+--
+
+- Put simply: "conditional" means "depending on"
+
+--
+
+  - I.e., How does a variable of interest vary *depending on* some other variable?
+  
+--
+
+  - "Variable of interest": the **outcome** (or **dependent** variable $Y$)
+  
+--
+
+  - "Some other variable": the **predictor** (or **independent** variable $X$)
+  
+--
+
+  - "Vary depending on": the **relationship**
+  
+--
+
+- Mapping concepts into .red[data] .blue[science]
+
+--
+
+  - The .blue[relationship] between the .red[outcome] and the .red[predictor]
+  
+---
+
+# What is .blue[conditional]?
+
+--
+
+- "Depending on" suggests a **causal** interpretation
+
+--
+
+  - High wages "depend on" education &rarr; education **causes** high wages
+
+--
+
+  - In .blue[theory], this is reasonable: students acquire skills in school which are valued by the labor market.
+  
+--
+
+  - But the positive correlation between education and wages might also be **"spurious"**
+  
+--
+
+  - Higher education *AND* higher wages are outcomes of some **true cause** (i.e., upbringing, SES, etc.)
+
+--
+
+**NOTE: The logic for why a relationship might be spurious is itself CAUSAL.**
+
+---
+
+# (Re-)Introducing the Data
+
+--
+
+- Using the Michigan exit poll data
+
+--
+
+- Download pre-wrangled data from [GitHub](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/data/MI2020_ExitPoll_small.rds) and save to your `data` folder.
+
+--
+
+- `require(tidyverse)` and `readRDS()` the data to `mi_ep` object
+
+```{r,message=F}
+require(tidyverse)
+
+mi_ep <- read_rds('../data/MI2020_ExitPoll_small.Rds')
+```
+
+---
+
+# Some Light .red[Data] .blue[Science]
+
+--
+
+- The "gender gap" in Trump support
+
+--
+
+- .blue[Theory]: Trump has expressed sexist views against women. Therefore, women should be less likely to support him.
+
+--
+
+  - **NOTE** the causal assumptions in this theory! 
+  
+--
+
+- .red[Analysis]: compare support for Trump among men and women
+
+--
+
+- But first, some quick data wrangling
+
+```{r}
+MI_final_small <- mi_ep %>%
+  filter(preschoice=="Donald Trump, the Republican" | preschoice=="Joe Biden, the Democrat") %>%
+  mutate(BidenVoter=ifelse(preschoice=="Joe Biden, the Democrat",1,0),
+         TrumpVoter=ifelse(BidenVoter==1,0,1),
+         AGE10=ifelse(AGE10==99,NA,AGE10))
+```
+
+---
+
+# Conditional Means
+
+```{r}
+MI_final_small %>%
+  count(preschoice,SEX) %>%
+  mutate(PctSupport = n/sum(n),
+         PctSupport = round(PctSupport, digits=2))
+```
+
+--
+
+- .red[Results] are **consistent** with the .blue[theory]
+
+--
+
+  - NB: .red[results] do not **prove** the .blue[theory]
+  
+---
+
+# Conditional Means
+
+- However, note that these proportions are out of *all* voters.
+
+--
+
+- This isn't directly addressing the .blue[theory]
+
+--
+
+  - We want to know the proportion **of women** who supported Trump
+  
+--
+
+```{r}
+MI_final_small %>%
+  count(preschoice,SEX) %>%
+  group_by(SEX) %>% #<<
+  mutate(totGender = sum(n)) %>%
+  mutate(pctSupport = n / totGender)
+```
+  
+---
+
+# Additional .blue[Theorizing]
+
+--
+
+- The strength of the theorized relationship might vary by age
+
+--
+
+  - Younger women might be more offended by Trump's casual sexism
+  
+--
+
+  - Older women might be more inured to Trump's casual sexism
+  
+--
+
+- .blue[Theory]: the "gender gap" will be larger among younger voters
+
+--
+
+  - (But also recognize that younger Americans are generally more progressive...meaning that **both** younger men and women are more offended by Trump's casual sexism!)
+  
+---
+
+# Two-Way Conditional Means
+
+--
+
+- We could just subset with `filter()`
+
+```{r}
+MI_final_small %>%
+  filter(AGE10==1) %>% #<<
+  group_by(SEX) %>%
+  count(preschoice) %>%
+  mutate(PctSupport = n/sum(n),
+         PctSupport = round(PctSupport, digits=2))
+```
+
+---
+
+# Two-Way Conditional Means
+
+- Or we could add `AGE10` to the `group_by`
+
+```{r}
+MI_final_small %>%
+  group_by(SEX, AGE10) %>%
+  summarize(PctTrump = mean(TrumpVoter),.groups = 'drop') %>%
+  mutate(PctTrump = round(PctTrump, digits =2))
+```
+
+---
+
+# Two-Way Conditional Means
+
+- A little hard to make comparisons
+
+```{r}
+MI_final_small %>%
+  group_by(SEX, AGE10) %>%
+  summarize(PctTrump = mean(TrumpVoter),.groups = 'drop') %>%
+  spread(SEX,PctTrump) %>% rename(Male = `1`,Female = `2`)
+```
+
+
+---
+
+# Introducing `spread()` & `gather()`
+
+- Data in `R` is either "long" or "wide"
+
+--
+
+- **Long**: One column for a categorical label and multiple rows
+  
+  - I.e., For each age group, we have one **row** for men and one **row** for women
+  
+--
+
+- **Wide**: Multiple columns for each categorical label and a single row
+
+  - I.e., For each age group, we have one **column** for men and one **column** for women
+  
+--
+
+- In `R`, we can switch between **wide** and **long** with two functions:
+
+--
+
+  1. `spread()`: converts from long to wide
+  
+  2. `gather()`: converts from wide to long
+  
+
+---
+
+# `spread([key],[value])`
+
+--
+
+  - `key`: categories that you want to make into columns
+  
+  - `value`: values you want to put into these new colunms
+  
+--
+
+<center><img src="https://raw.githubusercontent.com/gadenbuie/tidy-animated-verbs/master/images/tidyr-spread-gather.gif" width=80%></center>
+
+---
+
+# `spread()`
+
+```{r}
+MI_final_small %>%
+  group_by(SEX, AGE10) %>%
+  summarize(PctTrump = mean(TrumpVoter),.groups = 'drop') %>%
+  spread(key = SEX,value = PctTrump,fill = NA) %>% #<<
+  rename(Male = `1`,Female = `2`)
+```
+
+---
+
+# `gather()`
+
+```{r}
+MI_final_small %>%
+  group_by(SEX, AGE10) %>%
+  summarize(PctTrump = mean(TrumpVoter),.groups = 'drop') %>%
+  spread(key = SEX,value = PctTrump,fill = NA) %>%
+  rename(Male = `1`,Female = `2`) %>%
+  gather(SEX,PctTrump,-AGE10) #<<
+```
+
+---
+
+# Save Summary for Later Use
+
+```{r}
+SexAge <- MI_final_small %>%
+  group_by(SEX, AGE10) %>%
+  summarize(PctTrump = mean(TrumpVoter),.groups = 'drop')
+
+SexAge %>% filter(SEX == 2)
+```
+
+
+---
+
+# Conditional Categorical Analysis
+
+--
+
+- Want to know **reason** for voting for candidate by **vote choice**
+
+--
+
+  - `Quality`: 4 category unordered
+  
+--
+
+  - `preschoice`: 2 category unordered
+  
+--
+
+- Some light data wrangling
+
+```{r}
+toplot <- mi_ep %>% 
+    select(Quality,preschoice,SEX) %>%
+    filter(grepl('Biden|Trump',preschoice)) %>%
+    drop_na() %>%
+    filter(Quality != "[DON'T READ] Don’t know/refused") 
+```
+
+---
+
+# Conditional Categorical Analysis
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+(pReasonOverall <- toplot %>%
+  ggplot(aes(x = Quality)) + 
+  labs(y = "Number of Voters",x = "",
+         title = "Reasons for voting for a candidate",
+       subtitle = "Michigan 2020 Exit Poll") +
+    geom_bar(color="black",alpha = .4))
+```
+
+---
+
+# Conditional Categorical Analysis
+
+--
+
+- Can swap axes with `coord_flip()`
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pReasonOverall + coord_flip()
+```
+
+---
+
+# Conditional Categorical Analysis
+
+--
+
+- `fill` and `position = "dodge"` for **conditional** analysis
+  
+```{r}
+pReasonChoice <- toplot %>%
+  ggplot(aes(x = Quality,fill = preschoice)) + 
+  labs(y = "Number of Voters",x = "",
+         title = "Reasons for voting for a candidate",
+       subtitle = "Michigan 2020 Exit Poll",
+       fill = 'Self-Reported Vote') +
+    geom_bar(color="black",position = "dodge") + 
+   coord_flip()
+```
+
+---
+
+# Conditional Categorical Analysis
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pReasonChoice
+```
+
+---
+
+# Conditional Categorical Analysis
+
+--
+
+- What about if we do this by `SEX`?
+
+--
+
+```{r,fig.align='center',fig.width=9,fig.height=4.25}
+toplot %>% 
+    ggplot(aes(x= preschoice, fill = SEX)) +     
+    labs(y = "Number of Respondents",x = "",
+         title = "Vote by Respondent Sex",fill = "Sex") +
+    geom_bar(position="dodge") + coord_flip()
+```
+
+---
+
+# Be Attentive to `class()`
+
+--
+
+- How is `SEX` stored in the data?
+
+```{r}
+class(mi_ep$SEX)
+```
+
+--
+
+- Need to convert it to a `character` or `factor`
+
+```{r}
+pVoteSex <- toplot %>% 
+    ggplot(aes(x= preschoice, fill = factor(SEX))) +     
+    labs(y = "Number of Respondents",x = "",
+         title = "Vote by Respondent Sex",fill = "Sex") +
+    geom_bar(position="dodge") + coord_flip()
+```
+
+---
+
+# Be Attentive to `class()`
+
+```{r,fig.align='center',fig.width=9,fig.height=4.5}
+pVoteSex
+```
+
+--
+
+- Why is this a bad visualization? **Poorly labeled legend!**
+
+
+---
+
+# Continuous by Categorical
+
+--
+
+- Let's introduce a different dataset!
+
+--
+
+  - Download and open [`Pres2020_PV.Rds`](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/data/Pres2020_PV.Rds)
+  - Wrangle to get the popular vote margin, expressed in decimals
+  
+--
+
+```{r}
+poll <- read_rds('../data/Pres2020_PV.Rds')
+
+poll <- poll %>%
+  mutate(Trump = Trump/100,
+         Biden = Biden/100,
+         margin = Biden - Trump)
+```
+
+---
+
+# The Research Question
+
+```{r}
+pRQ <- poll %>%
+  ggplot() + 
+  geom_bar(aes(x = Biden*100),fill = 'blue',alpha = .5) + 
+  geom_bar(aes(x = Trump*100),fill = 'red',alpha = .5) + 
+  geom_vline(xintercept = 47,linetype = 'dashed',color= 'red') + 
+  geom_vline(xintercept = 51,linetype = 'dashed',color= 'blue')+ 
+  annotate(geom = 'text',x = c(47),y = Inf,angle = 90,hjust = 1,vjust = 0,label = c("Trump's Actual Support"),color = 'darkred') + 
+  annotate(geom = 'text',x = c(51),y = Inf,angle = 90,hjust = 1,vjust = 1,label = c("Biden's Actual Support"),color = 'darkblue') + 
+  labs(title = 'Poll Bias in the 2020 U.S. Presidential Election',
+       subtitle = 'Predicted vs Actual Support for Trump (red) and Biden (blue)',
+       x = 'Popular Vote Share (%)',
+       y = 'Number of Polls') + 
+  scale_x_continuous(breaks = seq(30,60,by = 5),labels = function(x) paste0(x,'%'))
+```
+
+---
+
+# The Research Question
+
+```{r}
+pRQ 
+```
+
+---
+
+# The Research Question
+
+```{r}
+poll %>% # Proportion that under-predict
+  summarise(propBidenUP = mean(Biden < .51),
+            propTrumpUP = mean(Trump < .47))
+```
+--
+
+```{r}
+poll %>% # Average under-prediction
+  summarise(avgBidenErr = mean(.51 - Biden),
+            avgTrumpErr = mean(.47 - Trump))
+```
+
+
+---
+
+# .blue[Theorizing]
+
+--
+
+- .blue[Research Question]: Why do polls under-predict Trump more than Biden?
+
+--
+
+  1. Unrepresentative samples (how were respondents contacted?)
+  
+  2. Small samples (how many respondents?)
+  
+  3. Shy Trump Voters / trolls (lying respondents)
+  
+  4. Timing (closer to the election &rarr; less biased)
+
+---
+
+# .blue[Theorizing]
+
+- A fifth explanation?
+
+--
+
+- Anti-Trump media!
+
+<center><img src="https://www.open.ac.uk/blogs/religious-studies/wp-content/uploads/2017/07/trump-2.jpg"></center>
+
+
+---
+
+# .blue[Theorizing]
+
+- However...
+
+<center><iframe width="560" height="315" src="https://www.youtube.com/embed/Cq6A9uytB7U?start=22&end=31" title="Trump Admits He's Lying ALL The Time" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></center>
+
+
+
+---
+
+# .blue[Theorizing]
+
+--
+
+- Theory #1: Does the "mode" of the survey matter?
+
+--
+
+  - I.e., if you only call people on landlines, who do you reach?
+  
+--
+
+  - And how might they differ from the general population?
+  
+--
+
+- .blue[Assumption 1]: Younger people do not use landlines, meaning that surveys which rely on **r**andom **d**igit **d**ialing (RDD) will get disproportionately older respondents.
+
+--
+
+- .blue[Assumption 2]: Younger voters are more progressive, making them less likely to support Trump.
+
+--
+
+- .blue[Theory]: Surveys that use RDD will find more support for Trump than Biden.
+
+---
+
+# .red[Analyzing]
+
+--
+
+- Plot the Biden-Trump vote margin by mode type
+
+```{r}
+poll %>%
+  count(Mode)
+```
+
+--
+
+- So many modes of interviewing people!
+
+---
+
+# .red[Analyzing]
+
+- For now, just focus on `IRV/Online` versus `Live phone - RDD`
+
+--
+
+- Since `margin` is a continuous variable, use `geom_histogram`
+
+```{r}
+pMode <- poll %>% 
+  filter(Mode == "IVR/Online" | Mode == "Live phone - RDD") %>%
+    ggplot(aes(x= margin, fill = Mode)) +     
+  labs(y = "Number of Polls",
+         x = "Biden- Trump Margin",
+         title = "Biden-Trump Margin for Two Types of Polls",
+        fill = "Mode of Interview") +
+    geom_histogram(bins=10, color="black", position="dodge") + #<<
+    scale_x_continuous(breaks=seq(-.1,.2,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# Mode Matters!
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pMode
+```
+
+--
+
+- But results are **inconsistent** with our .blue[theory]!
+
+---
+
+# Visualization
+
+--
+
+- How can we improve this? Perhaps `geom_density()` and `geom_vline()`?
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+toplot <- poll %>% 
+  filter(Mode == "IVR/Online" | Mode == "Live phone - RDD")
+
+pModeDens <- toplot %>%
+  ggplot(aes(x= margin, color = Mode)) +     
+  labs(y = "Number of Polls",
+       x = "Biden- Trump Margin",
+       title = "Biden-Trump Margin for Two Types of Polls",
+       color = "Mode of Interview") +
+  geom_density(lwd = 1.2) + #<<
+  scale_x_continuous(breaks=seq(-.1,.2,by=.05),
+                     labels= scales::percent_format(accuracy = 1)) + 
+  geom_vline(data = toplot %>%
+               group_by(Mode) %>%
+               summarise(margin = mean(margin)),aes(xintercept = margin,color = Mode),linetype = 'dashed')
+```
+
+---
+
+# Visualization
+
+- How can we improve this? Perhaps `geom_density()` and `geom_vline()`?
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pModeDens
+```
+
+---
+
+# More Modes
+
+--
+
+- `geom_histogram()` and `geom_density()` less useful for more comparisons
+
+--
+
+- First, let's drop modes that were hardly used
+
+```{r}
+(toKeep <- poll %>%
+  count(Mode) %>%
+  filter(n > 5, #<<
+         !is.na(Mode)))
+
+toplot <- poll %>% filter(Mode %in% toKeep$Mode)
+```
+
+---
+
+# More Modes
+
+- How hard is `geom_histogram()` with more categories?
+
+```{r}
+pModeHist <- toplot %>%
+  ggplot(aes(x= margin, fill = Mode)) +     
+  labs(y = "Number of Polls",
+       x = "Biden- Trump Margin",
+       title = "Biden-Trump Margin for Two Types of Polls",
+       fill = "Mode of Interview") +
+  geom_histogram(color = 'black',position = 'dodge',bins = 10) + #<<
+  scale_x_continuous(breaks=seq(-.1,.2,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# More Modes
+
+- How hard is `geom_histogram()` with more categories?
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pModeHist
+```
+
+
+
+---
+
+# More Modes
+
+- How hard is `geom_density()` with more categories?
+
+```{r}
+pModeDens <- toplot %>%
+  ggplot(aes(x= margin, color = Mode)) +     
+  labs(y = "Number of Polls",
+       x = "Biden- Trump Margin",
+       title = "Biden-Trump Margin for Two Types of Polls",
+       color = "Mode of Interview") +
+  geom_density(lwd = 1.2) + #<<
+  scale_x_continuous(breaks=seq(-.1,.2,by=.05),
+                     labels= scales::percent_format(accuracy = 1)) + 
+  geom_vline(data = toplot %>%
+               group_by(Mode) %>%
+               summarise(margin = mean(margin)),aes(xintercept = margin,color = Mode),linetype = 'dashed')
+```
+
+---
+
+# More Modes
+
+- How hard is `geom_density()` with more categories?
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pModeDens
+```
+
+---
+
+# `geom_boxplot()`
+
+--
+
+- More categories requires more compact ways of visualizing distributions
+
+--
+
+```{r}
+pModeBox <- toplot %>% 
+  ggplot(aes(x = Mode, y = margin)) + 
+    labs(x = "Mode of Survey Interview",
+         y = "Biden- Trump Margin",
+         title = "2020 Popular Vote Margin by Type of Poll") +
+    geom_boxplot(fill = "slateblue") + #<<
+    scale_y_continuous(breaks=seq(-.1,.2,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# `geom_boxplot()`
+
+- More categories requires more compact ways of visualizing distributions
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pModeBox
+```
+
+---
+
+# Ordering Unordered Categories
+
+--
+
+- We can use `reorder()` to arrange categories by the data
+
+```{r}
+pModeBox <- toplot %>% 
+  ggplot(aes(x = reorder(Mode,margin), y = margin)) + #<<
+    labs(x = "Mode of Survey Interview",
+         y = "Biden- Trump Margin",
+         title = "2020 Popular Vote Margin by Type of Poll") +
+    geom_boxplot(fill = "slateblue") + 
+    scale_y_continuous(breaks=seq(-.1,.2,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# Ordering Unordered Categories
+
+- We can use `reorder()` to arrange categories by the data
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pModeBox + coord_flip()
+```
+
+---
+
+# `geom_violin()`
+
+--
+
+- Boxplots are cleaner than densities and histograms for multiple categories
+
+--
+
+- But we lose ability to see distributions within the 80% box
+
+```{r}
+pModeViol <- toplot %>% 
+  ggplot(aes(x = reorder(Mode,margin), y = margin)) + 
+    labs(x = "Mode of Survey Interview",
+         y = "Biden- Trump Margin",
+         title = "2020 Popular Vote Margin by Type of Poll") +
+    geom_violin(fill = "slateblue",alpha = .5) + #<<
+    scale_y_continuous(breaks=seq(-.1,.2,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+
+---
+
+# `geom_violin()`
+
+```{r,fig.align='center',fig.width=9,fig.height=5}
+pModeViol + geom_hline(yintercept = 0,linetype = 'dashed')
+```
+
+---
+
+# Continuous by Continuous
+
+--
+
+- For .blue[conditional relationships] between two .red[continuous variables], use `geom_point()`
+
+--
+
+- .blue[Theory]: Are polls politically biased?
+
+--
+
+  - I.e., a Biden-friendly poll might **under**predict Trump support and **over**predict Biden support
+  
+--
+
+- .red[Data]: Trump support conditional on Biden support
+
+
+
+---
+
+# .red[Analysis]
+
+- Plot Trump support versus Biden support
+
+```{r}
+pSupp <- poll %>%
+  ggplot(aes(x = Biden, y = Trump)) + 
+  labs(title="Biden and Trump Support in 2020 National Popular Vote",
+       y = "Trump Support",
+       x = "Biden Support") + 
+  geom_point(color="purple") + 
+    scale_y_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1)) +
+  scale_x_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# `geom_scatter()`
+
+```{r}
+pSupp
+```
+
+--
+
+- How many observations are at each point?
+
+---
+
+# Tweaking `alpha`
+
+--
+
+- We can set the transparency of each point such that multiple points will show up darker
+
+--
+
+  - I.e., `alpha=.3` means that a single point will be 70% transparent, but 3 points on top of each other will be 10% transparent
+
+```{r}
+pSupp <- poll %>%
+  ggplot(aes(x = Biden, y = Trump)) + 
+  labs(title="Biden and Trump Support in 2020 National Popular Vote",
+       y = "Trump Support",
+       x = "Biden Support") + 
+  geom_point(color="purple",alpha = .3,size = 3) +  #<<
+    scale_y_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1)) +
+  scale_x_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# Tweaking `alpha`
+
+```{r}
+pSupp
+```
+
+---
+
+# `geom_jitter()`
+
+--
+
+- Instead, we could "jitter" the points
+
+--
+
+  - This adds some random noise to each point to shake them off each other
+  
+```{r}
+pSupp <- poll %>%
+  ggplot(aes(x = Biden, y = Trump)) + 
+  labs(title="Biden and Trump Support in 2020 National Popular Vote",
+       y = "Trump Support",
+       x = "Biden Support") + 
+  geom_jitter(color="purple") +  #<<
+    scale_y_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1)) +
+  scale_x_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# `geom_jitter()`
+
+```{r}
+pSupp
+```
+
+
+---
+
+# `size`
+
+--
+
+- Finally, we could simply count the number of polls at each x,y coordinate
+
+--
+
+  - Then size the points by the number of polls
+  
+```{r}
+pSupp <- poll %>%
+  group_by(Biden,Trump) %>%
+  summarise(nPolls = n()) %>% #<<
+  ggplot(aes(x = Biden, y = Trump,size = nPolls)) + #<<
+  labs(title="Biden and Trump Support in 2020 National Popular Vote",
+       y = "Trump Support",
+       x = "Biden Support") + 
+  geom_point(color="purple",alpha = .5) +  
+    scale_y_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1)) +
+  scale_x_continuous(breaks=seq(0,1,by=.05),
+                     labels= scales::percent_format(accuracy = 1))
+```
+
+---
+
+# `size`
+
+```{r}
+pSupp
+```
+
+---
+
+# .blue[Theory]
+
+--
+
+- These results indicate that polls which predict greater support for Biden **also** predict greater support for Trump
+
+--
+
+  - Is this consistent with the theory?
+  
+--
+
+  - Recall that **Biden-biased** polls should underpredict Trump support and overpredict Biden support
+  
+--
+
+  - In the .red[data], this would suggest a **negative** relationship
+  
+--
+
+  - But we find a **positive** relationship
+  
+--
+
+- **Inconsistent** with the theory, but raises another puzzle
+
+--
+
+- Why do polls that underpredict support for Biden also underpredict support for Trump?
+
+--
+
+  - .blue[Third party bias?] Polls bias against 3rd party candidates
+  
+--
+
+  - .blue[Timing of poll?] Fewer uncertain responses closer to election
+  
+---
+
+# Quiz & Homework
+
+- Go to Brightspace and take the **7th** quiz
+
+--
+
+  - The password to take the quiz is #### <!-- `r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Multivariate_Analysis_part1_hw.Rmd
+  
+  2. Problem Set 3 (on Brightspace)
+
+
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Multivariate_Analysis_part1_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

@@ -1,0 +1,202 @@
+---
+title: "Problem Set 2"
+subtitle: "Data Wrangling"
+author: "[YOUR NAME]"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-09-22"
+output:
+  html_document: default
+---
+
+```{r,include=F}
+knitr::opts_chunk$set(error=TRUE)
+```
+
+
+## Getting Set Up
+
+Open `RStudio` and create a new RMarkDown file (`.Rmd`) by going to `File -> New File -> R Markdown...`.
+Accept defaults and save this file as `[LAST NAME]_ps2.Rmd` to your `code` folder.
+
+Copy and paste the contents of this file into your `[LAST NAME]_ps2.Rmd` file. Then change the `author: [YOUR NAME]` (line 4) to your name.
+
+All of the following questions should be answered in this `.Rmd` file. There are code chunks with incomplete code that need to be filled in. 
+
+This problem set is worth 10 total points, plus three extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code.
+
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/09/22. Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
+
+**Good luck!**
+
+## ChatGPT Link [Optional]
+
+*Copy the link to ChatGPT you used here: _______________________.
+
+## Question 0
+Require `tidyverse` and load the `MI2020_ExitPoll.Rds` data to an object called `MI_raw`. (Tip: use the `read_rds()` function with the link to the raw data.)
+```{r}
+require(tidyverse)
+MI_raw <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/3_Data_Wrangling/data/MI2020_ExitPoll.rds') #https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/data/MI2020_ExitPoll.rds?raw=true')
+```
+
+
+## Question 1 [1 point]
+How many voters were from Wayne County?
+```{r}
+MI_raw %>%
+  count(County) %>% # Count the number of respondents per county
+  filter(County == 'WAYNE') # Subset to Wayne county (note capitalization)
+```
+
+> There were 102 voters from Wayne County.
+
+## Question 2 [1 point]
+Who did the majority of surveyed voters support in the 2020 presidential election?
+```{r}
+MI_raw %>%
+  count(PRSMI20) %>% # Count the number of respondents who supported each candidate
+  mutate(share = n / sum(n)) %>% # Calculate this number as the proportion of all respondents
+  arrange(desc(share)) # Arrange in decsending order
+```
+
+> The majority of surveyed voters (58.7%) supported Joe Biden in the 2020 presidential election.
+
+## Question 3 [1 point + 1 EC]
+What proportion of women supported Trump? What proportion of men supported Biden? EC: Answer using `group_by()`.
+```{r}
+MI_raw %>%
+  filter(SEX == 2) %>% # Subset to women (check the numeric code!)
+  count(PRSMI20) %>% # Count the number of women who supported each candidate
+  mutate(share = n / sum(n)) %>% # Calculate the share of women who supported each candidate
+  filter(PRSMI20 == 2) # Subset to those who supported Trump (check the numeric code!)
+
+MI_raw %>%
+  filter(SEX == 1) %>% # Subset to men (check the numeric code!)
+  count(PRSMI20) %>% # Count the number of men who supported each candidate
+  mutate(share = n / sum(n)) %>% # Calculate the share of men who supported each candidate
+  filter(PRSMI20 == 1) # Subset to those who supported Biden (check the numeric code!)
+
+# Extra Credit: Alternative approach using group_by() and summarise()
+MI_raw %>%
+  group_by(SEX) %>%
+  summarise(pctTrump = mean(PRSMI20 == 2),
+            pctBiden = mean(PRSMI20 == 1))
+```
+
+> 32.5% of women supported Trump. 52.5% of men supported Biden.
+
+## Question 4 [1 point]
+Create a new object called `MI_clean` that contains only the following variables:
+  - AGE10
+  - SEX
+  - PARTYID
+  - EDUC18
+  - PRMSI20
+  - QLT20
+  - LGBT
+  - BRNAGAIN
+  - LATINOS
+  - QRACEAI
+  - WEIGHT
+and then list which of these variables contain missing data recorded as `NA`. How many respondents were not asked certain questions?
+```{r}
+MI_clean <- MI_raw %>% 
+  select(AGE10,SEX,PARTYID,EDUC18,PRSMI20,QLT20,LGBT,BRNAGAIN,LATINOS,QRACEAI,WEIGHT) # Select the requested variables
+
+summary(MI_clean) # Identify which have missing data recorded as NA
+MI_raw %>%
+  count(PRSMI20)
+MI_raw %>%
+  count(AGE10)
+
+MI_raw %>%
+  count(SEX)
+
+MI_raw %>%
+  count(PARTYID)
+
+```
+
+> `QLT20`, `LGBT`, and `BRNAGAIN` have missing values stored as `NA`. 616 respondents were not asked `QLT20`, and 615 were not asked either `LGBT` or `BRNAGAIN`.
+
+## Question 5 [1 point]
+Are there **unit non-response** data in the `AGE10` variable? If so, how are they recorded? What about the `PARTYID` variable?
+
+```{r}
+MI_clean %>%
+  count(AGE10)
+
+MI_clean %>%
+  count(PARTYID)
+```
+
+> The unit non-response data in the `AGE10` variable is recorded with the number `99`. Missing data in the `PARTYID` variable is recorded with the number `9`.
+
+## Question 6 [1 point]
+Let's create a new variable called `preschoice` that converts `PRSMI20` to a character. To do this, install the `haven` package if you haven't already, then use the `as_factor()` function from the `haven` package combined with the `as.character()` function from base `R`. Now `count()` the number of respondents who reported voting for each candidate. Do you get the same number as in Question 2?
+```{r}
+MI_clean <- MI_clean %>%
+  mutate(preschoice = as.character(haven::as_factor(PRSMI20)))
+
+MI_clean %>%
+  count(preschoice)
+```
+
+> Yes this is the same as in Question 2.
+
+## Question 7 [1 point]
+Now do the same for the `QLT20` variable, the `AGE10` variable, and the `LGBT` variable. For each variable, make the character version `Qlty` for `QLT20`, `Age` for `AGE10`, and `Lgbt_clean` for `LGBT`. 
+
+```{r}
+# QLT20
+MI_clean <- MI_clean %>%
+  mutate(Qlty = as.character(haven::as_factor(QLT20)),
+         Age = as.character(haven::as_factor(AGE10)),
+         Lgbt_clean = as.character(haven::as_factor(LGBT)))
+```
+
+## Question 8 [1 point]
+For each of these new variables, replace the **unit non-response** label with `NA`. EC: use a `grepl()` function with an `ifelse()` statement for more efficient code.
+
+```{r}
+MI_clean <- MI_clean %>%
+  mutate(Qlty = ifelse(grepl("DON'T READ",Qlty),NA,Qlty),
+         Lgbt_clean = ifelse(grepl("DON'T READ",Lgbt_clean),NA,Lgbt_clean),
+         Age = ifelse(grepl("DON'T READ",Age),NA,Age))
+```
+
+## Question 9 [1 point + 1 EC]
+What proportion of LGBT-identifying voters supported Trump? EC: Plot this answer.
+
+```{r}
+MI_clean %>%
+  filter(Lgbt_clean == 'Yes') %>%
+  count(preschoice) %>%
+  mutate(share = n / sum(n)) %>%
+  ggplot(aes(x = preschoice,y = share)) + 
+  geom_bar(stat = 'identity')
+```
+
+> 30.4% of LGBT-identifying voters supported Trump.
+
+
+## Question 10 [1 point + 1 EC]
+Plot the distribution of ages in the data. EXTRA CREDIT: color by the number of voters in each bracket that supported Trump, Biden, or someone else. Make sure to drop voters who didn't indicate who they voted for **AND** those who didn't indicate their age.
+
+```{r}
+# Simple
+MI_clean %>%
+  ggplot(aes(x = Age)) + 
+  geom_bar(stat = 'count')
+
+
+# Extra Credit
+MI_clean %>%
+  mutate(preschoice_clean = ifelse(grepl('Biden',preschoice),'Biden',
+                                   ifelse(grepl('Trump',preschoice),'Trump','Someone else'))) %>%
+  filter(!is.na(preschoice),
+         !is.na(Age)) %>%
+  ggplot(aes(x = Age,fill = preschoice_clean)) + 
+  geom_bar(stat = 'count') + 
+  scale_fill_manual(values = c('Biden' = 'darkblue','Someone else' = 'grey80','Trump' = 'red'))
+```

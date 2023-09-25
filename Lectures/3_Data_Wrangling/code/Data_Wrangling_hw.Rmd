@@ -384,3 +384,11 @@ nba%>%
 # INSERT CODE HERE
 ```
 
+```{r,message=F,echo=F,warning=F,results='hide'}
+dir <- getwd()
+type <- 'pdf'
+format <- 'portrait'
+f <- 'Data_Wrangling_hw'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

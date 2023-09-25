@@ -171,7 +171,7 @@ nba <- readRDS('../data/nba_players_2018.Rds')
 
 --
 
-- [`Data_Wrangling_hw.pdf`](https://jbisbee1.github.io/DS1000-S2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.pdf) has the full codebook
+- [`Data_Wrangling_hw.pdf`](https://jbisbee1.github.io/DS1000-F2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.pdf) has the full codebook
 
 ---
 
