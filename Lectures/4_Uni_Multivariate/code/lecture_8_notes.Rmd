@@ -1,0 +1,88 @@
+---
+title: "Lecture 8 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-09-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+require(haven)
+
+nba <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/4_Uni_Multivariate/data/nba_players_2018.Rds")
+
+
+# Create a histogram of points
+nba %>%
+  ggplot(aes(x = pts,fill = isRookie)) + 
+  geom_histogram() + 
+  geom_vline(xintercept = mean(nba$pts,na.rm=T),color = 'red') + 
+  geom_vline(xintercept = median(nba$pts,na.rm=T),color = 'green')
+
+
+# Calculate proportion who are rookies
+nba %>%
+  mutate(isRookieNumeric = ifelse(isRookie == TRUE,1,0)) %>%
+  summarise(mean(isRookieNumeric))
+
+nba %>%
+  mutate(isRookieNumeric = ifelse(isRookie,1,0)) %>%
+  summarise(mean(isRookieNumeric))
+
+nba %>%
+  summarise(mean(isRookie))
+
+nba %>%
+  count(isRookie)
+
+
+# Counting and ordering teams by number of players on them
+nba %>%
+  count(slugTeam) %>%
+  arrange(desc(n)) %>%
+  ggplot(aes(x = n,y = reorder(slugTeam,n))) + 
+  geom_bar(stat = 'identity')
+
+
+# Visualizing field goals made
+nba %>%
+  ggplot(aes(x = fgm)) + 
+  geom_histogram()
+
+nba %>%
+  ggplot(aes(x = fgm)) + 
+  geom_density()
+
+
+# Look at field goal percentage
+nba %>%
+  select(namePlayer,pctFG,minutes) %>%
+  arrange(desc(pctFG))
+
+# Look at age
+nba %>%
+  select(namePlayer,agePlayer) %>%
+  arrange(desc(agePlayer))
+
+
+nba %>%
+  ggplot(aes(x = agePlayer)) + 
+  geom_histogram(bins = 20)
+
+nba %>%
+  ggplot(aes(x = agePlayer)) + 
+  geom_bar()
+
+nba %>%
+  select(namePlayer,org)
+
+nba %>%
+  count(org) %>%
+  arrange(desc(n)) %>%
+  ggplot(aes(x = n,y = reorder(org,n))) + 
+  geom_bar(stat = 'identity')
+```
