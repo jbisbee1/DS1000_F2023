@@ -1,0 +1,72 @@
+---
+title: "Lecture 9 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-09-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+require(haven)
+
+mi_ep <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/4_Uni_Multivariate/data/MI2020_ExitPoll_small.rds")
+
+MI_final_small <- mi_ep %>%
+  filter(preschoice == 'Donald Trump, the Republican' | preschoice == 'Joe Biden, the Democrat') %>%
+  mutate(BidenVoter = ifelse(preschoice == 'Joe Biden, the Democrat',1,0),
+         TrumpVoter = ifelse(BidenVoter == 1,0,1),
+         AGE10 = ifelse(AGE10 == 99,NA,AGE10))
+
+# Calculate gender gap
+MI_final_small %>%
+  count(preschoice,SEX) %>%
+  mutate(PctSupport = n /sum(n))
+
+# Calculate gender gap BY GENDER
+MI_final_small %>%
+  count(preschoice,SEX) %>%
+  group_by(SEX) %>%
+  mutate(totGender = sum(n)) %>%
+  mutate(PctSupport = n / totGender)
+
+# Two way conditional mean
+MI_final_small %>%
+  filter(AGE10 == 9) %>%
+  count(preschoice,SEX) %>%
+  group_by(SEX) %>%
+  mutate(totGender = sum(n)) %>%
+  mutate(PctSupport = n / totGender)
+
+MI_final_small %>%
+  group_by(SEX,AGE10) %>%
+  summarise(PctTrump = mean(TrumpVoter),.groups = 'drop') %>%
+  spread(SEX,PctTrump) %>%
+  rename(Male = `1`,Female = `2`) %>%
+  mutate(genderGap = Male - Female)
+
+toplot <- MI_final_small %>%
+  group_by(SEX,AGE10) %>%
+  summarise(PctTrump = mean(TrumpVoter),.groups = 'drop') %>%
+  spread(SEX,PctTrump) %>%
+  rename(Male = `1`,Female = `2`) %>%
+  mutate(genderGap = Male - Female)
+
+toplot %>%
+  ggplot(aes(x = AGE10,y = genderGap)) + 
+  geom_bar(stat = 'identity')
+
+toplot %>%
+  ggplot(aes(x = AGE10,y = Male)) + 
+  geom_bar(stat = 'identity',fill = 'forestgreen') + 
+  geom_bar(aes(x = AGE10,y = Female),stat = 'identity',fill = 'skyblue')
+
+toplot %>%
+  gather(gender,pctTrump,-AGE10,-genderGap) %>%
+  ggplot(aes(x = AGE10,y = pctTrump,fill = gender)) + 
+  geom_bar(stat = 'identity',position = 'dodge')
+
+```

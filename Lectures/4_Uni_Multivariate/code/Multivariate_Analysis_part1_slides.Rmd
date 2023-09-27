@@ -308,24 +308,64 @@ MI_final_small %>%
 
 --
 
-  1. `spread()`: converts from long to wide
+  1. `spread()` (or `pivot_wider()`): converts from long to wide
   
-  2. `gather()`: converts from wide to long
+  2. `gather()` (or `pivot_longer()`): converts from wide to long
   
 
 ---
 
-# `spread([key],[value])`
+# `spread()` and `gather()`
+
+- `spread([key],[value])`
 
 --
 
-  - `key`: categories that you want to make into columns
+  - `key`: variable containing categories to make into columns labels
   
-  - `value`: values you want to put into these new colunms
-  
---
+  - `value`: variable containing values put into these new columns
 
 <center><img src="https://raw.githubusercontent.com/gadenbuie/tidy-animated-verbs/master/images/tidyr-spread-gather.gif" width=80%></center>
+
+---
+
+# `spread()` and `gather()`
+
+- `gather([key],[value],[columns])`
+
+  - `key`: name of **new column** that contains categories
+  
+  - `value`: values you want to put into this new column
+
+<center><img src="https://raw.githubusercontent.com/gadenbuie/tidy-animated-verbs/master/images/tidyr-spread-gather.gif" width=80%></center>
+
+---
+
+# `pivot_wider()`
+
+- `pivot_wider([names_from],[values_from])`
+
+--
+
+  - `names_from`: variable containing categories to make into column labels
+  
+  - `values_from`: variable containing values put into these new columns
+  
+--
+
+<center><img src="https://www.fromthebottomoftheheap.net/assets/img/posts/tidyr-longer-wider.gif" width=80%></center>
+
+---
+
+# OR `pivot_longer()`
+
+- `pivot_longer([names_from],[values_from])`
+
+  - `names_from`: variable containing categories to make into column labels
+  
+  - `values_from`: variable containing values put into these new columns
+
+<center><img src="https://www.fromthebottomoftheheap.net/assets/img/posts/tidyr-longer-wider.gif" width=80%></center>
 
 ---
 

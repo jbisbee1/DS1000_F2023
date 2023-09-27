@@ -4,7 +4,7 @@
     <title>Multivariate Analysis</title>
     <meta charset="utf-8" />
     <meta name="author" content="Prof. Bisbee" />
-    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.16/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/lexis.css" type="text/css" />
     <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
@@ -27,7 +27,7 @@ class: center, middle, inverse, title-slide
 ]
 .date[
 ### Lecture Date: 2023/09/25
-Slides Updated: 2023-09-23
+Slides Updated: 2023-09-27
 ]
 
 ---
@@ -390,24 +390,64 @@ MI_final_small %&gt;%
 
 --
 
-  1. `spread()`: converts from long to wide
+  1. `spread()` (or `pivot_wider()`): converts from long to wide
   
-  2. `gather()`: converts from wide to long
+  2. `gather()` (or `pivot_longer()`): converts from wide to long
   
 
 ---
 
-# `spread([key],[value])`
+# `spread()` and `gather()`
+
+- `spread([key],[value])`
 
 --
 
-  - `key`: categories that you want to make into columns
+  - `key`: variable containing categories to make into columns labels
   
-  - `value`: values you want to put into these new colunms
-  
---
+  - `value`: variable containing values put into these new columns
 
 &lt;center&gt;&lt;img src="https://raw.githubusercontent.com/gadenbuie/tidy-animated-verbs/master/images/tidyr-spread-gather.gif" width=80%&gt;&lt;/center&gt;
+
+---
+
+# `spread()` and `gather()`
+
+- `gather([key],[value],[columns])`
+
+  - `key`: name of **new column** that contains categories
+  
+  - `value`: values you want to put into this new column
+
+&lt;center&gt;&lt;img src="https://raw.githubusercontent.com/gadenbuie/tidy-animated-verbs/master/images/tidyr-spread-gather.gif" width=80%&gt;&lt;/center&gt;
+
+---
+
+# `pivot_wider()`
+
+- `pivot_wider([names_from],[values_from])`
+
+--
+
+  - `names_from`: variable containing categories to make into column labels
+  
+  - `values_from`: variable containing values put into these new columns
+  
+--
+
+&lt;center&gt;&lt;img src="https://www.fromthebottomoftheheap.net/assets/img/posts/tidyr-longer-wider.gif" width=80%&gt;&lt;/center&gt;
+
+---
+
+# OR `pivot_longer()`
+
+- `pivot_longer([names_from],[values_from])`
+
+  - `names_from`: variable containing categories to make into column labels
+  
+  - `values_from`: variable containing values put into these new columns
+
+&lt;center&gt;&lt;img src="https://www.fromthebottomoftheheap.net/assets/img/posts/tidyr-longer-wider.gif" width=80%&gt;&lt;/center&gt;
 
 ---
 
@@ -609,15 +649,6 @@ toplot %&gt;%
     labs(y = "Number of Respondents",x = "",
          title = "Vote by Respondent Sex",fill = "Sex") +
     geom_bar(position="dodge") + coord_flip()
-```
-
-```
-## Warning: The following aesthetics were dropped during statistical
-## transformation: fill
-## ℹ This can happen when ggplot fails to infer the correct
-##   grouping structure in the data.
-## ℹ Did you forget to specify a `group` aesthetic or to
-##   convert a numerical variable into a factor?
 ```
 
 &lt;img src="Multivariate_Analysis_part1_slides_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
@@ -925,12 +956,6 @@ pModeDens &lt;- toplot %&gt;%
   geom_vline(data = toplot %&gt;%
                group_by(Mode) %&gt;%
                summarise(margin = mean(margin)),aes(xintercept = margin,color = Mode),linetype = 'dashed')
-```
-
-```
-## Warning: Using `size` aesthetic for lines was deprecated in ggplot2
-## 3.4.0.
-## ℹ Please use `linewidth` instead.
 ```
 
 ---
@@ -1378,7 +1403,7 @@ pSupp
 
 --
 
-  - The password to take the quiz is #### &lt;!-- 4169 --&gt;
+  - The password to take the quiz is #### &lt;!-- 3971 --&gt;
   
 --
 

@@ -273,7 +273,8 @@ Lecture Content (2023/09/20): Univariate - Summaries of a single variable
 Lecture Content (2023/09/25): Multivariate Part 1 - Summaries of multiple variables
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_02_06_2023_notes.Rmd)
+* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3000257/View)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_8_notes.Rmd)
 * Homework (due 2023/09/27): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_hw.Rmd)
 * Data: [Michigan Survey (prepped)](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/MI2020_ExitPoll_small.rds); [Presidential Vote](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/Pres2020_PV.Rds)
 * **Problem Set 3 (due 2023-09-29 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS3.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS3_AK.Rmd)
@@ -282,13 +283,14 @@ Lecture Content (2023/09/25): Multivariate Part 1 - Summaries of multiple variab
 Lecture Content (2023/09/27): Multivariate Part 2 - Visualizations of multiple variables
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_notes_02_08_2023.Rmd)
+* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3003097/View)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_9_notes.Rmd)
 * Homework (due 2023/10/02): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_hw.Rmd)
 
 Lecture Content (2023/10/02): Multivariate Part 3 - Uncertainty and bootstrapping
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_02_13_2023_notes.Rmd)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_10_notes.Rmd)
 * Homework (due 2023/10/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
 * **Problem Set 4 (due 2023-10-06 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4.Rmd)
 [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4_AK.pdf)
