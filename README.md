@@ -169,13 +169,13 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 | Date | Lecture | Learning Goal | Psets<br />(due Friday) | HW<br />(due next class) | Quiz<br />(in class) |
 | ----: | :-----: | ------------ | :-------: | :-------: | :------: |
 | 8/23 | [Intro 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1) | Scientific method, camps of analysis | [Pset 0](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf) | | |
-| 8/28 | [Intro 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.html#1) | ChatGPT and Data Science | | HW #1 | Quiz 1 |
+| 8/28 | [Intro 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.html#1) | ChatGPT and Data Science | | [HW #1](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd) | Quiz 1 |
 | 8/30 | BREAK |  | | | |
-| 9/04 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
-| 9/06 | [Intro to `R` 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.html#1) | Visualization in `R` | | | Quiz 3 | 
-| 9/11 | [Intro to `R` 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1) | More visualization | | | Quiz 4 | 
-| 9/13 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
-| 9/18 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 9/04 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | [HW #2](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.Rmd) | Quiz 2 | 
+| 9/06 | [Intro to `R` 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.html#1) | Visualization in `R` | | [HW #3](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_hw.Rmd) | Quiz 3 | 
+| 9/11 | [Intro to `R` 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1) | More visualization | [Pset 1](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Problem_Set_1.Rmd) | [HW #4](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd) | Quiz 4 | 
+| 9/13 | Review Session | | | | | 
+| 9/18 | [Data Wrangling](https://www.jamesbisbee.com/DS1000_F2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.html#1) | Replicability and `R` | [Pset 2](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/3_Data_Wrangling_PS2.Rmd) | [HW #5](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.Rmd) | Quiz 5 | 
 | 9/20 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
 | 9/25 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
 | 9/27 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
