@@ -3,7 +3,7 @@ title: "Multivariate Analysis Part 3"
 subtitle: "Homework"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Due Date: 2023-02-20"
+date: "Due Date: 2023-10-09"
 output: html_document
 ---
 
@@ -200,4 +200,14 @@ Now let's run the regression again. What do you conclude? How confident are you 
 ```
 
 
+
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'portrait'
+f <- 'Multivariate_Analysis_part3_hw'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
 

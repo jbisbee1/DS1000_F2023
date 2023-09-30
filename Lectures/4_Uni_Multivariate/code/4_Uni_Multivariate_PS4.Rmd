@@ -3,7 +3,7 @@ title: "Problem Set 4"
 subtitle: "Multivariate Visualization and Analysis"
 author: "[YOUR NAME]"
 institute: "Vanderbilt University"
-date: "Due Date: 2023-02-17"
+date: "Due Date: 2023-10-06"
 output:
   html_document: default
 ---
@@ -24,14 +24,18 @@ All of the following questions should be answered in this `.Rmd` file. There are
 
 This problem set is worth 10 total points, plus five extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Unlike the first two problem sets, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
 
-You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/02/17.
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/10/06. Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
 
 **Good luck!**
 
+## ChatGPT Link [Optional]
+
+*Copy the link to ChatGPT you used here: _______________________.
+
 ## Question 0
-Require `tidyverse` and load the [`game_summary.rds`](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true') data to an object called `games`. (Tip: use the `read_rds()` function with the link to the raw data.)
+Require `tidyverse` and load the [`game_summary.rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true') data to an object called `games`. (Tip: use the `read_rds()` function with the link to the raw data.)
 ```{r}
-#LINK: https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true')
+#LINK: https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true')
 ```
 
 
@@ -55,7 +59,7 @@ games %>%
 > Write one to two sentences here.
 
 ## Question 2 [1 point]
-Now recreate the same plot for the 2018, 2019, and combined seasons. Imagine that you work for the Celtics organization and Brad Stevens (the GM), asks you if the team scores more points at home or away? Based on your analysis, what would you tell him?
+Now recreate the same plot for the 2017, 2018, 2019, and combined seasons (use `facet_wrap()`!). Imagine that you work for the Celtics organization and Brad Stevens (the GM), asks you if the team scores more points at home or away? Based on your analysis, what would you tell him?
 
 ```{r}
 # By season
