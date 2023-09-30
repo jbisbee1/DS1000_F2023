@@ -171,6 +171,7 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 | 8/23 | Intro to Data Science Part 1 | Wed | Scientific method, camps of analysis | Pset 0 | | |
 | 8/28 | Intro to Data Science Part 2 | Mon | ChatGPT and Data Science | | | Quiz 1 |
 | 8/30 | BREAK | Wed | | | | |
+| 9/04 | Intro to `R` Part 1 | Mon | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
 
 ### Lecture Notes, Data and Code for Each Topic 
 Each lecture's materials will be released according to the following schedule:
