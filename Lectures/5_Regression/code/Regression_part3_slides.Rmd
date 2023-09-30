@@ -1,0 +1,734 @@
+---
+title: "Regression"
+subtitle: "Part 3"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/02/27\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+set.seed(123)
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+# Agenda
+
+1. Recap of Movie Analysis
+
+2. Multiple Regression
+
+3. Categorical Predictors
+
+---
+
+# Recal of Movie Analysis
+
+```{r,message=F}
+require(tidyverse)
+
+mv <- readRDS('../data/mv.Rds')
+```
+
+--
+
+- .blue[Theory]: the more a movie costs, the more it should make
+
+--
+
+  - If not, Hollywood would go out of business!
+  
+--
+
+- $X$: budget
+
+- $Y$: gross
+
+---
+
+# Step 1: Look
+
+```{r}
+summary(mv %>% select(gross,budget))
+```
+
+---
+
+# Step 1: Look
+
+```{r}
+mv %>%
+  mutate(missing = ifelse(is.na(gross) | is.na(budget),1,0)) %>%
+  group_by(year) %>%
+  summarise(propMissing = mean(missing)) %>%
+  ggplot(aes(x = year,y = propMissing)) + 
+  geom_line()
+```
+
+
+---
+
+# Some quick wrangling
+
+```{r}
+mv <- mv %>%
+  drop_na(gross,budget)
+
+mv %>%
+  select(gross,budget) %>%
+  glimpse()
+```
+
+---
+
+# Step 2: Univariate Viz
+
+```{r}
+mv %>%
+  select(title,gross,budget) %>%
+  gather(metric,value,-title) %>%
+  ggplot(aes(x = value,color = metric)) + 
+  geom_density()
+```
+
+---
+
+# More Wrangling?
+
+--
+
+- Univariate visualization higlights significant **skew** in both measures
+
+--
+
+  - Most movies don't cost a lot and don't make a lot
+  
+--
+
+  - But there are a few blockbusters that pull the density way out
+  
+--
+
+- Let's **wrangle** two new variables that take the log of these skewed measures
+
+--
+
+  - Logging transforms skewed measures to more "normal" measures
+
+```{r}
+mv <- mv %>%
+  mutate(gross_log = log(gross),
+         budget_log = log(budget))
+```
+
+---
+
+# Step 2: Univariate Viz
+
+```{r}
+mv %>%
+  select(title,gross_log,budget_log) %>%
+  gather(metric,value,-title) %>%
+  ggplot(aes(x = value,color = metric)) + 
+  geom_density()
+```
+
+---
+
+# Step 3: Multivariate Viz
+
+```{r}
+pClean <- mv %>%
+  ggplot(aes(x = budget,y = gross)) + 
+  geom_point() + 
+  scale_x_log10(labels = scales::dollar) + 
+  scale_y_log10(labels = scales::dollar) + 
+  labs(title = "Movie Costs and Returns",
+       x = "Costs (logged budget)",
+       y = "Returns (logged gross)")
+```
+
+---
+
+# Step 3: Multivariate Viz
+
+```{r}
+pClean + geom_smooth(method = 'lm')
+```
+
+---
+
+# Step 4: Regression!
+
+```{r}
+m <- lm(gross_log ~ budget_log,data = mv)
+summary(m)
+```
+
+
+---
+
+# Step 5.1: Univariate Viz of Errors
+
+- Errors $\varepsilon = Y - \hat{Y}$
+
+--
+
+  - In `R`, can also get them via `resid()` function
+
+--
+
+```{r}
+mv %>%
+  mutate(errors_manual = gross_log - predict(m),
+         errors_resid = resid(m))
+
+mv <- mv %>%
+  mutate(errors = resid(m))
+```
+
+---
+
+# Step 5.1: Univariate Viz of Errors
+
+```{r,message=F}
+mv %>%
+  ggplot(aes(x = errors)) + 
+  geom_histogram()
+```
+
+---
+
+# Step 5.2: Multivariate Viz of Errors
+
+```{r,message=F}
+mv %>%
+  ggplot(aes(x = budget_log,y = errors)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+---
+
+# Step 5.3: Cross Validated RMSE
+
+```{r}
+set.seed(123)
+rmseBudget <- NULL
+for(i in 1:100) {
+  inds <- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F)
+  
+  train <- mv %>% slice(inds)
+  test <- mv %>% slice(-inds)
+  
+  mTrain <- lm(gross_log ~ budget_log,train)
+  
+  test$preds <- predict(mTrain,newdata = test)
+  
+  rmse <- sqrt(mean((test$gross_log - test$preds)^2,na.rm=T))
+  rmseBudget <- c(rmseBudget,rmse)
+}
+
+mean(rmseBudget)
+```
+
+---
+
+
+# Thinking like a .blue[scientist]
+
+--
+
+- Our previous model predicted `gross` as a function of `budget`
+
+--
+
+- .blue[Theoretically], is this sensible?
+
+--
+    
+  1. Bigger budgets &rarr; famous actors &rarr; mass appeal &rarr; more tickets
+  
+--
+
+  2. Bigger budgets &rarr; advertising money &rarr; mass appeal &rarr; more tickets
+  
+--
+
+- But what if the movie is just...not good?
+
+
+---
+
+# Alternative .blue[Theory]
+
+--
+
+- Good movies make more money
+
+--
+
+  - .blue[Theory]: good movies &rarr; recommendations &rarr; more tickets
+  
+--
+
+- Predict gross with .red[IMDB rating] (`score`)
+
+```{r}
+pIMDB <- mv %>%
+  ggplot(aes(x = score,y = gross)) + 
+  geom_point() + 
+  labs(title = "Movie gross as a function of public perception",
+       x = "IMDB score",
+       y = "Gross (logged)") + 
+  scale_y_log10(label = scales::dollar) + 
+  geom_smooth(method = 'lm',se = F)
+```
+
+---
+
+# Alternative .red[Model]
+
+```{r,message = F}
+pIMDB
+```
+
+---
+
+# Evaluating the Model
+
+--
+
+- Let's go straight to RMSE
+
+--
+
+  - We can have `R` calculate errors for us with `residuals()` command
+
+```{r}
+m2 <- lm(gross_log ~ score,mv)
+error <- residuals(m2)
+(rmseScore <- sqrt(mean(error^2)))
+```
+
+--
+
+- Even worse!
+
+---
+
+# Multivariate Regression
+
+--
+
+- Recall that we can **model** our outcome with multiple **predictors**
+
+$$Y = \alpha + \beta_1 X_1 + \beta_2 X_2 + \dots + \varepsilon$$
+
+--
+
+- How much better can we predict `gross` with **BOTH** `budget` and `score`?
+
+```{r}
+m3 <- lm(gross_log ~ budget_log + score,mv)
+error <- residuals(m3)
+(rmseBudgScore <- sqrt(mean(error^2)))
+```
+
+---
+
+# Comparing Models
+
+--
+
+- Which model best predicts movie revenues?
+
+```{r}
+p <- data.frame(budget = mean(rmseBudget),
+           IMDB = rmseScore,
+           combined = rmseBudgScore) %>%
+  gather(model,rmse) %>%
+  ggplot(aes(x = reorder(model,rmse),y = rmse)) + 
+  geom_bar(stat = 'identity') + 
+  labs(title = "Best Regression Model",
+       subtitle = "Predicting a movie's revenue",
+       y = "RMSE (lower is better)",
+       x = "Model") + 
+  coord_flip()
+```
+
+---
+
+# Comparing Models
+
+- Which model best predicts movie revenues?
+
+```{r}
+p
+```
+
+
+---
+
+# Why RMSE?
+
+--
+
+- Want to understand how good / bad our model is
+
+--
+
+- Can use it to compare models
+
+---
+
+# Why RMSE?
+
+- Do we improve our model with `score`?
+
+```{r}
+set.seed(123)
+bsRes <- NULL
+for(i in 1:100) {
+  inds <- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F)
+  train <- mv %>% slice(inds)
+  test <- mv %>% slice(-inds)
+  
+  mB <- lm(gross_log ~ budget_log,train)
+  mS <- lm(gross_log ~ score,train)
+  mC <- lm(gross_log ~ budget_log + score,train)
+  
+  bsRes <- test %>%
+    mutate(pB = predict(mB,newdata = test),
+           pS = predict(mS,newdata = test),
+           pC = predict(mC,newdata = test)) %>%
+    summarise(Budget = sqrt(mean((gross_log - pB)^2,na.rm=T)),
+              Score = sqrt(mean((gross_log - pS)^2,na.rm=T)),
+              Combined = sqrt(mean((gross_log - pC)^2,na.rm=T))) %>%
+    bind_rows(bsRes)
+}
+```
+
+---
+
+# ASIDE: alternative `code`
+
+- `sample_n()` and `anti_join()`
+
+```{r}
+set.seed(123)
+bsRes <- NULL
+for(i in 1:100) {
+  train <- mv %>%
+    sample_n(size = round(nrow(.)*.8),replace = F)
+  test <- mv %>%
+    anti_join(train) #<<
+
+  mB <- lm(gross_log ~ budget_log,train)
+  mS <- lm(gross_log ~ score,train)
+  mC <- lm(gross_log ~ budget_log + score,train)
+  
+  bsRes <- test %>%
+    mutate(pB = predict(mB,newdata = test),
+           pS = predict(mS,newdata = test),
+           pC = predict(mC,newdata = test)) %>%
+    summarise(Budget = sqrt(mean((gross_log - pB)^2,na.rm=T)),
+              Score = sqrt(mean((gross_log - pS)^2,na.rm=T)),
+              Combined = sqrt(mean((gross_log - pC)^2,na.rm=T))) %>%
+    bind_rows(bsRes) 
+}
+```
+
+---
+
+# Why RMSE?
+
+```{r}
+bsRes %>%
+  summarise_all(mean,na.rm=T)
+```
+
+---
+
+# Visualizing
+
+```{r}
+bsRes %>%
+  gather(model,rmse) %>%
+  ggplot(aes(x = rmse,y = reorder(model,rmse))) + 
+  geom_violin()
+```
+
+
+---
+
+# Categorical Data
+
+--
+
+- Thus far, only using continuous variables
+
+--
+
+- But we can do regression with categorical data too!
+
+--
+
+- The Bechdel Test: 3 questions of a movie
+
+--
+
+  1. Does it have two women in it?
+  2. Who talk to each other?
+  3. About something other than a man?
+  
+```{r}
+mv %>%
+  count(bechdel_score)
+```
+
+---
+
+# Research Question
+
+--
+
+- .blue[Do movies that pass the Bechdel Test make more money?]
+
+--
+
+  - .blue[Theory:] Women are ~50% of the population. Movies that pass the test are more appealing to women.
+  
+--
+
+  - .blue[Hypothesis:] Movies that pass the test make more money.
+  
+--
+
+- .red[Wrangling:] Let's turn the `bechdel_score` variable into a binary
+
+```{r}
+mv <- mv %>%
+  mutate(bechdel_bin = ifelse(bechdel_score == 3,1,0)) %>%
+  mutate(bechdel_factor=recode_factor(bechdel_bin,
+                                      `1`="Pass",
+                                      `0`="Fail",
+                                      ))
+```
+
+---
+
+# Regression
+
+--
+
+- We can add the binary factor to our regression
+
+```{r}
+summary(lm(gross_log ~ bechdel_factor,mv))
+```
+
+---
+
+# Regression
+
+- Coefficient is positive
+
+--
+
+- What is the interpretation?
+
+--
+
+  - Movies that fail make more money...
+  
+--
+
+  - ...than what?
+  
+--
+
+  - Movies that pass the Bechdel Test
+  
+--
+
+- Categorical variables are **always interpreted in relation to the hold-out category**!
+
+---
+
+# Regression
+
+- Movies that fail the test make more money!?
+
+--
+
+- **REMEMBER**: Correlation $\neq$ causation
+
+--
+
+  - What might explain this pattern?
+  
+--
+
+  - Budgets in a sexist Hollywood!
+  
+--
+
+  - Movies that fail the test get larger budgets
+  
+--
+
+  - Budgets are positively associated with gross
+  
+--
+
+- So we want to "control" for budget by adding it to our regression
+
+```{r}
+mBechCtrl <- lm(gross_log ~ budget_log + bechdel_factor,mv)
+```
+
+---
+
+# Regression
+
+```{r}
+summary(mBechCtrl)
+```
+
+---
+
+# Regression
+
+- Our hypothesis is supported!
+
+--
+
+- What about non-binary categorical variables?
+
+```{r}
+mv %>%
+  count(rating)
+```
+
+---
+
+# Categorical
+
+- Let's first remove rarely-occurring ratings
+
+```{r}
+mvAnalysis <- mv %>%
+  filter(!rating %in% c('Approved','TV-14','TV-MA','TV-PG','X'))
+```
+
+---
+
+# Categorical
+
+```{r}
+summary(lm(gross_log ~ rating,mvAnalysis))
+```
+
+---
+
+# Categorical
+
+- Everything makes less money than the hold-out category!
+
+--
+
+  - "G"-rated movies are powered by children
+  
+--
+
+- What if we wanted to compare to a different reference category?
+
+```{r}
+mvAnalysis <- mvAnalysis %>%
+  mutate(rating = factor(rating,
+                         levels = c('R','PG-13','PG','G','Not Rated')))
+
+mRating2 <- lm(gross_log ~ rating,mvAnalysis)
+```
+
+---
+
+# Categorical
+
+```{r}
+summary(mRating2)
+```
+
+---
+
+# Cross Validation
+
+- This is why `sample_n()` is useful
+
+```{r,warning = F}
+set.seed(123)
+rmseRes_rating <- NULL
+for(i in 1:100) {
+  train <- mvAnalysis %>%
+    group_by(rating) %>%
+    sample_n(size = round(n()*.8),replace = F)
+  test <- mvAnalysis %>% anti_join(train)
+  
+  m <- lm(gross_log ~ rating,train)
+  rmseRes_rating <- test %>%
+    mutate(preds = predict(m,newdata = test)) %>%
+    summarise(rmse = sqrt(mean((gross_log - preds)^2,na.rm=T))) %>%
+    bind_rows(rmseRes_rating)
+}
+rmseRes_rating %>%
+  summarise(rmse = mean(rmse))
+```
+
+---
+
+# Quiz & Homework
+
+- Go to Brightspace and take the **12th** quiz
+
+--
+
+  - The password to take the quiz is #### <!-- `r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Study for midterm!

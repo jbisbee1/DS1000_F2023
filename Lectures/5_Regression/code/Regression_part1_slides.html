@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Regression</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Regression
+]
+.subtitle[
+## Part 1
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/10/11
+Slides Updated: 2023-09-30
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Modeling Conditional Variation
+
+2. Adding Regression to the **Process**
+
+3. Introducing the Data
+
+4. Demonstrating Regressions
+
+---
+
+# Regression &amp; Conditional Analysis
+
+--
+
+- Recall our discussion of **conditional** analysis
+
+--
+
+  - Conditional &amp;rarr; **depends on**
+  
+--
+
+  - Analyze with **conditional means**
+  
+---
+
+# Reminder of the **Process**
+
+--
+
+1. Determine variable **type**
+
+--
+
+  - I.e., categorical (ordered, unordered, binary) or continuous
+  
+  - In `R` terms: `chr`, `fct` for categorical, `dbl` for continuous
+  
+--
+
+2. Type informs **univariate analysis**
+
+--
+
+  - I.e., histograms for continuous, barplots for categorical
+  
+--
+
+3. Combination of types informs **conditional analysis**
+
+--
+
+  - Categorical X Categorical: proportions by categories (`geom_bar`)
+  
+  - Binary X Continuous: histograms by categories (`geom_histogram` / `geom_density`)
+  
+  - Categorical X Continuous: distributions by categories (`geom_boxplot` / `geom_violin`)
+  
+  - Continuous X Continuous: scatter plots (`geom_point`)
+  
+---
+
+# What is regression?
+
+--
+
+- Conditional means for continuous data
+
+--
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+---
+
+# What is regression?
+
+- People with hourly wages &lt; $20 spend ~$50 on entertainment per week
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+---
+
+# What is regression?
+
+- People with hourly wages &gt; $40 spend ~$95 on entertainment per week
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+---
+
+# What is regression?
+
+- .blue[Theory]: the more you earn, the more you spend
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+---
+
+# What is regression?
+
+- But **conditional means** make a lot of mistakes. Can we do better?
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+
+---
+
+# What is regression?
+
+- But **conditional means** make a lot of mistakes. Can we do better?
+
+&lt;center&gt;&lt;img src="figs/condmean_reg.png" width = 45%&gt;&lt;/center&gt;
+
+
+---
+
+# Regression
+
+--
+
+- Calculating a **line** that minimizes mistakes *for every observation*
+
+--
+
+  - NB: could be a curvey line! For now, just assume straight
+  
+--
+
+- Recall from geometry how to graph a straight line
+
+--
+
+- `\(Y = a + bX\)`
+
+  - `\(a\)`: the "intercept" (where the line intercepts the y-axis)
+  - `\(b\)`: the "slope" (how much `\(Y\)` changes for each increase in `\(X\)`)
+
+--
+
+- (Data scientists use `\(\alpha\)` and `\(\beta\)` instead of `\(a\)` and `\(b\)` b/c nerds)
+
+--
+
+- Regression analysis simply chooses the best line
+
+--
+
+  - "Best"?
+
+--
+
+  - The line that minimizes the mistakes (the **line of best fit**)
+
+---
+
+# Visual Intuition
+
+&lt;center&gt;&lt;img src="./figs/raw.png" width = 70%&gt;&lt;/center&gt;
+
+
+---
+
+# Visual Intuition
+
+&lt;center&gt;&lt;img src="./figs/regression-line.gif" width = 70%&gt;&lt;/center&gt;
+
+---
+
+# Regression
+
+--
+
+- The line is .blue[substantively meaningful]
+
+--
+
+- Red line on scatter plot of spending and wages: `\(Y = 12 + 2*X\)`
+
+--
+
+- `\(\alpha\)` tells us the value of `\(Y\)` when `\(X\)` is zero
+
+--
+
+  - People who don't make any money spend $12 per week on entertainment
+  
+--
+
+- `\(\beta\)` tells us how much `\(Y\)` increases for each additional `\(X\)`
+
+--
+
+  - People spend an additional $2 per week for each additional $1 in hourly wages
+  
+---
+
+# Regression
+
+- These are called **"linear models"**
+
+--
+
+  - **Not** because the line is straight (it might not be)
+  
+  - but because the components are additive ( `\(\alpha + \beta X\)` )
+  
+--
+
+- Can extend to multiple predictors ( `\(X\)` 's)
+
+--
+
+  - `\(Y = \alpha + \beta_1 X_1 + \beta_2 X_2 + \dots + \varepsilon\)`
+  
+--
+
+  - `\(X_1\)` might be wages and `\(X_2\)` might be age (for example)
+  
+--
+
+  - The final term `\(\varepsilon\)` measures how bad our mistakes are
+  
+---
+
+# Regression
+
+--
+
+- Let's demonstrate with the `debt` data
+
+
+```r
+require(tidyverse)
+
+debt &lt;- readRDS('../data/sc_debt.Rds')
+
+glimpse(debt)
+```
+
+```
+## Rows: 2,546
+## Columns: 16
+## $ unitid         &lt;int&gt; 100654, 100663, 100690, 100706, 100…
+## $ instnm         &lt;chr&gt; "Alabama A &amp; M University", "Univer…
+## $ stabbr         &lt;chr&gt; "AL", "AL", "AL", "AL", "AL", "AL",…
+## $ grad_debt_mdn  &lt;int&gt; 33375, 22500, 27334, 21607, 32000, …
+## $ control        &lt;chr&gt; "Public", "Public", "Private", "Pub…
+## $ region         &lt;chr&gt; "Southeast", "Southeast", "Southeas…
+## $ preddeg        &lt;chr&gt; "Bachelor's", "Bachelor's", "Associ…
+## $ openadmp       &lt;int&gt; 2, 2, 1, 2, 2, 2, 1, NA, 2, 2, 2, 1…
+## $ adm_rate       &lt;dbl&gt; 0.9175, 0.7366, NA, 0.8257, 0.9690,…
+## $ ccbasic        &lt;int&gt; 18, 15, 20, 16, 19, 15, 2, 22, 18, …
+## $ sat_avg        &lt;int&gt; 939, 1234, NA, 1319, 946, 1261, NA,…
+## $ md_earn_wne_p6 &lt;int&gt; 25200, 35100, 30700, 36200, 22600, …
+## $ ugds           &lt;int&gt; 5271, 13328, 365, 7785, 3750, 31900…
+## $ costt4_a       &lt;int&gt; 23053, 24495, 14800, 23917, 21866, …
+## $ selective      &lt;dbl&gt; 0, 0, NA, 0, 0, 0, NA, NA, 0, 0, 0,…
+## $ research_u     &lt;dbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+```
+
+---
+
+# Research Camp
+
+- .blue[Research Question]: What is the relationship between SAT scores and median future earnings?
+
+--
+
+- .blue[Theory]: Students with higher SAT scores work harder and have learned more. Employers reward these attributes with higher wages in the private market.
+
+--
+
+- .blue[Hypothesis]: The relationship between SAT scores and future earnings should be positive.
+
+--
+
+  - **NB**: Important caveats to this simplistic theory!
+  
+--
+
+  - Socioeconomic status: predicts both higher SAT scores and higher wages
+  
+--
+
+  - **Correlation `\(\neq\)` Causation**
+  
+---
+
+# Set Up
+
+- Linking .blue[Theory] to .red[Data]
+
+--
+
+- Our SAT scores are theorized to explain future earnings
+
+--
+
+  - Thus the SAT scores are the independent / explanatory / predictor variable `\(X\)`
+  
+  - And earnings are the dependent / outcome variable `\(Y\)`
+
+---
+
+# Regression
+
+- There is a simple recipe to follow
+
+--
+
+- And it is exactly how the syllabus for the class is designed!
+
+--
+
+  1. Look at your data to identify **missingness**
+  
+  2. **Univariate** visualization of your variables
+  
+  3. **Multivariate** visualization of your variables
+  
+  4. **Regression** (today)
+  
+  5. Evaluation of **errors** (next lecture)
+
+---
+
+# Step 1: Look
+
+- Why worry about **missingness**?
+
+--
+
+1. **Substantive:** external validity
+
+2. **Technical:** cross validation won't work! (Wednesday's lecture)
+
+--
+
+
+```r
+summary(debt %&gt;% select(sat_avg,md_earn_wne_p6))
+```
+
+```
+##     sat_avg     md_earn_wne_p6  
+##  Min.   : 737   Min.   : 10600  
+##  1st Qu.:1053   1st Qu.: 26100  
+##  Median :1119   Median : 31500  
+##  Mean   :1141   Mean   : 33028  
+##  3rd Qu.:1205   3rd Qu.: 37400  
+##  Max.   :1557   Max.   :120400  
+##  NA's   :1317   NA's   :240
+```
+
+---
+
+# Step 2: Univariate Viz
+
+- Why visualize both `\(Y\)` and `\(X\)`?
+
+--
+
+1. **Substantive:** *See* which units you are talking about
+
+2. **Technical:** Adjust for *skew*
+
+---
+
+# Step 2: Univariate Viz
+
+- Why visualize both `\(Y\)` and `\(X\)`?
+
+
+```r
+debt %&gt;%
+  ggplot(aes(x = sat_avg)) + 
+  geom_histogram()
+```
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 2: Univariate Viz
+
+- Why visualize both `\(Y\)` and `\(X\)`?
+
+
+```r
+debt %&gt;%
+  ggplot(aes(x = md_earn_wne_p6)) + 
+  geom_histogram()
+```
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 3: Multivariate 
+
+- Eyeball the relationship first!
+
+--
+
+
+```r
+debt %&gt;%
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6)) + 
+  geom_point()
+```
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 3: Multivariate Viz
+
+- Adding regression line
+
+
+```r
+debt %&gt;%
+  ggplot(aes(x = sat_avg,y = md_earn_wne_p6)) + 
+  geom_point() + geom_smooth(method = 'lm',se = F)
+```
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 3: Multivariate Viz
+
+- Let's focus on two schools
+
+
+```r
+toplot &lt;- debt %&gt;%
+  mutate(hl = ifelse(unitid %in% c(100654,179265),'hl','none')) # Choosing two examples
+p2 &lt;- toplot %&gt;%
+  ggplot(aes(x = sat_avg, y = md_earn_wne_p6,color = hl,group = 1,alpha = hl)) + 
+  geom_point(data = toplot %&gt;% filter(hl == 'none')) + 
+  geom_point(data = toplot %&gt;% filter(hl == 'hl'),size =3) + 
+  scale_alpha_manual(values = c(1,.3)) + 
+  scale_color_manual(values = c('red','black')) + 
+  geom_smooth(method = 'lm',se = F) + 
+  theme(legend.position = 'none') + 
+  labs(title = "Graduate Earnings and SAT Scores",
+       subtitle = "By School",
+       x = "Average SAT Score",
+       y = "Median Earnings of Grads")
+```
+
+---
+
+# Step 3: Multivariate Viz
+
+- Adding regression line
+
+
+```r
+p2
+```
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 3: Multivariate Viz
+
+- Defining `\(\varepsilon\)`
+
+
+```r
+p3 &lt;- toplot %&gt;%
+  ggplot(aes(x = sat_avg, y = md_earn_wne_p6,color = hl,group = 1,alpha = hl)) + 
+  geom_point(data = toplot %&gt;% filter(hl == 'none')) + 
+  geom_point(data = toplot %&gt;% filter(hl == 'hl'),size =3) + 
+  scale_alpha_manual(values = c(1,.3)) + 
+  scale_color_manual(values = c('red','black')) + 
+  geom_smooth(method = 'lm',se = F) + 
+  annotate(geom = 'segment',
+           x = toplot %&gt;% filter(hl == 'hl') %&gt;% .$sat_avg,
+           y = toplot %&gt;% filter(hl == 'hl') %&gt;% .$md_earn_wne_p6,
+           xend = toplot %&gt;% filter(hl == 'hl') %&gt;% .$sat_avg,
+           yend = c(27500,41000),color = 'red',lwd = 1.2) + 
+  theme(legend.position = 'none') + 
+  labs(title = "Graduate Earnings and SAT Scores",
+       subtitle = "By School",
+       x = "Average SAT Score",
+       y = "Median Earnings of Grads")
+```
+
+---
+
+# Step 3: Multivariate Viz
+
+- Measuring errors
+
+
+```r
+p3
+```
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# The Data Scientist's Trade-off
+
+--
+
+- Those mistakes seem pretty big!
+
+--
+
+- Why not use a curvier line?
+
+
+
+---
+
+# The Data Scientist's Trade-off
+
+- Those mistakes seem pretty big!
+
+- Why not use a curvier line?
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The Data Scientist's Trade-off
+
+- Those mistakes seem pretty big!
+
+- Why not use a curvier line?
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The Data Scientist's Trade-off
+
+- Those mistakes seem pretty big!
+
+- Why not use a curvier line?
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The Data Scientist's Trade-off
+
+- Those mistakes seem pretty big!
+
+- Why not use a curvier line?
+
+&lt;img src="Regression_part1_slides_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# The Data Scientist's Trade-off
+
+--
+
+- Want to **reduce complexity**
+
+--
+
+- But also want to be **accurate**
+
+--
+
+- What is the right answer?
+
+--
+
+  - It depends on your .blue[theory] and the .red[data]
+  
+--
+
+  - It is context-dependent
+  
+--
+
+- And this is still only using *linear regression models*!
+
+--
+
+  - This is a deep area of study, for those interested
+  
+
+---
+
+# Step 4: Regression
+
+- Introducing the `lm(formula,data)` function
+
+--
+
+- Two inputs to care about:
+
+--
+
+  - `formula`: Code for `\(Y = \alpha + \beta X\)`
+  
+  - `data`: What is the data we are using?
+  
+- `formula` is written as `Y ~ X`
+
+--
+
+  - `R` will calculate `\(\alpha\)` and `\(\beta\)` for us
+  
+  - Just need to tell it what is `\(Y\)` (`md_earn_wne_p6`) and `\(X\)` (`sat_avg`)
+  
+  - The tilde (`~`) is `R`'s version of the equals sign
+  
+--
+
+- Save the model to an object
+
+
+```r
+model_earn_sat &lt;- lm(formula = md_earn_wne_p6 ~ sat_avg,data = debt)
+```
+
+---
+
+# Step 4: Interpretation
+
+- What is in this object?
+
+--
+
+- The regression results! Look at them with `summary()`
+
+
+```r
+summary(model_earn_sat)
+```
+
+```
+## 
+## Call:
+## lm(formula = md_earn_wne_p6 ~ sat_avg, data = debt)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -23239  -4311   -852   2893  78695 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -12053.87    1939.80  -6.214 7.12e-10 ***
+## sat_avg         42.60       1.69  25.203  &lt; 2e-16 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7594 on 1196 degrees of freedom
+##   (1348 observations deleted due to missingness)
+## Multiple R-squared:  0.3469,	Adjusted R-squared:  0.3463 
+## F-statistic: 635.2 on 1 and 1196 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Step 4: Interpretation
+
+- Starting with the first column called `Estimate`
+
+--
+
+- 1st Row `(Intercept)` is `\(\alpha\)`: the predicted value of `\(Y\)` when `\(X\)` is zero
+
+--
+
+  - Schools with average SAT scores of 0 produce graduates who earn -$12,053.87
+  
+  - Sensible?
+  
+--
+
+- 2nd Row `sat_avg` is the `\(\beta\)`: the increase in `\(Y\)` when `\(X\)` increases by one
+
+--
+
+  - For each unit increase in the average SAT score, recent graduates earn $42.60 more
+  
+  - Sensible?
+  
+---
+
+# Step 4: Interpretation
+
+- Other 3 columns?
+
+--
+
+  - `Std. Error` is the "standard error"
+  
+  - `t value` is the "t-statistic"
+  
+  - `Pr(&gt;|t|)` is the "p-value"
+  
+--
+
+- t-statistic = Estimate / standard error
+
+- p-value = function(t-statistic)
+
+--
+
+  - Only really need to remember the p-value for this course
+  
+  - This is 1 minus confidence
+  
+  - The lower the p-value, the more confident we are that the `Estimate` is not zero
+  
+---
+
+# Step 4: Interpretation
+
+
+```r
+summary(model_earn_sat)
+```
+
+```
+## 
+## Call:
+## lm(formula = md_earn_wne_p6 ~ sat_avg, data = debt)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -23239  -4311   -852   2893  78695 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -12053.87    1939.80  -6.214 7.12e-10 ***
+## sat_avg         42.60       1.69  25.203  &lt; 2e-16 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7594 on 1196 degrees of freedom
+##   (1348 observations deleted due to missingness)
+## Multiple R-squared:  0.3469,	Adjusted R-squared:  0.3463 
+## F-statistic: 635.2 on 1 and 1196 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Another Example
+
+- We will come back to the RMSE next class
+
+--
+
+- For now, let's try with a different research question!
+
+--
+
+- .blue[What is the relationship between admissions and future earnings?]
+
+--
+
+  - .blue[Theory]: More selective schools are more prestigious
+
+  - .blue[Hypothesis]: There should be a negative relationship between the admissions rate and future earnings
+  
+---
+
+# Do It Together!
+
+1. Look at the data and acknowledge missingness
+
+2. Univariate visualization of `\(X\)` and `\(Y\)`
+
+3. Multivariate visualization of `\(X\)` and `\(Y\)`
+
+4. Regression
+
+---
+
+# Quiz &amp; Homework
+
+- Go to Brightspace and take the **10th** quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 3326 --&gt;
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Regression_part1_hw.Rmd
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

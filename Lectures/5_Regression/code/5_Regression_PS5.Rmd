@@ -1,0 +1,179 @@
+---
+title: "Problem Set 5"
+subtitle: "Regression"
+author: "[YOUR NAME]"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-02-24"
+output:
+  html_document: default
+---
+
+```{r,include=F}
+knitr::opts_chunk$set(error=TRUE)
+```
+
+
+## Getting Set Up
+
+Open `RStudio` and create a new RMarkDown file (`.Rmd`) by going to `File -> New File -> R Markdown...`.
+Accept defaults and save this file as `[LAST NAME]_ps5.Rmd` to your `code` folder.
+
+Copy and paste the contents of this file into your `[LAST NAME]_ps5.Rmd` file. Then change the `author: [YOUR NAME]` (line 4) to your name.
+
+All of the following questions should be answered in this `.Rmd` file. There are code chunks with incomplete code that need to be filled in. 
+
+This problem set is worth 10 total points, plus five extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Unlike the first two problem sets, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
+
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/02/24.
+
+**Good luck!**
+
+## Question 0
+Require `tidyverse` and load the [`mv.Rds`](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/data/mv.Rds?raw=true') data to an object called `movies`. (Tip: use the `read_rds()` function with the link to the raw data.)
+```{r}
+#https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true')
+```
+
+
+## Question 1 [1 point]
+In this problem set, we will answer the following research question: do movies that score higher among audiences (`score`) make more money (`gross`). First, write out a **theory** that answers this question and transform it into a **hypothesis**. 
+
+> Write 2 to 3 sentences here.
+
+## Question 2 [1 point]
+Based on your theory, which variable is the $X$ variable (i.e., the independent variable or the predictor)? Which variable is the $Y$ variable (i.e., the dependent variable or the outcome)? Use **univariate** visualization to create two plots, one for each variable. Do you need to apply a log-transformation to either of these variables? Why?
+
+```{r}
+# INSERT CODE HERE
+```
+
+> Write 2 to 3 sentences here.
+
+## Question 3 [2 points]
+Now create a multivariate visualization of these two variables, making sure to put the independent variable on the x-axis and the dependent variable on the y-axis. Add the line of best fit. Make sure to log the data if you determined this was necessary in the previous question! Does the visualization support your hypothesis?
+
+```{r}
+# INSERT CODE HERE
+```
+
+> Write 1 to 2 sentences here.
+
+## Question 4 [2 points]
+Now estimate the regression using the `lm()` function. Describe the output of the model in English, talking about the intercept, the slope, and the statistical significance.
+
+```{r}
+movies_analysis <- movies %>%
+  mutate(log_gross = ) %>% # Create the logged version of gross
+  drop_na() # Drop missing values for both the X and Y variables
+
+model_gross_score <- lm(formula = , # Write the regression formula here
+                        data = movies_analysis)
+
+summary(model_gross_score)
+```
+
+
+> Write 3 to 4 sentences here.
+
+## Question 5 [2 points]
+Now calculate the model's prediction errors and create both a univariate and multivariate visualization of them. Based on these analyses, would you say that your model does a good job predicting how much money a movie makes? **Make sure to reference both the univariate and multivariate visualization of the errors!**
+
+```{r}
+movies_analysis <- movies_analysis %>%
+  mutate(preds = ) %>% # Add the predicted values from the model as its own column called "preds"
+  mutate(errors = ) # Calculate the errors as Y - predicted Y
+
+# Univariate
+movies_analysis %>%
+  ggplot(aes()) + # Visualize the errors
+  geom_...() + # Choose the best geom_... for this data
+  geom_vline() + # Add a vertical dashed line at zero
+  labs(title = '', # Write clear labels for the title, subtitle, and axes
+       subtitle = '',
+       x = '',
+       y = '')
+
+# Multivariate
+movies_analysis %>%
+  ggplot(aes()) + # Visualize the audience score and the model's errors 
+  geom_...() + # Choose the best geom_... for this data
+  geom_smooth() + # Add a line of best fit (this can be curvey)
+  geom_hline() + # Add a horizontal dashed line at zero
+  labs(title = '', # Write clear labels for the title, subtitle, and axes
+       subtitle = '',
+       x = '',
+       y = '')
+```
+
+> Write 3 to 6 sentences here.
+
+## Question 6 [2 points]
+Calculate the RMSE in the full data. Then calculate the RMSE using 100-fold cross validation with an 80-20 split and take the average of the 100 estimates. Which value is larger? Why?
+
+```{r}
+# RMSE Full Data
+movies_analysis %>%
+  mutate() %>% # Calculate the squared errors
+  summarise() %>% # Calculate the mean squared errors
+  mutate() # Calculate the square root of the mean squared errors
+
+# RMSE 100-fold CV
+set.seed(123)
+cvRes <- NULL # Instantiate an empty object to store data from the loop
+for(i in 1:100) { # Loop 100 times
+  inds <- sample(x = , # Sample from the row numbers of the movies_analysis dataframe
+                 size = , # Set the size to be 80% of the total rows (don't forget to round()!)
+                 replace = ) # Sample WITHOUT replacement
+  
+  train <- movies_analysis %>% slice() # Use the 80% to get the training data
+  test <- movies_analysis %>% slice() # Drop the 80% to get the test data
+  
+  m <- lm(formula = , # Write the regression formula here
+          data = ) # Train the model on the train data
+  
+  test$preds <- predict() # Generate predicted values from the model
+  
+  e <- # Calculate the errors as the true Y minus the predicted Y
+  se <-  # Square the errors
+  mse <- # Take the mean of the squared errors
+  rmse <- # Take the square root of the mean of the squared errors
+  cvRes <- c() # Append the rmse to the cvRes object
+} 
+
+mean(cvRes) # Calculate the average RMSE from 100-fold cross validation
+```
+
+> Write 2 to 4 sentences here.
+
+## Question 7 [5 EC Points]
+Using the same process as described in the preceding questions, answer the following research question: "Do movies that have a higher Bechdel Score (`bechdel_score`) make more money (`gross`)?" Make sure to include:
+
+* A theory and hypothesis (write-up required: 2 to 3 sentences)
+* Univariate AND multivariate visualizations of both the $X$ and $Y$ variables (no write-up required)
+* A regression model using the `lm()` function (write-up required)
+* Univariate and multivariate visualizations of the errors (write-up required: 2 to 3 sentences)
+* Analysis of RMSE using 100-fold cross validation with an 80-20 split (no write-up required)
+
+> THEORY: Write 2 to 3 sentences here.
+
+```{r}
+# INSERT CODE FOR UNIVARIATE VISUALIZATION HERE
+
+# INSERT CODE FOR MULTIVARIATE VISUALIZATION HERE
+
+# INSERT CODE TO PREPARE THE DATA FOR ANALYSIS HERE
+
+# INSERT CODE TO ESTIMATE THE REGRESSION HERE
+```
+
+> REGRESSION INTERPRETATION: Write 2 to 3 sentences here
+
+```{r}
+# INSERT CODE TO VISUALIZE THE ERRORS HERE
+
+# CALCULATE THE FULL RMSE HERE
+
+# CALCULATE THE CV RMSE HERE
+```
+
+

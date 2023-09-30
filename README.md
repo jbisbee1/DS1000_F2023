@@ -164,6 +164,12 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 ### Tentative Spreadsheet
 ![spreadsheet](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/figs/syllabus.png)
 
+### Interactive Table (TEST)
+
+| Date | Lecture | DOW | Learning Goal | Problem Sets | Homeworks | Quizzes |
+| ----: | :-----: | :----: | ------------- | :-------: | :-------: | :------: |
+| 23-Aug-23 | Intro to Data Science Part 1 | Wed | Scientific method, camps of analysis | Pset 0 | | |
+
 ### Lecture Notes, Data and Code for Each Topic 
 Each lecture's materials will be released according to the following schedule:
 * Lecture Slides (PDF/html): Published the evening of the date of the class. PDFs can be downloaded. html slides can be viewed online.
@@ -291,7 +297,6 @@ Lecture Content (2023/10/02): Multivariate Part 2.b - Visualizations of multiple
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.html#1)
 * [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3003097/View)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_9_notes.Rmd)
 * Homework (due 2023/10/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_hw.Rmd)
 * **Problem Set 4 (due 2023-10-06 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4.Rmd)
 [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4_AK.pdf)
@@ -299,12 +304,10 @@ Lecture Content (2023/10/02): Multivariate Part 2.b - Visualizations of multiple
 Lecture Content (2023/10/04): Multivariate Part 3 - Uncertainty and bootstrapping
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_10_notes.Rmd)
 * Homework (due 2023/10/09): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
 
 
 **Review Session (2023/10/09): Review of Uni & Multivariate section.**
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Review_notes_02_15_2023.Rmd)
 * Homework (due 2023/10/11): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
 
 *[Back to ToC](#table-of-contents)*
@@ -315,28 +318,24 @@ Lecture Content (2023/10/04): Multivariate Part 3 - Uncertainty and bootstrappin
 Lecture Content (2023/10/11): Regression Part 1 - The concept of a linear regression
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part1_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_20_2023.Rmd)
 * Homework (due 2023/10/16): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_hw.Rmd)
 
 
 Lecture Content (2023/10/16): Regression Part 2 - Interpreting model output and evaluating performance
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part2_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_22_2023.Rmd)
 * Homework (due 2023/10/18): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_hw.Rmd)
 * **Problem Set 5 (due 2023-10-23 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5_AK.Rmd)
 
 Lecture Content (2023/10/18): Regression Part 3 - Multiple regression and categorical predictors
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part3_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_27_2023.Rmd)
 * Practice Problem Set: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_Practice_PSset.Rmd)
 
 ### 6\. Midterm Exam
 
 **Review Session (2023/10/23): Review of first half of semester.**
 * Previous Midterm: [F2022](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/DS1000_F2022_midterm_exam_AK.pdf)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/midterm_review_notes.Rmd)
 * [Midterm Exam](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/DS1000_midterm.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/6_Midterm/code/DS1000_midterm_AK.Rmd)
 
 
@@ -349,24 +348,20 @@ Lecture Content (2023/10/18): Regression Part 3 - Multiple regression and catego
 Lecture Content (2023/10/30): Classification Part 1 - The concept of a logistic Classification
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_20_2023.Rmd)
 * Homework (due 2023/11/01): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_parts_1_and_2_hw.Rmd)
 * **Problem Set 6 (due 2023-11-03 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS6.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS6_AK.Rmd)
 
 Lecture Content (2023/11/01): Classification Part 2 - Interpreting model output and evaluating performance
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part2_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_22_2023.Rmd)
 * Homework (due 2023/11/06): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part3_hw.Rmd)
 
 Lecture Content (2023/11/06): Classification Part 3 - Using models for prediction
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part3_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_27_2023.Rmd)
 * **Problem Set 7 (due 2023-11-10 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS7.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS7_AK.Rmd)
 
 **Review Session (2023/11/08): Review of Classification section.**
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/lecture_notes_03_29_2023.Rmd)
 * Homework (due 2023/11/13): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part1_hw.Rmd)
 
 *[Back to ToC](#table-of-contents)*
@@ -376,14 +371,12 @@ Lecture Content (2023/11/06): Classification Part 3 - Using models for predictio
 Lecture Content (2023/11/13): Clustering & NLP Part 1 - *k*-means clustering
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part1_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_03_2023.Rmd)
 * Homework (due 2023/11/15): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part1_hw.Rmd)
 * **Problem Set 8 (due 2023-11-17 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8.Rmd); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8_AK.Rmd)
 
 Lecture Content (2023/11/15): Clustering & NLP Part 2 - *k*-means clustering on text
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part2_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_05_2023.Rmd)
 * Homework (due 2023/11/27): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part2_hw.Rmd)
 
 
@@ -394,14 +387,12 @@ Lecture Content (2023/11/15): Clustering & NLP Part 2 - *k*-means clustering on 
 Lecture Content (2023/11/27): Clustering & NLP Part 3 - Sentiment analysis
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_10_2023.Rmd)
 * Homework (due 2023/11/29): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part3_hw.Rmd)
 * **Problem Set 9 (due 2023-12-01 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8.Rmd); [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_PS8_AK.Rmd)
 
 
 **Review Session (2023/11/29): Review of Clustering section.**
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/lecture_notes_04_12_2023.Rmd)
 
 *[Back to ToC](#table-of-contents)*
 
@@ -410,7 +401,6 @@ Lecture Content (2023/11/27): Clustering & NLP Part 3 - Sentiment analysis
 Lecture Content (2023/12/04): Ethics in data science
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/9_Advanced_Topics/code/Ethics_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/9_Advanced_Topics/code/Ethics_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/9_Advanced_Topics/code/lecture_notes_04_19_2023.Rmd)
 
 *[Back to ToC](#table-of-contents)*
 
