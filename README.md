@@ -162,7 +162,7 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 ## Syllabus
 
 | Date | Lecture | Learning Goal | Psets<br />(due Friday) | HW<br />(due next class) | Quiz<br />(in class) |
-| ----: | :-----: | ------------ | :-------: | :-------: | :------: |
+| ----: | :----- | ------------ | :-------: | :-------: | :------: |
 | 8/23 | [Intro 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1)<br />[Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2953333/View) | Scientific method, analytic camps | [Pset 0](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf) | | |
 | 8/28 | [Intro 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.html#1)<br />[Recording 1](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2967884/View), [2](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/2967883/View) | ChatGPT and Data Science | | [HW #1](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd) | Quiz 1 |
 | 8/30 | BREAK |  | | | |
