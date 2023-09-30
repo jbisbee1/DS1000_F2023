@@ -3,7 +3,7 @@ title: "Multivariate Analysis"
 subtitle: "Part 3: Uncertainty"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/02/13\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/10/04\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -1238,4 +1238,15 @@ p
   
   1. Work through Multivariate_Analysis_part3_hw.Rmd (regression!)
   
-  2. Problem Set 4 (on Brightspace)
+  2. Finish Problem Set 4 (on Brightspace)
+
+
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Multivariate_Analysis_part3_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

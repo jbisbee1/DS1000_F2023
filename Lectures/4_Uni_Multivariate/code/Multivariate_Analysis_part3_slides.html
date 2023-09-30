@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Multivariate Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Multivariate Analysis
+]
+.subtitle[
+## Part 3: Uncertainty
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/10/04
+Slides Updated: 2023-09-30
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Uncertainty
+
+2. More NBA data
+
+3. Bootstrap Sampling
+
+4. Applied to Polls
+
+---
+
+# The Missing Ingrediant
+
+--
+
+- Thus far we have:
+
+--
+
+  1. Tested whether **selective** schools have **higher SAT scores**: .blue[Yes]
+  
+  2. Tested Trump's theory that **polls were biased against him**: .blue[No]
+  
+  3. Tested whether RDD polls **contact more Trump supporters**: .blue[No]
+  
+  4. Tested whether state polls **accurately predicted the president**: .blue[No]
+  
+--
+
+- We want to do more than say "Yes" or "No" when answering a .blue[Research Question] or making a .red[Prediction]
+
+--
+
+- We want to express our **confidence**
+
+---
+
+# What is "confidence"?
+
+- In frequentist statistics:
+
+--
+
+  - How often your conclusion would be correct if you were able to run an "experiment" many times
+
+--
+
+  - How often your conclusion would be correct if you were able to observe the world many times
+  
+--
+
+- .blue[Research Question]: Are NBA players from Tennessee better at shooting free throws than players from UVA?
+
+--
+
+  - .blue[Theory]: ??
+  
+  - .blue[Hypothesis]: ??
+  
+--
+
+- .red[Analysis]: compare `pctFT` by `org`
+  
+---
+
+# NBA Example
+
+
+```r
+require(tidyverse)
+```
+
+```r
+nba &lt;- read_rds('../data/nba_players_2018.Rds')
+glimpse(nba %&gt;% select(org,pctFT))
+```
+
+```
+## Rows: 530
+## Columns: 2
+## $ org   &lt;fct&gt; Texas, NA, Other, FC Barcelona Basquet, Kent…
+## $ pctFT &lt;dbl&gt; 0.847, 0.700, 0.500, 0.923, 0.735, 0.667, 0.…
+```
+
+---
+
+# Look
+
+
+```r
+summary(nba %&gt;% select(pctFT,org))
+```
+
+```
+##      pctFT                            org     
+##  Min.   :0.0000   Other                 : 85  
+##  1st Qu.:0.6515   Kentucky              : 25  
+##  Median :0.7500   Duke                  : 17  
+##  Mean   :0.6968   California-Los Angeles: 15  
+##  3rd Qu.:0.8180   Kansas                : 11  
+##  Max.   :1.0000   (Other)               :220  
+##                   NA's                  :157
+```
+
+---
+
+# Visualize: Univariate `\(Y\)`
+
+
+```r
+nba %&gt;%
+  ggplot(aes(x = pctFT)) + 
+  geom_density()
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Visualize: Univariate `\(X\)`
+
+
+```r
+nba %&gt;%
+  count(org) %&gt;%
+  ggplot(aes(x = n,y = reorder(org,n))) + 
+  geom_bar(stat = 'identity')
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Visualize: Multivariate
+
+- Option #1: `summarise()` data prior to plotting
+
+
+```r
+nba %&gt;%
+  filter(org %in% c('Tennessee','Virginia')) %&gt;%
+* group_by(org) %&gt;% summarise(meanFT = mean(pctFT,na.rm=T)) %&gt;%
+  ggplot(aes(x = org,y = meanFT)) + 
+  geom_bar(stat = 'identity')
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Visualize: Multivariate
+
+- Option #2: plot raw data
+
+
+```r
+nba %&gt;%
+  filter(org %in% c('Tennessee','Virginia')) %&gt;%
+  ggplot(aes(x = org,y = pctFT)) + 
+  geom_boxplot()
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# Uncertainty
+
+--
+
+- Are players from Tennessee **better** at free throws than players from UVA?
+
+--
+
+- Big philosophical step back
+
+--
+
+  - We live in a stochastic universe!
+  
+&lt;center&gt;&lt;img src="http://marcosagarcia.com/project/stochastic/featured.jpg" width=60%&gt;&lt;/center&gt;
+
+---
+
+# Uncertainty
+
+- Are players from Tennessee **better** at free throws than players from UVA?
+
+--
+
+- Populations versus samples
+  
+--
+
+  - Intro stats: uncertainty due to **sample**
+  
+---
+
+# Uncertainty
+
+- Big philosophical step back
+
+  - We live in a stochastic universe!
+  
+- What does **better** mean?
+
+--
+
+  - .blue[Theory]: An innate quality in greater abundance
+  
+--
+
+  - .blue[Prediction]: If we had to bet on who scores more FTs, who do we choose?
+  
+--
+
+- How **confident** would we be with this bet?
+
+---
+
+# Uncertainty
+
+- If the universe is inherently stochastic, we are inherently uncertain
+
+--
+
+  - We THINK UT players are better FT shooters, but not 100% certain
+  
+--
+
+- How to measure this?
+
+--
+
+  - Run 100 experimental seasons
+  
+--
+
+  - Record FT percentage for players from UVA and UT for each season
+  
+--
+
+  - Calculate how many times UT players have a better percentage than UVA players
+  
+--
+
+- 90 seasons out of 100 &amp;rarr; 90% confident / certainty
+
+--
+
+- 100 seasons out of 100 &amp;rarr; 100%?
+
+--
+
+- **FUNDAMENTAL STOCHASTIC NATURE OF REALITY (FSNoR)**
+
+---
+
+# Uncertainty
+
+--
+
+- Running 100 experimental seasons is impossible
+
+--
+
+  1. We are not Adam Silver
+  2. Even if we were Adam Silver, 100 seasons = a century of basketball!
+  
+--
+
+&lt;center&gt;&lt;img src="figs/no-country-for-old-men.jpg" width = 100%&gt;&lt;/center&gt;
+
+
+---
+
+# Uncertainty
+
+- Running 100 experimental seasons is impossible
+
+  1. We are not Adam Silver
+  2. Even if we were Adam Silver, 100 seasons = a century of basketball!
+  3. If we were God? 100 seasons with the same players?
+  
+--
+
+- *STILL wouldn't be 100% certain due to **FSNoR***
+
+--
+
+  - (**F**undamental **S**tochastic **N**ature **o**f **R**eality)
+
+---
+
+# Uncertainty
+
+--
+
+- But we are data scientists
+
+--
+
+- Take 1 season of basketball but sample it randomly
+
+--
+
+- **Bootstrap sampling**
+
+--
+
+- .blue[Theory]: By mimicking the sampling process, we can simulate a God experiment
+
+--
+
+  - (NB: this goes much deeper. Uncertainty from bootstrap combines FSNoR + sampling uncertainty.)
+  
+--
+
+- .red[Practice]: `sample_n()` + `for()` loops
+
+---
+
+# Bootstrap Demo Step 1
+
+- One randomly sampled player via `sample_n(size,replace)`
+
+--
+
+  - `size`: how many samples (from 1 to all observations)
+  
+  - `replace`: whether to put the sample back (`TRUE` or `FALSE`)
+
+
+```r
+set.seed(123) # Ensure we can reproduce results exactly
+
+nba %&gt;%
+  sample_n(size = 1,replace = T) %&gt;% select(namePlayer,slugSeason,slugTeam,pctFT)
+```
+
+```
+## # A tibble: 1 × 4
+##   namePlayer    slugSeason slugTeam pctFT
+##   &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt;
+## 1 Moritz Wagner 2018-19    LAL      0.811
+```
+
+---
+
+# Bootstrap Demo Step 2
+
+- Two randomly sampled players
+
+
+```r
+set.seed(123)
+nba %&gt;%
+  sample_n(size = 1,replace = T) %&gt;% select(namePlayer,slugSeason,slugTeam,pctFT)
+```
+
+```
+## # A tibble: 1 × 4
+##   namePlayer    slugSeason slugTeam pctFT
+##   &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt;
+## 1 Moritz Wagner 2018-19    LAL      0.811
+```
+
+```r
+nba %&gt;%
+  sample_n(size = 1,replace = T) %&gt;% select(namePlayer,slugSeason,slugTeam,pctFT)
+```
+
+```
+## # A tibble: 1 × 4
+##   namePlayer slugSeason slugTeam pctFT
+##   &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt;
+## 1 Sam Dekker 2018-19    LAC      0.609
+```
+
+---
+
+# Bootstrap Demo Step 2
+
+- OR two randomly sampled players
+
+
+```r
+set.seed(123)
+
+nba %&gt;%
+  sample_n(size = 2,replace = T) %&gt;% select(namePlayer,slugSeason,slugTeam,pctFT)
+```
+
+```
+## # A tibble: 2 × 4
+##   namePlayer    slugSeason slugTeam pctFT
+##   &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt;
+## 1 Moritz Wagner 2018-19    LAL      0.811
+## 2 Sam Dekker    2018-19    LAC      0.609
+```
+
+
+---
+
+# Bootstrap Demo Step 3
+
+- Randomly sample all players: `size = nrow(nba)` (or `nrow(.)`)
+
+
+
+```r
+set.seed(123)
+
+nba %&gt;%
+  sample_n(size = nrow(nba),replace = T) %&gt;% # Same as nrow(.)
+  select(namePlayer,slugSeason,slugTeam,pctFT)
+```
+
+```
+## # A tibble: 530 × 4
+##    namePlayer        slugSeason slugTeam pctFT
+##    &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt;
+##  1 Moritz Wagner     2018-19    LAL      0.811
+##  2 Sam Dekker        2018-19    LAC      0.609
+##  3 Joe Harris        2018-19    BKN      0.827
+##  4 Jonas Valanciunas 2018-19    LAL      0.795
+##  5 John Holland      2018-19    CLE      0    
+##  6 Angel Delgado     2018-19    LAC      0.5  
+##  7 Donovan Mitchell  2018-19    UTA      0.806
+##  8 Damian Jones      2018-19    GSW      0.649
+##  9 Luke Kornet       2018-19    NYK      0.826
+## 10 Justin Anderson   2018-19    ATL      0.743
+## # … with 520 more rows
+```
+
+---
+
+# Bootstrap Demo Step 4
+
+- Linking to **confidence**: Do we draw the same conclusion twice?
+
+
+```r
+set.seed(123)
+
+# Bootstrapped Season #1
+bsSeason1 &lt;- nba %&gt;%
+  sample_n(size = nrow(.),replace = T) %&gt;%
+  select(org,pctFT) %&gt;%
+  mutate(bsSeason = 1)
+
+# Bootstrapped Season #2
+bsSeason2 &lt;- nba %&gt;%
+  sample_n(size = nrow(.),replace = T) %&gt;%
+  select(org,pctFT) %&gt;%
+  mutate(bsSeason = 2)
+```
+
+---
+
+# Bootstrap Demo Step 4
+
+- Linking to **confidence**: Do we draw the same conclusion twice?
+
+
+```r
+bsSeason1 %&gt;%
+  filter(org %in% c('Tennessee','Virginia')) %&gt;%
+  group_by(org) %&gt;%
+  summarise(mean_FT = mean(pctFT))
+```
+
+```
+## # A tibble: 2 × 2
+##   org       mean_FT
+##   &lt;fct&gt;       &lt;dbl&gt;
+## 1 Tennessee   0.866
+## 2 Virginia    0.785
+```
+
+```r
+bsSeason2 %&gt;%
+  filter(org %in% c('Tennessee','Virginia')) %&gt;%
+  group_by(org) %&gt;%
+  summarise(mean_FT = mean(pctFT))
+```
+
+```
+## # A tibble: 2 × 2
+##   org       mean_FT
+##   &lt;fct&gt;       &lt;dbl&gt;
+## 1 Tennessee   0.866
+## 2 Virginia    0.799
+```
+
+---
+
+# Bootstrap Demo Step 5
+
+- Want to do this 100 times!
+
+--
+
+- Use a `for()` loop to make it cleaner
+
+--
+
+- A `for()` loop repeats the same code multiple times
+
+--
+
+  - Benefit: don't need to copy and paste a chunk of code 100 times
+  
+  - Just put a chunk of code in a loop that repeats 100 times!
+
+
+```r
+set.seed(123) # Ensure you'll get the same results each time
+bsSeasons &lt;- NULL # Instantiate empty object
+for(bsSeason in 1:100) { # Repeat 100 times
+  tmpSeason &lt;- nba %&gt;%
+    sample_n(size = nrow(.),replace = T) %&gt;% # Sample the data
+    select(org,pctFT) %&gt;% # Select variables of interest
+    mutate(bsSeasonNumber = bsSeason) # Save the simulation ID
+  bsSeasons &lt;- bind_rows(bsSeasons,tmpSeason) # Append to the empty object!
+}
+```
+
+
+---
+
+# Bootstrap to measure Confidence
+
+--
+
+- Compare UVA and UT's FT percentages in each season
+
+
+```r
+bsSeasons %&gt;%
+  filter(grepl('Tennessee|^Virginia',org)) %&gt;%
+  group_by(bsSeasonNumber,org) %&gt;%
+  summarise(mean_ftp = mean(pctFT),.groups = 'drop')
+```
+
+```
+## # A tibble: 188 × 3
+##    bsSeasonNumber org       mean_ftp
+##             &lt;int&gt; &lt;fct&gt;        &lt;dbl&gt;
+##  1              1 Tennessee    0.866
+##  2              1 Virginia     0.785
+##  3              2 Tennessee    0.866
+##  4              2 Virginia     0.799
+##  5              3 Tennessee    0.816
+##  6              3 Virginia     0.827
+##  7              4 Tennessee    0.847
+##  8              4 Virginia     0.852
+##  9              5 Tennessee    0.852
+## 10              5 Virginia     0.836
+## # … with 178 more rows
+```
+
+---
+
+# Bootstrap to measure Confidence
+
+- Compare UVA and UT's FT percentages in each season
+
+
+```r
+bsSeasons %&gt;%
+  filter(grepl('Tennessee|^Virginia',org)) %&gt;%
+  group_by(bsSeasonNumber,org) %&gt;%
+  summarise(mean_ftp = mean(pctFT),.groups = 'drop') %&gt;%
+* spread(org,mean_ftp)
+```
+
+```
+## # A tibble: 100 × 3
+##    bsSeasonNumber Tennessee Virginia
+##             &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1              1     0.866    0.785
+##  2              2     0.866    0.799
+##  3              3     0.816    0.827
+##  4              4     0.847    0.852
+##  5              5     0.852    0.836
+##  6              6     0.866    0.771
+##  7              7     0.861   NA    
+##  8              8     0.842   NA    
+##  9              9     0.863    0.836
+## 10             10     0.833    0.743
+## # … with 90 more rows
+```
+
+---
+
+# Bootstrap + `filter()`
+
+- We are missing an observation for Virginia in the 7th simulated season!
+
+--
+
+- Why?
+
+--
+
+  - Just bad luck...didn't get any players in that sample
+  
+--
+
+- Could ignore, or could `filter()` the data prior to bootstrapping
+
+---
+
+# Bootstrap + `filter()`
+
+
+```r
+*nbaTNVA &lt;- nba %&gt;% filter(org %in% c('Tennessee','Virginia'))
+set.seed(123)
+bsSeasons &lt;- NULL
+for(counter in 1:100) {
+* tmpSeason &lt;- nbaTNVA %&gt;%
+    sample_n(size = nrow(.),replace = T) %&gt;%
+    select(org,pctFT) %&gt;%
+    mutate(bsSeasonNumber = counter)
+  
+  bsSeasons &lt;- bind_rows(bsSeasons,tmpSeason)
+}
+
+nrow(bsSeasons)
+```
+
+```
+## [1] 600
+```
+
+
+---
+
+# Bootstrap to measure Confidence
+
+- Compare UVA and UT's FT percentages in each season
+
+
+```r
+bsSeasons %&gt;%
+  group_by(bsSeasonNumber,org) %&gt;%
+  summarise(mean_ftp = mean(pctFT),.groups = 'drop') %&gt;%
+* spread(org,mean_ftp) %&gt;%
+  filter(complete.cases(.)) %&gt;%
+  mutate(TNWin = ifelse(Tennessee &gt; Virginia,1,0))
+```
+
+```
+## # A tibble: 95 × 4
+##    bsSeasonNumber Tennessee Virginia TNWin
+##             &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  1              1     0.866    0.878     0
+##  2              2     0.848    0.785     1
+##  3              3     0.861    0.830     1
+##  4              4     0.830    0.810     1
+##  5              5     0.844    0.833     1
+##  6              6     0.841    0.833     1
+##  7              7     0.830    0.810     1
+##  8              8     0.863    0.833     1
+##  9              9     0.841    0.805     1
+## 10             10     0.863    0.810     1
+## # … with 85 more rows
+```
+
+---
+
+# Bootstrap to measure Confidence
+
+- Compare UVA and UT's FT percentages in each season
+
+
+```r
+(conf &lt;- bsSeasons %&gt;%
+  group_by(bsSeasonNumber,org) %&gt;%
+  summarise(mean_ftp = mean(pctFT),.groups = 'drop') %&gt;%
+  spread(org,mean_ftp) %&gt;%
+  filter(complete.cases(.)) %&gt;%
+  mutate(TNWin = ifelse(Tennessee &gt; Virginia,1,0)) %&gt;%
+  summarise(TNWin = mean(TNWin)))
+```
+
+```
+## # A tibble: 1 × 1
+##   TNWin
+##   &lt;dbl&gt;
+## 1 0.674
+```
+
+--
+
+- TN beats UVA 67.4% of the time! (How much do you bet on next season?)
+
+---
+
+# Other ways to use bootstraps
+
+- Could plot the **distributions** for each school
+
+
+```r
+bsSeasons %&gt;%
+  group_by(org,bsSeasonNumber) %&gt;%
+  summarise(mean_FT = mean(pctFT)) %&gt;%
+  ggplot(aes(x = mean_FT,fill = org)) + 
+  geom_density(alpha = .3)
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Other ways to use bootstraps
+
+- Could plot the **distributions** of the "estimate"
+
+
+```r
+p &lt;- bsSeasons %&gt;%
+  group_by(org,bsSeasonNumber) %&gt;%
+  summarise(mean_FT = mean(pctFT)) %&gt;%
+  spread(key = org,value = mean_FT) %&gt;%
+  mutate(estimate = Tennessee - Virginia) %&gt;%
+  ggplot(aes(x = estimate)) + 
+  geom_density(alpha = .3) + 
+  geom_vline(xintercept = 0,linetype = 'dashed')
+```
+
+---
+
+# Other ways to use bootstraps
+
+- Could plot the **distributions** of the "estimate"
+
+
+```r
+p
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Where to calculate the "estimate"
+
+- **First** we created a new dataset of 100 simulated seasons
+
+--
+
+- **Then** we calculate average FT % for TN and UVA for each simulation
+
+--
+
+- **Finally** we calculate proportion of times average is higher for TN
+
+--
+
+- **BUT!** It is equally valid to calculate the "estimate" *within* the `for()` loop
+
+
+```r
+set.seed(123)
+bsRes &lt;- NULL
+for(counter in 1:100) {
+  tmpEst &lt;- nbaTNVA %&gt;%
+    sample_n(size = nrow(.),replace = T) %&gt;%
+    group_by(org) %&gt;%
+*   summarise(mean_FT = mean(pctFT,na.rm=T)) %&gt;%
+    mutate(bsSeason = counter)
+  
+  bsRes &lt;- bind_rows(bsRes,tmpEst)
+}
+```
+
+---
+
+# Where to calculate the "estimate"
+
+
+```r
+bsRes %&gt;%
+  ggplot(aes(x = mean_FT,fill = org)) + 
+  geom_density(alpha = .3)
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Where to calculate the "estimate"
+
+
+```r
+bsRes %&gt;%
+  spread(org,mean_FT) %&gt;%
+  mutate(TNWin = Tennessee - Virginia) %&gt;%
+  ggplot(aes(x = TNWin)) + 
+  geom_density(alpha = .3) + 
+  geom_vline(xintercept = 0,linetype = 'dashed')
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Where to calculate the "estimate"
+
+- Same confidence measure
+
+
+```r
+bsRes %&gt;%
+  spread(key = org,value = mean_FT) %&gt;%
+  mutate(TNWin = ifelse(Tennessee &gt; Virginia,1,0)) %&gt;%
+  summarise(confidence = mean(TNWin,na.rm=T))
+```
+
+```
+## # A tibble: 1 × 1
+##   confidence
+##        &lt;dbl&gt;
+## 1      0.674
+```
+
+---
+
+# Interpreting Confidence
+
+- **Is this high?**
+
+--
+
+  - What value reflects the minimum confidence?
+  
+--
+
+  - A coin flip &amp;rarr; 50%
+  
+--
+
+- What does a confidence level of 0.1 (or 10%) mean?
+
+--
+
+  - We are 90% confident that Virginia is better!
+
+---
+
+# Other Applications
+
+- Could do the same to express **confidence** in conclusions about:
+
+--
+
+  - The relationship between SAT scores and selective admissions
+  
+  - The relationship between MSM polls and anti-Trump bias
+  
+  - Whether state polls are good at predicting the 2020 president
+
+---
+
+# Other NBA Data
+
+--
+
+- Download and load the [`game_summary.Rds`](https://github.com/jbisbee1/DSCI1000/blob/main/Lectures/Topic5_UnivariateDescription/data/game_summary.Rds) data
+
+
+```r
+gms &lt;- readRDS('../data/game_summary.Rds')
+gms
+```
+
+```
+## # A tibble: 7,380 × 16
+##      idGame yearSe…¹ dateGame   idTeam nameT…² locat…³   tov
+##       &lt;dbl&gt;    &lt;int&gt; &lt;date&gt;      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt;
+##  1 21600001     2017 2016-10-25 1.61e9 Clevel… H          14
+##  2 21600001     2017 2016-10-25 1.61e9 New Yo… A          18
+##  3 21600002     2017 2016-10-25 1.61e9 Portla… H          12
+##  4 21600002     2017 2016-10-25 1.61e9 Utah J… A          11
+##  5 21600003     2017 2016-10-25 1.61e9 Golden… H          16
+##  6 21600003     2017 2016-10-25 1.61e9 San An… A          13
+##  7 21600004     2017 2016-10-26 1.61e9 Miami … A          10
+##  8 21600004     2017 2016-10-26 1.61e9 Orland… H          11
+##  9 21600005     2017 2016-10-26 1.61e9 Dallas… A          15
+## 10 21600005     2017 2016-10-26 1.61e9 Indian… H          16
+## # … with 7,370 more rows, 9 more variables: pts &lt;dbl&gt;,
+## #   treb &lt;dbl&gt;, oreb &lt;dbl&gt;, pctFG &lt;dbl&gt;, pctFT &lt;dbl&gt;,
+## #   teamrest &lt;dbl&gt;, second_game &lt;lgl&gt;, isWin &lt;lgl&gt;,
+## #   ft_80 &lt;dbl&gt;, and abbreviated variable names
+## #   ¹​yearSeason, ²​nameTeam, ³​locationGame
+```
+
+---
+
+# Other NBA Data
+
+- Contains data on every game played between 2016 and 2019
+
+--
+
+
+```r
+gms %&gt;%
+  ggplot(aes(x = dateGame)) +
+  geom_bar(stat = 'count')
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Other NBA Data
+
+
+```r
+glimpse(gms)
+```
+
+```
+## Rows: 7,380
+## Columns: 16
+## $ idGame       &lt;dbl&gt; 21600001, 21600001, 21600002, 2160000…
+## $ yearSeason   &lt;int&gt; 2017, 2017, 2017, 2017, 2017, 2017, 2…
+## $ dateGame     &lt;date&gt; 2016-10-25, 2016-10-25, 2016-10-25, …
+## $ idTeam       &lt;dbl&gt; 1610612739, 1610612752, 1610612757, 1…
+## $ nameTeam     &lt;chr&gt; "Cleveland Cavaliers", "New York Knic…
+## $ locationGame &lt;chr&gt; "H", "A", "H", "A", "H", "A", "A", "H…
+## $ tov          &lt;dbl&gt; 14, 18, 12, 11, 16, 13, 10, 11, 15, 1…
+## $ pts          &lt;dbl&gt; 117, 88, 113, 104, 100, 129, 108, 96,…
+## $ treb         &lt;dbl&gt; 51, 42, 34, 31, 35, 55, 52, 45, 49, 5…
+## $ oreb         &lt;dbl&gt; 11, 13, 5, 6, 8, 21, 16, 15, 10, 8, 1…
+## $ pctFG        &lt;dbl&gt; 0.4833077, 0.3220769, 0.4310000, 0.51…
+## $ pctFT        &lt;dbl&gt; 0.7500000, 0.8055000, 1.0000000, 1.00…
+## $ teamrest     &lt;dbl&gt; 120, 120, 120, 120, 120, 120, 120, 12…
+## $ second_game  &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FA…
+## $ isWin        &lt;lgl&gt; TRUE, FALSE, TRUE, FALSE, FALSE, TRUE…
+## $ ft_80        &lt;dbl&gt; 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+```
+
+---
+
+# Codebook
+
+| Name         |                                          Description |
+|--------------|-----------------------------------------------------:|
+| idGame       |                                       Unique game id |
+| yearSeason   | Which season? NBA uses ending year so 2016-17 = 2017 |
+| dateGame     |                                     Date of the game |
+| idTeam       |                                       Unique team id |
+| nameTeam     |                                            Team Name |
+| locationGame |                        Game location, H=Home, A=Away |
+| tov          |                                      Total turnovers |
+| pts          |                                         Total points |
+| treb         |                                       Total rebounds |
+| pctFG        |                                Field Goal Percentage |
+| teamrest     |               How many days since last game for team |
+| pctFT        |                                Free throw percentage |
+| isWin        |                                   Won? TRUE or FALSE |
+| ft_80        |      Team scored more than 80 percent of free throws |
+
+---
+
+# Codebook
+
+--
+
+- Which of these are categorical? Which are continuous?
+
+--
+
+  - Remember the **process**!
+  
+--
+
+- `isWin` as an ordered binary
+
+
+```r
+gms %&gt;%
+  count(isWin)
+```
+
+```
+## # A tibble: 2 × 2
+##   isWin     n
+##   &lt;lgl&gt; &lt;int&gt;
+## 1 FALSE  3690
+## 2 TRUE   3690
+```
+
+---
+
+# Codebook
+
+- The same number for wins and losses?
+  
+
+```r
+gms %&gt;%
+  select(idGame,nameTeam,dateGame,locationGame,isWin) %&gt;% head()
+```
+
+```
+## # A tibble: 6 × 5
+##     idGame nameTeam               dateGame   locatio…¹ isWin
+##      &lt;dbl&gt; &lt;chr&gt;                  &lt;date&gt;     &lt;chr&gt;     &lt;lgl&gt;
+## 1 21600001 Cleveland Cavaliers    2016-10-25 H         TRUE 
+## 2 21600001 New York Knicks        2016-10-25 A         FALSE
+## 3 21600002 Portland Trail Blazers 2016-10-25 H         TRUE 
+## 4 21600002 Utah Jazz              2016-10-25 A         FALSE
+## 5 21600003 Golden State Warriors  2016-10-25 H         FALSE
+## 6 21600003 San Antonio Spurs      2016-10-25 A         TRUE 
+## # … with abbreviated variable name ¹​locationGame
+```
+
+--
+
+- Each row is a **team-game** pair
+
+--
+
+  - I.e., the Cavs hosted the Knicks on October 25, 2016 and won!
+  
+---
+
+# The Knicks
+
+&lt;center&gt;&lt;img src="https://miro.medium.com/max/1215/1*SeZTaMMhZbrG6zV5wTzLqg.gif" width = 100%&gt;&lt;/center&gt;
+
+---
+
+# .blue[Science]
+
+--
+
+- What predicts winning?
+
+--
+
+  - Points? (more is better)
+  - Turnovers? (less is better)
+  - Rebounds? (more is better)
+  
+--
+
+- How confident are we?
+
+
+```r
+gms %&gt;%
+  group_by(isWin) %&gt;%
+  summarise(avgTO = mean(tov))
+```
+
+```
+## # A tibble: 2 × 2
+##   isWin avgTO
+##   &lt;lgl&gt; &lt;dbl&gt;
+## 1 FALSE  13.9
+## 2 TRUE   13.1
+```
+
+---
+
+# Turnovers and Winning
+
+--
+
+- On average, winning teams have ~1 fewer turnover than losing teams
+
+--
+
+- FSNoR: is this *always* the case?
+
+
+```r
+gms %&gt;%
+  filter(yearSeason == 2017) %&gt;%
+  group_by(isWin) %&gt;%
+  summarise(avgTO = mean(tov))
+```
+
+```
+## # A tibble: 2 × 2
+##   isWin avgTO
+##   &lt;lgl&gt; &lt;dbl&gt;
+## 1 FALSE  13.8
+## 2 TRUE   12.9
+```
+
+---
+
+# Turnovers and Winning
+
+- On average, winning teams have ~1 fewer turnover than losing teams
+
+- FSNoR: is this *always* the case?
+
+
+```r
+gms %&gt;%
+  filter(yearSeason == 2018) %&gt;%
+  group_by(isWin) %&gt;%
+  summarise(avgTO = mean(tov))
+```
+
+```
+## # A tibble: 2 × 2
+##   isWin avgTO
+##   &lt;lgl&gt; &lt;dbl&gt;
+## 1 FALSE  14.1
+## 2 TRUE   13.3
+```
+
+---
+
+# Turnovers and Winning
+
+- On average, winning teams have ~1 fewer turnover than losing teams
+
+- FSNoR: is this *always* the case?
+
+
+```r
+gms %&gt;%
+  group_by(isWin,yearSeason) %&gt;%
+  summarise(avgTO = mean(tov)) %&gt;%
+  spread(isWin,avgTO,sep = '_')
+```
+
+```
+## `summarise()` has grouped output by 'isWin'. You can
+## override using the `.groups` argument.
+```
+
+```
+## # A tibble: 3 × 3
+##   yearSeason isWin_FALSE isWin_TRUE
+##        &lt;int&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+## 1       2017        13.8       12.9
+## 2       2018        14.1       13.3
+## 3       2019        13.9       13.1
+```
+
+
+---
+
+# Turnovers and Winning
+
+- On average, winning teams have ~1 fewer turnover than losing teams
+
+- FSNoR: is this *always* the case?
+
+--
+
+  - Not literally (numbers change)
+
+--
+
+  - But practically?
+  
+- How **confident** are we in making this claim?
+
+--
+
+  - In each season, the average turnovers of winning teams are roughly 1 lower than the average turnovers of losing teams
+  
+--
+
+  - Use **bootstrap sampling** to express this more concretely!
+  
+
+---
+
+# Looping
+
+
+```r
+set.seed(20220921)
+bs_tov &lt;- NULL
+for(i in 1:1000) {
+  bs_tov &lt;- gms %&gt;%
+    sample_n(size = 100,replace = T) %&gt;%
+    group_by(isWin) %&gt;%
+    summarise(avgTO = mean(tov)) %&gt;%
+    bind_rows(bs_tov)
+}
+bs_tov %&gt;% head()
+```
+
+```
+## # A tibble: 6 × 2
+##   isWin avgTO
+##   &lt;lgl&gt; &lt;dbl&gt;
+## 1 FALSE  14.1
+## 2 TRUE   13.4
+## 3 FALSE  15.0
+## 4 TRUE   12.6
+## 5 FALSE  14.0
+## 6 TRUE   12.8
+```
+
+---
+
+# Bootstrapped Estimates vs Data
+
+
+```r
+bs_tov %&gt;%
+  group_by(isWin) %&gt;%
+  summarise(bs_est = mean(avgTO))
+```
+
+```
+## # A tibble: 2 × 2
+##   isWin bs_est
+##   &lt;lgl&gt;  &lt;dbl&gt;
+## 1 FALSE   13.9
+## 2 TRUE    13.1
+```
+
+```r
+gms %&gt;%
+  group_by(isWin) %&gt;%
+  summarise(data_est = mean(tov))
+```
+
+```
+## # A tibble: 2 × 2
+##   isWin data_est
+##   &lt;lgl&gt;    &lt;dbl&gt;
+## 1 FALSE     13.9
+## 2 TRUE      13.1
+```
+
+---
+
+# Bootstrapped Estimates vs Data
+
+--
+
+- They're identical!
+
+--
+
+  - In .blue[theory], bootstrapped samples converge on true values
+  
+--
+
+  - ...where "true" is the full data
+  
+--
+
+- So then why bother with bootstrapping?
+
+--
+
+- **Uncertainty!**
+
+---
+
+# Plot Distributions of Bootstraps
+
+
+```r
+bs_tov %&gt;%
+  ggplot(aes(x = avgTO,fill = isWin)) + 
+  geom_density(alpha = .3)
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-40-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Generalizability
+
+--
+
+- What if we only used one season?
+
+--
+
+  - Do we think our conclusions would "generalize" (i.e., apply to) other seasons?
+
+--
+
+  - For example, is the turnover-win relationship the same in the 2017 season as the 2018 season?
+  
+--
+
+  - What about the 2019 season?
+  
+--
+
+  - Why or why not?
+  
+--
+
+- Demonstrate using the 2017 data
+
+---
+
+# Generalizability
+
+- Bootstrap + `group_by`
+
+
+```r
+bsRes &lt;- NULL
+
+for(i in 1:500) {  # Only 500 simulations this time
+  bsRes &lt;- gms %&gt;%
+    group_by(yearSeason) %&gt;% #&lt;&lt; Group by the season
+    sample_n(size = 100,replace = T) %&gt;% #&lt;&lt; Get 100 observations per season
+    group_by(yearSeason,isWin) %&gt;% #&lt;&lt; Then calculate mean tov by season AND win
+    summarise(avgTO = mean(tov,na.rm=T),.groups = 'drop') %&gt;%
+    ungroup() %&gt;%
+    mutate(bsInd = i) %&gt;%
+    bind_rows(bsRes)
+  
+}
+```
+
+---
+
+# Plotting the results
+
+
+```r
+bsRes %&gt;%
+  ggplot(aes(x = avgTO)) + 
+  geom_density(alpha = .3)
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-42-1.png" style="display: block; margin: auto;" /&gt;
+
+--
+
+- Is this answering our .blue[question]?
+
+---
+
+# Plotting the results
+
+
+```r
+bsRes %&gt;%
+  ggplot(aes(x = avgTO,fill = isWin)) + 
+  geom_density(alpha = .3)
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-43-1.png" style="display: block; margin: auto;" /&gt;
+
+- Is this answering our .blue[question]?
+
+---
+
+# Plotting the results
+
+
+```r
+bsRes %&gt;%
+  ggplot(aes(x = avgTO,fill = isWin)) + 
+  geom_density(alpha = .3) + 
+  facet_grid(yearSeason~.)
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-44-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Plotting the results
+
+
+```r
+p  &lt;- bsRes %&gt;%
+  ggplot(aes(x = avgTO,fill = isWin)) + 
+  geom_density(alpha = .3) + 
+  geom_vline(data = bsRes %&gt;%
+               group_by(yearSeason,isWin) %&gt;%
+               summarise(avgTO = mean(avgTO,na.rm=T)),
+             aes(xintercept = avgTO,color = isWin),linetype = 'dashed') + 
+  geom_text(data = bsRes %&gt;%
+               group_by(yearSeason,isWin) %&gt;%
+               summarise(avgTO = mean(avgTO,na.rm=T)),
+             aes(x = avgTO,y = Inf,label = round(avgTO,1)),hjust = 1.1,vjust = 1.1,size = 3,angle = 90) + 
+  facet_grid(yearSeason~.)
+```
+
+```
+## `summarise()` has grouped output by 'yearSeason'. You can
+## override using the `.groups` argument.
+## `summarise()` has grouped output by 'yearSeason'. You can
+## override using the `.groups` argument.
+```
+
+---
+
+# Plotting the results
+
+
+```r
+p
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-46-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Summarizing further
+
+--
+
+- We are *actually* interested in whether winning teams turnover the ball less
+
+--
+
+  - .blue[Science]: never forget your theory / hypothesis!
+  
+--
+
+- So let's actually calculate this!
+
+--
+
+- The `spread` command to create two columns
+
+
+```r
+bsRes %&gt;%
+  spread(isWin,avgTO,sep = '_') %&gt;%
+  mutate(TO_diff = isWin_FALSE - isWin_TRUE)
+```
+
+```
+## # A tibble: 1,500 × 5
+##    yearSeason bsInd isWin_FALSE isWin_TRUE TO_diff
+##         &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+##  1       2017     1        13.7       13.3   0.34 
+##  2       2017     2        13.7       13.0   0.641
+##  3       2017     3        14.1       13.6   0.546
+##  4       2017     4        13.7       12.2   1.46 
+##  5       2017     5        13.3       13.1   0.212
+##  6       2017     6        14.8       13.2   1.58 
+##  7       2017     7        13.9       12.2   1.77 
+##  8       2017     8        14.8       13.4   1.40 
+##  9       2017     9        14.9       13.3   1.55 
+## 10       2017    10        13.8       12.8   0.948
+## # … with 1,490 more rows
+```
+
+---
+
+# Generalizability
+
+
+```r
+bsRes %&gt;%
+  spread(isWin,avgTO,sep = '_') %&gt;%
+  mutate(TO_diff = isWin_FALSE - isWin_TRUE) %&gt;%
+  ggplot(aes(x = TO_diff,fill = factor(yearSeason))) + 
+  geom_density(alpha = .3)
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-48-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Comparing across seasons
+
+
+```r
+p &lt;- bsRes %&gt;%
+  spread(isWin,avgTO,sep = '_') %&gt;%
+  mutate(TO_diff = isWin_FALSE - isWin_TRUE) %&gt;%
+  ggplot(aes(x = TO_diff,group = yearSeason)) + 
+  geom_density(alpha = .3) + 
+  geom_vline(xintercept = 0) + 
+  geom_text(data = bsRes %&gt;%
+             spread(isWin,avgTO,sep = '_') %&gt;%
+             mutate(TO_diff = isWin_FALSE - isWin_TRUE) %&gt;%
+             group_by(yearSeason) %&gt;%
+             summarise(conf = mean(TO_diff &gt; 0),
+                       TO_diff = mean(TO_diff),
+                       y = .25),
+            aes(x = TO_diff,y = y,label = paste0(round(conf*100,1),'%'))) + 
+  facet_grid(yearSeason ~.)
+```
+
+---
+
+# Comparing across seasons
+
+
+```r
+p
+```
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-50-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Visualization is **DEEP**
+
+
+```r
+toplot &lt;- bsRes %&gt;%
+  spread(isWin,avgTO,sep = '_') %&gt;%
+  mutate(TO_diff = isWin_FALSE - isWin_TRUE)
+
+tmp &lt;- density(toplot$TO_diff)
+p &lt;- data.frame(x = tmp$x,y = tmp$y,
+           area = tmp$x &gt;= 0) %&gt;%
+  ggplot(aes(x = x,ymin = 0,ymax = y,fill = area)) + 
+  geom_ribbon(alpha = .6) + 
+  geom_vline(xintercept = 0,linetype = 'dashed',size = 1.1) + 
+  annotate(geom = 'text',x = mean(toplot$TO_diff),y = .25,
+           label = paste0("Losing team had\nmore turnovers in\n",round(mean(toplot$TO_diff &gt; 0),3)*100,"% of\nBootstraps"),
+           hjust = .5) + 
+  labs(title = 'Difference in Turnovers by Game Outcome',
+       subtitle = '1,000 Bootstrapped Estimates from 2016-2019 Seasons',
+       x = 'Losing Team Turnovers minus Winning Team Turnovers',
+       y = 'Density of Simulated Games') + 
+  scale_fill_manual(name = 'Who Had More Turnovers',
+                    values = c('grey60','gold'),labels = c('Winning Team','Losing Team')) + 
+  theme(panel.background = element_blank(),
+        legend.position = 'bottom')
+```
+
+```
+## Warning: Using `size` aesthetic for lines was deprecated in ggplot2
+## 3.4.0.
+## ℹ Please use `linewidth` instead.
+```
+
+
+---
+
+# Visualization is **DEEP**
+
+&lt;img src="Multivariate_Analysis_part3_slides_files/figure-html/unnamed-chunk-52-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Conclusion
+
+--
+
+- Anyone can spit stats
+
+&lt;center&gt;&lt;img src="https://imgs.xkcd.com/comics/sports.png" width=30%&gt;&lt;/center&gt;
+
+--
+
+- Data scientists are comfortable with **.blue[uncertainty]**
+
+
+---
+
+# Quiz &amp; Homework
+
+- Go to Brightspace and take the **9th** quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 7477 --&gt;
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Multivariate_Analysis_part3_hw.Rmd (regression!)
+  
+  2. Finish Problem Set 4 (on Brightspace)
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

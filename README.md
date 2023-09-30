@@ -182,7 +182,7 @@ Each lecture's materials will be released according to the following schedule:
 
 [4. Univariate & Multivariate Data Analysis](#4-univariate--multivariate-data-analysis): Sep 20 - Oct 04
 
-[5. Regression](#5-regression): Oct 06 - Oct 18
+[5. Regression](#5-regression): Oct 11 - Oct 18
 
 [6. Midterm](#6-midterm-exam): Oct 25
 

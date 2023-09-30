@@ -552,11 +552,12 @@ bsRes %>%
 ```
 
 
-```{r,message=F,echo=F,warning=F,results='hide'}
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
 dir <- getwd()
 type <- 'pdf'
-format <- 'porttrait'
+format <- 'portrait'
 f <- 'Multivariate_Analysis_part2_hw'
 
-system(paste('Rscript ../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
 ```
