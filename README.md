@@ -182,9 +182,9 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 | 10/02 | [Multivariate 2.b](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.html#1) | Visualizations of multiple variables | [Pset 4](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4.Rmd) | [HW #9](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_hw.Rmd) | Quiz 8 | 
 | 10/04 | [Multivariate 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.html#1) | Uncertainty and bootstrapping | | [HW #10](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd) | Quiz 9 | 
 | 10/9 | Review Session | | | | | 
-| 10/11 | [Regression 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Linear regression | | | Quiz 10 | 
-| 10/16 | [Regression 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Interpretation and evaluation | | | Quiz 11 | 
-| 10/18 | [Regression 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Multiple regression, categorical $X$ | | | Quiz 12 | 
+| 10/11 | [Regression 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part1_slides.html#1) | Linear regression | | | Quiz 10 | 
+| 10/16 | [Regression 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part2_slides.html#1) | Interpretation and evaluation | | | Quiz 11 | 
+| 10/18 | [Regression 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part3_slides.html#1) | Multiple regression, categorical $X$ | | | Quiz 12 | 
 | 10/23 | Review Session | | | | | 
 | 10/25 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
 | 10/30 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
