@@ -280,52 +280,57 @@ Lecture Content (2023/09/25): Multivariate Part 1 - Summaries of multiple variab
 * **Problem Set 3 (due 2023-09-29 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS3.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS3_AK.Rmd)
 
 
-Lecture Content (2023/09/27): Multivariate Part 2 - Visualizations of multiple variables
+Lecture Content (2023/09/27): Multivariate Part 2.a - Visualizations of multiple variables
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.html#1)
 * [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3003097/View)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_9_notes.Rmd)
 * Homework (due 2023/10/02): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_hw.Rmd)
 
-Lecture Content (2023/10/02): Multivariate Part 3 - Uncertainty and bootstrapping
+Lecture Content (2023/10/02): Multivariate Part 2.b - Visualizations of multiple variables
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.html#1)
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_10_notes.Rmd)
-* Homework (due 2023/10/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.html#1)
+* [Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3003097/View)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_9_notes.Rmd)
+* Homework (due 2023/10/04): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_hw.Rmd)
 * **Problem Set 4 (due 2023-10-06 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4.Rmd)
 [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/4_Uni_Multivariate_PS4_AK.pdf)
 
-**Review Session (2023/10/04): Review of Uni & Multivariate section.**
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Review_notes_02_15_2023.Rmd)
+Lecture Content (2023/10/04): Multivariate Part 3 - Uncertainty and bootstrapping
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.html#1)
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/lecture_10_notes.Rmd)
 * Homework (due 2023/10/09): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
+
+
+**Review Session (2023/10/09): Review of Uni & Multivariate section.**
+* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Review_notes_02_15_2023.Rmd)
+* Homework (due 2023/10/11): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
 
 *[Back to ToC](#table-of-contents)*
 
 
 ### 5\. Regression
 
-Lecture Content (2023/10/09): Regression Part 1 - The concept of a linear regression
+Lecture Content (2023/10/11): Regression Part 1 - The concept of a linear regression
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part1_slides.html#1)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_20_2023.Rmd)
-* Homework (due 2023/10/11): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_hw.Rmd)
-* **Problem Set 5 (due 2023-10-13 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5_AK.Rmd)
+* Homework (due 2023/10/16): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_hw.Rmd)
 
-Lecture Content (2023/10/11): Regression Part 2 - Interpreting model output and evaluating performance
+
+Lecture Content (2023/10/16): Regression Part 2 - Interpreting model output and evaluating performance
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part2_slides.html#1)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_22_2023.Rmd)
-* Homework (due 2023/10/16): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_hw.Rmd)
+* Homework (due 2023/10/18): [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_hw.Rmd)
+* **Problem Set 5 (due 2023-10-23 by 11:59PM):** [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5.Rmd); [AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5_AK.Rmd)
 
-Lecture Content (2023/10/16): Regression Part 3 - Multiple regression and categorical predictors
+Lecture Content (2023/10/18): Regression Part 3 - Multiple regression and categorical predictors
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part3_slides.html#1)
 * In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/lecture_notes_02_27_2023.Rmd)
 * Practice Problem Set: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_Practice_PSset.Rmd)
-
-**Review Session (2023/10/18): Review of Regression section.**
-* In-Class Notes: [RMD](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/review_notes_03_01_2023.Rmd)
-
 
 ### 6\. Midterm Exam
 

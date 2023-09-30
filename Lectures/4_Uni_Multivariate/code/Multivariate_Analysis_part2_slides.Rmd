@@ -3,7 +3,7 @@ title: "Multivariate Analysis"
 subtitle: "Part 2: Visualizations"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/02/08\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/10/02\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -1466,6 +1466,15 @@ statePoll %>%
 
 --
   
-  1. Work through Data_Wrangling_Part2_hw.Rmd
+  1. Work through Multivariate_Analysis_part3_hw.Rmd
   
-  2. Finish Problem Set 3 (Brightspace)
+  2. Start on Problem Set 4 (Brightspace)
+
+```{r,message=F,echo=F,warning=F,results='hide'}
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Multivariate_Analysis_part2_slides'
+
+system(paste('Rscript ../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
