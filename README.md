@@ -168,8 +168,8 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 
 | Date | Lecture | DOW | Learning Goal | Problem Sets | Homeworks | Quizzes |
 | ----: | :-----: | :----: | ------------- | :-------: | :-------: | :------: |
-| 8/23 | Intro to Data Science Part 1 | Wed | Scientific method, camps of analysis | Pset 0 | | |
-| 8/28 | Intro to Data Science Part 2 | Mon | ChatGPT and Data Science | | | Quiz 1 |
+| 8/23 | [Intro to Data Science Part 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1) | Wed | Scientific method, camps of analysis | Pset 0 | | |
+| 8/28 | Intro to Data Science Part 2 | Mon | ChatGPT and Data Science | | HW #1 | Quiz 1 |
 | 8/30 | BREAK | Wed | | | | |
 | 9/04 | Intro to `R` Part 1 | Mon | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
 
