@@ -171,7 +171,26 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 | 8/23 | [Intro 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1) | Scientific method, camps of analysis | [Pset 0](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf) | | |
 | 8/28 | [Intro 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/1_Intro_Data_Science/code/ChatGPT_and_Data_Science_slides.html#1) | ChatGPT and Data Science | | HW #1 | Quiz 1 |
 | 8/30 | BREAK |  | | | |
-| 9/04 | Intro to `R` 1 | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 9/04 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 9/06 | [Intro to `R` 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.html#1) | Visualization in `R` | | | Quiz 3 | 
+| 9/11 | [Intro to `R` 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1) | More visualization | | | Quiz 4 | 
+| 9/13 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 9/18 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 9/20 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 9/25 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 9/27 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/02 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/04 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/9 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/11 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/16 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/18 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/23 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/25 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 10/30 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 11/01 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 11/06 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
+| 11/08 | [Intro to `R` 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1) | Objects, functions, `%>%`, and `<-` | | | Quiz 2 | 
 
 ### Lecture Notes, Data and Code for Each Topic 
 Each lecture's materials will be released according to the following schedule:
