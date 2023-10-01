@@ -180,8 +180,8 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 | 10/11 | [Regression 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part1_slides.html#1)<br />[- Recording] | Linear regression | | [HW #11](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part1_hw.Rmd) | Quiz 10 | 
 | 10/16 | [Regression 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part2_slides.html#1)<br />[- Recording] | Interpretation and evaluation | [Pset 5](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5.Rmd)<br />[AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_PS5_AK.Rmd) | [HW #12](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/Regression_part2_hw.Rmd) | Quiz 11 | 
 | 10/18 | [Regression 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/5_Regression/code/Regression_part3_slides.html#1)<br />[- Recording] | Multiple regression, categorical $X$ | | [Practice](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/code/5_Regression_Practice_PSset.Rmd) | Quiz 12 | 
-| 10/23 | .red[Review Session] | | | | | 
-| 10/25 | Midterm Exam | | | | | 
+| 10/23 | Review Session | | | | | 
+| 10/25 | **Midterm Exam** | | | | | 
 | 10/30 | [Classification 1](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)<br />[- Recording] | Logistic Regression | [Pset 6](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS6.Rmd)<br />[AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS6_AK.Rmd) | [HW #13](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_parts_1_and_2_hw.Rmd) | Quiz 13 | 
 | 11/01 | [Classification 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part2_slides.html#1)<br />[- Recording] | Interpretation and evaluation | | [HW #14](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_part3_hw.Rmd) | Quiz 14 | 
 | 11/06 | [Classification 3](https://www.jamesbisbee.com/DS1000_F2023/Lectures/7_Classification/code/Classification_part3_slides.html#1)<br />[- Recording] | Prediction | [Pset 7](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS7.Rmd)<br />[AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/7_Classification/code/Classification_PS7_AK.Rmd) | [HW #15](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part1_hw.Rmd) | Quiz 15 | 
@@ -194,7 +194,7 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 | 11/29 | Review Session | | | | | 
 | 12/04 | [Ethics](https://www.jamesbisbee.com/DS1000_F2023/Lectures/9_Advanced_Topics/code/Ethics_slides.html#1)<br />[- Recording] | Ethical data science | | | Quiz 19 | 
 | 12/06 | Review Session | | | | Quiz 20 | 
-| 12/11 | Final Exam | | | | | 
+| 12/11 | **Final Exam** | | | | | 
 
 ## Helpful Resources
 
