@@ -35,7 +35,7 @@ You are free to rely on whatever resources you need to complete this problem set
 ## Question 0
 Require `tidyverse` and load the [`game_summary.rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true') data to an object called `games`. (Tip: use the `read_rds()` function with the link to the raw data.)
 ```{r}
-#LINK: https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true')
+#LINK: https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true
 ```
 
 
@@ -44,7 +44,7 @@ How points, on average, did the Boston Celtics score at home and away games in t
 ```{r}
 games %>%
   filter() %>% # Filter to the 2017 season (yearSeason) AND to the Boston Celtics (nameTeam)
-  group_by() %>% # Group by the location of the game (locatoinGame)
+  group_by() %>% # Group by the location of the game (locationGame)
   summarise() # Calculate the average points (pts)
 
 games %>%

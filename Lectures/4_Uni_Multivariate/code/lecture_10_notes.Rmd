@@ -1,0 +1,65 @@
+---
+title: "Lecture 10 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-10-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+require(haven)
+
+poll <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/4_Uni_Multivariate/data/Pres2020_PV.Rds')
+
+poll <- poll %>%
+  mutate(Trump = Trump / 100,
+         Biden = Biden / 100,
+         margin = round(Biden - Trump,2))
+
+# Wrangle prior to visualizing
+poll %>%
+  filter(Mode == 'IVR/Online' | Mode == 'Live phone - RDD') %>%
+  ggplot(aes(x = Mode)) + 
+  geom_bar()
+
+# Bivariate Relationship between Mode and Margin
+poll %>%
+  filter(Mode == 'IVR/Online' | Mode == 'Live phone - RDD') %>%
+  ggplot(aes(x = margin,color = Mode)) + 
+  geom_density()
+  # geom_histogram(position = 'dodge',bins = 10)
+
+toKeep <- poll %>%
+  count(Mode) %>%
+  filter(n > 5) %>%
+  drop_na(Mode)
+
+poll %>%
+  filter(Mode %in% toKeep$Mode) %>%
+  ggplot(aes(y = margin,x = reorder(Mode,margin))) + 
+  geom_boxplot()
+  # geom_histogram(position = 'dodge',bins = 10)
+
+# Continuous by continuous
+poll %>%
+  ggplot(aes(x = Biden,y = Trump)) + 
+  geom_point(alpha = .3) + 
+  geom_smooth(method = 'lm',se = F)
+
+poll %>%
+  ggplot(aes(x = Biden,y = Trump)) + 
+  geom_jitter() + 
+  geom_smooth(method = 'lm',se = F)
+
+poll %>%
+  group_by(Biden,Trump) %>%
+  summarise(nPolls = n()) %>%
+  ggplot(aes(x = Biden,y = Trump,size = nPolls)) + 
+  geom_point()
+
+```
+
