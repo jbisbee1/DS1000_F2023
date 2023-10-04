@@ -1,0 +1,87 @@
+---
+title: "Lecture 11 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-10-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+require(haven)
+
+poll <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/4_Uni_Multivariate/data/Pres2020_PV.Rds')
+
+glimpse(poll)
+
+poll %>%
+  filter(str_detect(StartDate,'^10|^11')) %>%
+  ggplot(aes(x = StartDate)) + 
+  geom_bar()
+
+poll %>%
+  select(StartDate)
+
+poll %>%
+  mutate(StartDate = as.Date(StartDate,format = "%m/%d/%Y")) %>%
+  ggplot(aes(x = StartDate)) + 
+  geom_bar()
+
+# First, save the as.Date() version of the StartDate
+poll <- poll %>%
+  mutate(StartDate = as.Date(StartDate,format = '%m/%d/%Y'))
+
+poll %>%
+  ggplot(aes(x = StartDate,y = Trump)) + 
+  geom_point(color = 'red') + 
+  geom_smooth(color = 'red') +
+  geom_point(aes(y = Biden),color = 'blue') + 
+  geom_smooth(color = 'blue',aes(y = Biden)) + 
+  geom_hline(yintercept = 47,color = 'red') + 
+  geom_hline(yintercept = 51,color = 'blue')
+  
+# Using the NBA data
+nba <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/4_Uni_Multivariate/data/nba_players_2018.Rds')
+
+glimpse(nba %>% select(org,pctFT))
+
+nba %>%
+  count(org) %>%
+  ggplot(aes(y = reorder(org,n),x = n)) + 
+  geom_bar(stat= 'identity')
+
+nba %>%
+  ggplot(aes(x = pctFT)) + 
+  geom_histogram()
+
+nba %>%
+  filter(str_detect(org,'Tennessee|Virginia')) %>%
+  count(org)
+
+nba %>%
+  filter(org %in% c('Tennessee','Virginia')) %>%
+  ggplot(aes(x = org,y = pctFT)) + 
+  geom_boxplot()
+
+nba %>%
+  filter(org %in% c('Tennessee','Virginia')) %>%
+  group_by(org) %>%
+  summarise(pctFT = mean(pctFT,na.rm=T))
+
+bsRes <- NULL
+for(i in 1:100) {
+bsRes <- bsRes %>%
+  bind_rows(nba %>%
+  sample_n(size = nrow(nba),replace = T) %>%
+  select(namePlayer,pctFT,org) %>%
+  filter(org %in% c('Tennessee','Virginia')) %>%
+  group_by(org) %>%
+  summarise(pctFT = mean(pctFT,na.rm=T)))
+}
+
+
+```
+
