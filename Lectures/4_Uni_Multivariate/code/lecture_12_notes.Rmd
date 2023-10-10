@@ -1,0 +1,72 @@
+---
+title: "Lecture 12 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-10-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+require(haven)
+
+nba <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/4_Uni_Multivariate/data/nba_players_2018.Rds")
+```
+
+# Bootstrapping
+
+```{r}
+set.seed(123)
+bsRes <- NULL
+for(j in 1:100) {
+  tmp <- nba %>%
+    sample_n(size = nrow(nba),replace = T) %>%
+  filter(str_detect(org,'Tennessee|^Virginia')) %>%
+  group_by(org) %>%
+  summarise(avg_ft = mean(pctFT,na.rm=T)) %>%
+    mutate(bs_index = j)
+  
+  bsRes <- bsRes %>%
+    bind_rows(tmp)
+}
+bsRes %>%
+  spread(org,avg_ft) %>%
+  mutate(winnerT = Tennessee > Virginia) %>%
+  summarise(confidence = mean(winnerT,na.rm=T))
+```
+
+# Visualizing Uncertainty
+
+```{r}
+helper <- bsRes %>%
+  group_by(org) %>%
+  summarise(avg_ft = mean(avg_ft,na.rm=T))
+
+bsRes %>%
+  ggplot(aes(x = avg_ft,fill = org)) + 
+  geom_density(alpha = .1) + 
+  geom_vline(data = helper,aes(xintercept = avg_ft,color = org),
+             linetype = 'dashed') + 
+  geom_text(data = helper,
+             aes(x = avg_ft,label = round(avg_ft,2)),
+             y = 20,angle = 90)
+```
+
+# Plotting the difference
+
+```{r}
+bsRes %>%
+  spread(org,avg_ft) %>%
+  mutate(diff = Tennessee - Virginia) %>%
+  ggplot(aes(x = diff)) + 
+  geom_density() +
+  # geom_histogram() + 
+  geom_vline(xintercept = 0,linetype = 'dashed')
+```
+
+
+
+
