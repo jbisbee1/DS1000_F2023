@@ -1,0 +1,30 @@
+---
+title: "Lecture 13 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-10-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+
+debt <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/2_Intro_to_R/data/sc_debt.Rds")
+
+
+# Introducing lm() function
+sat_earn_model <- lm(formula = md_earn_wne_p6 ~ sat_avg,
+   data = debt)
+
+summary(sat_earn_model)
+
+# Admissions and earnings
+adm_ear_model <- lm(formula = md_earn_wne_p6 ~ adm_rate,
+                    data = debt)
+
+summary(adm_ear_model)
+```
+
