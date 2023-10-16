@@ -35,7 +35,7 @@ You are free to rely on whatever resources you need to complete this problem set
 ## Question 0
 Require `tidyverse` and load the [`mv.Rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/data/mv.Rds?raw=true') data to an object called `movies`. (Tip: use the `read_rds()` function with the link to the raw data.)
 ```{r}
-#https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/4_Uni_Multivariate/data/game_summary.Rds?raw=true')
+#https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/5_Regression/data/mv.Rds?raw=true')
 ```
 
 

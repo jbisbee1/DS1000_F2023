@@ -1,0 +1,22 @@
+---
+title: "Lecture 14 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-10-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading Movie Data
+
+```{r}
+require(tidyverse)
+require(haven)
+
+mv <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/5_Regression/data/mv.Rds")
+
+mv
+```
+

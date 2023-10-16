@@ -1,0 +1,25 @@
+---
+title: "Bisbee OH 10/16/2023"
+output: html_document
+date: "2023-10-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Conditional Means
+
+```{r}
+require(tidyverse)
+
+poll <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/4_Uni_Multivariate/data/MI2020_ExitPoll_small.rds')
+
+
+poll %>%
+  mutate(biden = ifelse(PRSMI20 == 1,1,0)) %>% # This creates a dummy variable for whether the person voted for Biden
+  group_by(SEX) %>% # group_by(X)
+  summarise(pctBiden = mean(biden,na.rm=T)) # summarise(Y)
+
+```
+
