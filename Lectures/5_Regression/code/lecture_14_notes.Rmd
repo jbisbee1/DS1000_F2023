@@ -18,5 +18,62 @@ require(haven)
 mv <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/5_Regression/data/mv.Rds")
 
 mv
+
+# Visualizing X and Y
+mv %>%
+  drop_na(gross,budget) %>%
+  select(title,gross,budget) %>%
+  gather(metric,value,-title) %>%
+  arrange(title,metric) %>%
+  ggplot(aes(x = value,color = metric)) + 
+  geom_density()
+
+
+# Dealing with Skew via log()
+mv <- mv %>%
+  mutate(gross_log = log(gross),
+         budget_log = log(budget))
+
+mv %>%
+  drop_na(gross_log,budget_log) %>%
+  select(title,gross_log,budget_log) %>%
+  gather(metric,value,-title) %>%
+  arrange(title,metric) %>%
+  ggplot(aes(x = value,color = metric)) + 
+  geom_density()
+
+# Multivariate visualization
+mv %>%
+  ggplot(aes(x = budget_log,y = gross_log)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm')
 ```
+
+# Evaluating Regression model
+
+```{r}
+mv_analysis <- mv %>% drop_na(gross_log,budget_log)
+m <- lm(gross_log ~ budget_log,data = mv_analysis)
+
+mv_analysis <- mv_analysis %>%
+  mutate(predictions = predict(m))
+  
+mv_analysis <- mv_analysis %>%
+  mutate(error = gross_log - predictions)
+```
+
+# Visualizing Errors
+
+```{r}
+mv_analysis %>%
+  ggplot(aes(x = error)) + 
+  geom_histogram()
+
+# Investing $10m
+1.26 + .96*log(10000000)
+1.26 + .96*log(1e7)
+
+```
+
+
 
