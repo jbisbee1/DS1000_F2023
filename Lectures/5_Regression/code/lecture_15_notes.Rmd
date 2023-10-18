@@ -1,0 +1,119 @@
+---
+title: "Lecture 15 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-10-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading Movie Data
+
+```{r}
+require(tidyverse)
+require(haven)
+
+mv <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/5_Regression/data/mv.Rds")
+
+
+
+# Dealing with Skew via log()
+mv <- mv %>%
+  mutate(gross_log = log(gross),
+         budget_log = log(budget))
+```
+
+# Evaluating Regression model
+
+```{r}
+mv_analysis <- mv %>% drop_na(gross_log,budget_log)
+
+m <- lm(gross_log ~ budget_log,data = mv_analysis)
+
+mv_analysis <- mv_analysis %>%
+  mutate(predictions = predict(m))
+  
+mv_analysis <- mv_analysis %>%
+  mutate(error = gross_log - predictions)
+```
+
+# Visualizing Errors
+
+```{r}
+mv_analysis %>%
+  ggplot(aes(x = error)) + 
+  geom_histogram()
+
+# Investing $10m
+1.26 + .96*log(10000000)
+1.26 + .96*log(1e7)
+```
+
+# RMSE
+
+```{r}
+e <- mv_analysis$gross_log - mv_analysis$predictions
+se <- e^2
+mse <- mean(se)
+rmse <- sqrt(mse)
+
+rmse
+```
+
+
+# Cross Validation
+
+```{r}
+set.seed(123)
+
+cvRes <- NULL
+for(i in 1:50) {
+  inds <- sample(1:nrow(mv_analysis),
+               size = round(nrow(mv_analysis)*.5),
+               replace = F)
+  train <- mv_analysis %>%
+    slice(inds)
+  test <- mv_analysis %>%
+    slice(-inds)
+  
+  mBudget <- lm(gross_log ~ budget_log,train)
+  mBudgetScore <- lm(gross_log ~ budget_log + score,train)
+  
+  # Calculate RMSE
+  test$predictionsBudget <- predict(mBudget,newdata = test)
+  test$predictionsBudgetScore <- predict(mBudgetScore,newdata = test)
+  
+  # Quick way to calculate RMSE in a single line (but uglier)
+  rmseBudget <- sqrt(mean((test$gross_log - test$predictionsBudget)^2))
+  
+  # Long way to calculate RMSE in 4 lines (but cleaner)
+  e <- test$gross_log - test$predictionsBudgetScore
+  se <- e^2
+  mse <- mean(se)
+  rmseBudgetScore <- sqrt(mse)
+  
+  # Append the RMSE to the cvRes object
+  # cvRes <- c(cvRes,rmse)
+  
+  tmp <- data.frame(rmseBudget = rmseBudget,
+             rmseBudgetScore = rmseBudgetScore,
+             cvInd = i)
+  
+  cvRes <- cvRes %>%
+    bind_rows(tmp)
+}
+
+cvRes %>%
+  gather(model,rmse,-cvInd) %>%
+  ggplot(aes(x = rmse,y = model)) + 
+  geom_boxplot()
+
+cvRes %>%
+  summarise(rmseBudget = mean(rmseBudget),
+            rmseBudgetScore = mean(rmseBudgetScore))
+```
+
+
+

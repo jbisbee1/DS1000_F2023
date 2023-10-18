@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Regression</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Regression
+]
+.subtitle[
+## Part 3
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/10/18
+Slides Updated: 2023-10-17
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Recap of Movie Analysis
+
+2. Multiple Regression
+
+3. Categorical Predictors
+
+---
+
+# Recap of Movie Analysis
+
+
+```r
+require(tidyverse)
+
+mv &lt;- readRDS('../data/mv.Rds')
+```
+
+--
+
+- .blue[Theory]: the more a movie costs, the more it should make
+
+--
+
+  - If not, Hollywood would go out of business!
+  
+--
+
+- `\(X\)`: budget
+
+- `\(Y\)`: gross
+
+---
+
+# Step 1: Look
+
+
+```r
+summary(mv %&gt;% select(gross,budget))
+```
+
+```
+##      gross               budget         
+##  Min.   :7.140e+02   Min.   :     5172  
+##  1st Qu.:1.121e+07   1st Qu.: 16865322  
+##  Median :5.178e+07   Median : 37212044  
+##  Mean   :1.402e+08   Mean   : 57420173  
+##  3rd Qu.:1.562e+08   3rd Qu.: 77844746  
+##  Max.   :3.553e+09   Max.   :387367903  
+##  NA's   :3668        NA's   :4482
+```
+
+---
+
+# Step 1: Look
+
+
+```r
+mv %&gt;%
+  mutate(missing = ifelse(is.na(gross) | is.na(budget),1,0)) %&gt;%
+  group_by(year) %&gt;%
+  summarise(propMissing = mean(missing)) %&gt;%
+  ggplot(aes(x = year,y = propMissing)) + 
+  geom_line()
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Some quick wrangling
+
+
+```r
+mv &lt;- mv %&gt;%
+  drop_na(gross,budget)
+
+mv %&gt;%
+  select(gross,budget) %&gt;%
+  glimpse()
+```
+
+```
+## Rows: 3,179
+## Columns: 2
+## $ gross  &lt;dbl&gt; 73677478, 53278578, 723586629, 11490339, 62…
+## $ budget &lt;dbl&gt; 93289619, 10883789, 160147179, 6996721, 139…
+```
+
+---
+
+# Step 2: Univariate Viz
+
+
+```r
+mv %&gt;%
+  select(title,gross,budget) %&gt;%
+  gather(metric,value,-title) %&gt;%
+  ggplot(aes(x = value,color = metric)) + 
+  geom_density()
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# More Wrangling?
+
+--
+
+- Univariate visualization higlights significant **skew** in both measures
+
+--
+
+  - Most movies don't cost a lot and don't make a lot
+  
+--
+
+  - But there are a few blockbusters that pull the density way out
+  
+--
+
+- Let's **wrangle** two new variables that take the log of these skewed measures
+
+--
+
+  - Logging transforms skewed measures to more "normal" measures
+
+
+```r
+mv &lt;- mv %&gt;%
+  mutate(gross_log = log(gross),
+         budget_log = log(budget))
+```
+
+---
+
+# Step 2: Univariate Viz
+
+
+```r
+mv %&gt;%
+  select(title,gross_log,budget_log) %&gt;%
+  gather(metric,value,-title) %&gt;%
+  ggplot(aes(x = value,color = metric)) + 
+  geom_density()
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 3: Multivariate Viz
+
+
+```r
+pClean &lt;- mv %&gt;%
+  ggplot(aes(x = budget,y = gross)) + 
+  geom_point() + 
+  scale_x_log10(labels = scales::dollar) + 
+  scale_y_log10(labels = scales::dollar) + 
+  labs(title = "Movie Costs and Returns",
+       x = "Costs (logged budget)",
+       y = "Returns (logged gross)")
+```
+
+---
+
+# Step 3: Multivariate Viz
+
+
+```r
+pClean + geom_smooth(method = 'lm')
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 4: Regression!
+
+
+```r
+m &lt;- lm(gross_log ~ budget_log,data = mv)
+summary(m)
+```
+
+```
+## 
+## Call:
+## lm(formula = gross_log ~ budget_log, data = mv)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.2672 -0.6354  0.1648  0.7899  8.5599 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.26107    0.30953   4.074 4.73e-05 ***
+## budget_log   0.96386    0.01786  53.971  &lt; 2e-16 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.281 on 3177 degrees of freedom
+## Multiple R-squared:  0.4783,	Adjusted R-squared:  0.4782 
+## F-statistic:  2913 on 1 and 3177 DF,  p-value: &lt; 2.2e-16
+```
+
+
+---
+
+# Step 5.1: Univariate Viz of Errors
+
+- Errors `\(\varepsilon = Y - \hat{Y}\)`
+
+--
+
+  - In `R`, can also get them via `resid()` function
+
+--
+
+
+```r
+mv %&gt;%
+  mutate(errors_manual = gross_log - predict(m),
+         errors_resid = resid(m))
+```
+
+```
+## # A tibble: 3,179 × 24
+##    title     rating genre  year relea…¹ score  votes direc…²
+##    &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  
+##  1 Almost F… R      Adve…  2000 Septem…   7.9 2.6 e5 Camero…
+##  2 American… R      Come…  2000 April …   7.6 5.14e5 Mary H…
+##  3 Gladiator R      Acti…  2000 May 5,…   8.5 1.4 e6 Ridley…
+##  4 Requiem … Unrat… Drama  2000 Decemb…   8.3 7.86e5 Darren…
+##  5 Memento   R      Myst…  2000 May 25…   8.4 1.2 e6 Christ…
+##  6 Cast Away PG-13  Adve…  2000 Decemb…   7.8 5.42e5 Robert…
+##  7 Scary Mo… R      Come…  2000 July 7…   6.2 2.38e5 Keenen…
+##  8 The Perf… PG-13  Acti…  2000 June 3…   6.4 1.6 e5 Wolfga…
+##  9 Coyote U… PG-13  Come…  2000 August…   5.7 1.08e5 David …
+## 10 X-Men     PG-13  Acti…  2000 July 1…   7.4 5.82e5 Bryan …
+## # … with 3,169 more rows, 16 more variables: writer &lt;chr&gt;,
+## #   star &lt;chr&gt;, country &lt;chr&gt;, budget &lt;dbl&gt;, gross &lt;dbl&gt;,
+## #   company &lt;chr&gt;, runtime &lt;dbl&gt;, id &lt;dbl&gt;, imdb_id &lt;chr&gt;,
+## #   bechdel_score &lt;dbl&gt;, boxoffice_a &lt;dbl&gt;, language &lt;chr&gt;,
+## #   gross_log &lt;dbl&gt;, budget_log &lt;dbl&gt;, errors_manual &lt;dbl&gt;,
+## #   errors_resid &lt;dbl&gt;, and abbreviated variable names
+## #   ¹​released, ²​director
+```
+
+```r
+mv &lt;- mv %&gt;%
+  mutate(errors = resid(m))
+```
+
+---
+
+# Step 5.1: Univariate Viz of Errors
+
+
+```r
+mv %&gt;%
+  ggplot(aes(x = errors)) + 
+  geom_histogram()
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 5.2: Multivariate Viz of Errors
+
+
+```r
+mv %&gt;%
+  ggplot(aes(x = budget_log,y = errors)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Step 5.3: Cross Validated RMSE
+
+
+```r
+set.seed(123)
+rmseBudget &lt;- NULL
+for(i in 1:100) {
+  inds &lt;- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F)
+  
+  train &lt;- mv %&gt;% slice(inds)
+  test &lt;- mv %&gt;% slice(-inds)
+  
+  mTrain &lt;- lm(gross_log ~ budget_log,train)
+  
+  test$preds &lt;- predict(mTrain,newdata = test)
+  
+  rmse &lt;- sqrt(mean((test$gross_log - test$preds)^2,na.rm=T))
+  rmseBudget &lt;- c(rmseBudget,rmse)
+}
+
+mean(rmseBudget)
+```
+
+```
+## [1] 1.279899
+```
+
+---
+
+
+# Thinking like a .blue[scientist]
+
+--
+
+- Our previous model predicted `gross` as a function of `budget`
+
+--
+
+- .blue[Theoretically], is this sensible?
+
+--
+    
+  1. Bigger budgets &amp;rarr; famous actors &amp;rarr; mass appeal &amp;rarr; more tickets
+  
+--
+
+  2. Bigger budgets &amp;rarr; advertising money &amp;rarr; mass appeal &amp;rarr; more tickets
+  
+--
+
+- But what if the movie is just...not good?
+
+
+---
+
+# Alternative .blue[Theory]
+
+--
+
+- Good movies make more money
+
+--
+
+  - .blue[Theory]: good movies &amp;rarr; recommendations &amp;rarr; more tickets
+  
+--
+
+- Predict gross with .red[IMDB rating] (`score`)
+
+
+```r
+pIMDB &lt;- mv %&gt;%
+  ggplot(aes(x = score,y = gross)) + 
+  geom_point() + 
+  labs(title = "Movie gross as a function of public perception",
+       x = "IMDB score",
+       y = "Gross (logged)") + 
+  scale_y_log10(label = scales::dollar) + 
+  geom_smooth(method = 'lm',se = F)
+```
+
+---
+
+# Alternative .red[Model]
+
+
+```r
+pIMDB
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Evaluating the Model
+
+--
+
+- Let's go straight to RMSE
+
+--
+
+  - We can have `R` calculate errors for us with `residuals()` command
+
+
+```r
+m2 &lt;- lm(gross_log ~ score,mv)
+error &lt;- residuals(m2)
+(rmseScore &lt;- sqrt(mean(error^2)))
+```
+
+```
+## [1] 1.753146
+```
+
+--
+
+- Even worse!
+
+---
+
+# Multivariate Regression
+
+--
+
+- Recall that we can **model** our outcome with multiple **predictors**
+
+`$$Y = \alpha + \beta_1 X_1 + \beta_2 X_2 + \dots + \varepsilon$$`
+
+--
+
+- How much better can we predict `gross` with **BOTH** `budget` and `score`?
+
+
+```r
+m3 &lt;- lm(gross_log ~ budget_log + score,mv)
+error &lt;- residuals(m3)
+(rmseBudgScore &lt;- sqrt(mean(error^2)))
+```
+
+```
+## [1] 1.248817
+```
+
+---
+
+# Comparing Models
+
+--
+
+- Which model best predicts movie revenues?
+
+
+```r
+p &lt;- data.frame(budget = mean(rmseBudget),
+           IMDB = rmseScore,
+           combined = rmseBudgScore) %&gt;%
+  gather(model,rmse) %&gt;%
+  ggplot(aes(x = reorder(model,rmse),y = rmse)) + 
+  geom_bar(stat = 'identity') + 
+  labs(title = "Best Regression Model",
+       subtitle = "Predicting a movie's revenue",
+       y = "RMSE (lower is better)",
+       x = "Model") + 
+  coord_flip()
+```
+
+---
+
+# Comparing Models
+
+- Which model best predicts movie revenues?
+
+
+```r
+p
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Why RMSE?
+
+--
+
+- Want to understand how good / bad our model is
+
+--
+
+- Can use it to compare models
+
+---
+
+# Why RMSE?
+
+- Do we improve our model with `score`?
+
+
+```r
+set.seed(123)
+bsRes &lt;- NULL
+for(i in 1:100) {
+  inds &lt;- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F)
+  train &lt;- mv %&gt;% slice(inds)
+  test &lt;- mv %&gt;% slice(-inds)
+  
+  mB &lt;- lm(gross_log ~ budget_log,train)
+  mS &lt;- lm(gross_log ~ score,train)
+  mC &lt;- lm(gross_log ~ budget_log + score,train)
+  
+  bsRes &lt;- test %&gt;%
+    mutate(pB = predict(mB,newdata = test),
+           pS = predict(mS,newdata = test),
+           pC = predict(mC,newdata = test)) %&gt;%
+    summarise(Budget = sqrt(mean((gross_log - pB)^2,na.rm=T)),
+              Score = sqrt(mean((gross_log - pS)^2,na.rm=T)),
+              Combined = sqrt(mean((gross_log - pC)^2,na.rm=T))) %&gt;%
+    bind_rows(bsRes)
+}
+```
+
+---
+
+# ASIDE: alternative `code`
+
+- `sample_n()` and `anti_join()`
+
+
+```r
+set.seed(123)
+bsRes &lt;- NULL
+for(i in 1:100) {
+  train &lt;- mv %&gt;%
+    sample_n(size = round(nrow(.)*.8),replace = F)
+  test &lt;- mv %&gt;%
+*   anti_join(train)
+
+  mB &lt;- lm(gross_log ~ budget_log,train)
+  mS &lt;- lm(gross_log ~ score,train)
+  mC &lt;- lm(gross_log ~ budget_log + score,train)
+  
+  bsRes &lt;- test %&gt;%
+    mutate(pB = predict(mB,newdata = test),
+           pS = predict(mS,newdata = test),
+           pC = predict(mC,newdata = test)) %&gt;%
+    summarise(Budget = sqrt(mean((gross_log - pB)^2,na.rm=T)),
+              Score = sqrt(mean((gross_log - pS)^2,na.rm=T)),
+              Combined = sqrt(mean((gross_log - pC)^2,na.rm=T))) %&gt;%
+    bind_rows(bsRes) 
+}
+```
+
+```
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors")
+```
+
+---
+
+# Why RMSE?
+
+
+```r
+bsRes %&gt;%
+  summarise_all(mean,na.rm=T)
+```
+
+```
+## # A tibble: 1 × 3
+##   Budget Score Combined
+##    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+## 1   1.29  1.76     1.26
+```
+
+---
+
+# Visualizing
+
+
+```r
+bsRes %&gt;%
+  gather(model,rmse) %&gt;%
+  ggplot(aes(x = rmse,y = reorder(model,rmse))) + 
+  geom_violin()
+```
+
+&lt;img src="Regression_part3_slides_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Categorical Data
+
+--
+
+- Thus far, only using continuous variables
+
+--
+
+- But we can do regression with categorical data too!
+
+--
+
+- The Bechdel Test: 3 questions of a movie
+
+--
+
+  1. Does it have two women in it?
+  2. Who talk to each other?
+  3. About something other than a man?
+  
+
+```r
+mv %&gt;%
+  count(bechdel_score)
+```
+
+```
+## # A tibble: 5 × 2
+##   bechdel_score     n
+##           &lt;dbl&gt; &lt;int&gt;
+## 1             0   141
+## 2             1   526
+## 3             2   206
+## 4             3  1185
+## 5            NA  1121
+```
+
+---
+
+# Research Question
+
+--
+
+- .blue[Do movies that pass the Bechdel Test make more money?]
+
+--
+
+  - .blue[Theory:] Women are ~50% of the population. Movies that pass the test are more appealing to women.
+  
+--
+
+  - .blue[Hypothesis:] Movies that pass the test make more money.
+  
+--
+
+- .red[Wrangling:] Let's turn the `bechdel_score` variable into a binary
+
+
+```r
+mv &lt;- mv %&gt;%
+  mutate(bechdel_bin = ifelse(bechdel_score == 3,1,0)) %&gt;%
+  mutate(bechdel_factor=recode_factor(bechdel_bin,
+                                      `1`="Pass",
+                                      `0`="Fail",
+                                      ))
+```
+
+---
+
+# Regression
+
+--
+
+- We can add the binary factor to our regression
+
+
+```r
+summary(lm(gross_log ~ bechdel_factor,mv))
+```
+
+```
+## 
+## Call:
+## lm(formula = gross_log ~ bechdel_factor, data = mv)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -9.8817 -0.7918  0.2253  1.0831  3.8225 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        18.16844    0.04835 375.794   &lt;2e-16 ***
+## bechdel_factorFail  0.15969    0.07423   2.151   0.0316 *  
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.664 on 2056 degrees of freedom
+##   (1121 observations deleted due to missingness)
+## Multiple R-squared:  0.002246,	Adjusted R-squared:  0.001761 
+## F-statistic: 4.628 on 1 and 2056 DF,  p-value: 0.03157
+```
+
+---
+
+# Regression
+
+- Coefficient is positive
+
+--
+
+- What is the interpretation?
+
+--
+
+  - Movies that fail make more money...
+  
+--
+
+  - ...than what?
+  
+--
+
+  - Movies that pass the Bechdel Test
+  
+--
+
+- Categorical variables are **always interpreted in relation to the hold-out category**!
+
+---
+
+# Regression
+
+- Movies that fail the test make more money!?
+
+--
+
+- **REMEMBER**: Correlation `\(\neq\)` causation
+
+--
+
+  - What might explain this pattern?
+  
+--
+
+  - Budgets in a sexist Hollywood!
+  
+--
+
+  - Movies that fail the test get larger budgets
+  
+--
+
+  - Budgets are positively associated with gross
+  
+--
+
+- So we want to "control" for budget by adding it to our regression
+
+
+```r
+mBechCtrl &lt;- lm(gross_log ~ budget_log + bechdel_factor,mv)
+```
+
+---
+
+# Regression
+
+
+```r
+summary(mBechCtrl)
+```
+
+```
+## 
+## Call:
+## lm(formula = gross_log ~ budget_log + bechdel_factor, data = mv)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.6325 -0.5305  0.1287  0.6792  7.9370 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         2.30814    0.34497   6.691 2.85e-11 ***
+## budget_log          0.92089    0.01993  46.199  &lt; 2e-16 ***
+## bechdel_factorFail -0.18795    0.05254  -3.577 0.000356 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.166 on 2055 degrees of freedom
+##   (1121 observations deleted due to missingness)
+## Multiple R-squared:  0.5106,	Adjusted R-squared:  0.5101 
+## F-statistic:  1072 on 2 and 2055 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Regression
+
+- Our hypothesis is supported!
+
+--
+
+- What about non-binary categorical variables?
+
+
+```r
+mv %&gt;%
+  count(rating)
+```
+
+```
+## # A tibble: 9 × 2
+##   rating        n
+##   &lt;chr&gt;     &lt;int&gt;
+## 1 G            54
+## 2 NC-17         6
+## 3 Not Rated    34
+## 4 PG          434
+## 5 PG-13      1249
+## 6 R          1388
+## 7 TV-MA         2
+## 8 Unrated       7
+## 9 &lt;NA&gt;          5
+```
+
+---
+
+# Categorical
+
+- Let's first remove rarely-occurring ratings
+
+
+```r
+mvAnalysis &lt;- mv %&gt;%
+  filter(!rating %in% c('Approved','TV-14','TV-MA','TV-PG','X'))
+```
+
+---
+
+# Categorical
+
+
+```r
+summary(lm(gross_log ~ rating,mvAnalysis))
+```
+
+```
+## 
+## Call:
+## lm(formula = gross_log ~ rating, data = mvAnalysis)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.6749 -0.8189  0.1630  1.1082  5.2339 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      19.1818     0.2177  88.113  &lt; 2e-16 ***
+## ratingNC-17      -2.4483     0.6884  -3.556 0.000381 ***
+## ratingNot Rated  -4.4322     0.3502 -12.655  &lt; 2e-16 ***
+## ratingPG         -0.3905     0.2308  -1.692 0.090784 .  
+## ratingPG-13      -0.7633     0.2224  -3.433 0.000605 ***
+## ratingR          -1.9123     0.2219  -8.618  &lt; 2e-16 ***
+## ratingUnrated    -4.6564     0.6426  -7.246 5.38e-13 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.6 on 3165 degrees of freedom
+##   (5 observations deleted due to missingness)
+## Multiple R-squared:  0.1772,	Adjusted R-squared:  0.1756 
+## F-statistic: 113.6 on 6 and 3165 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Categorical
+
+- Everything makes less money than the hold-out category!
+
+--
+
+  - "G"-rated movies are powered by children
+  
+--
+
+- What if we wanted to compare to a different reference category?
+
+
+```r
+mvAnalysis &lt;- mvAnalysis %&gt;%
+  mutate(rating = factor(rating,
+                         levels = c('R','PG-13','PG','G','Not Rated')))
+
+mRating2 &lt;- lm(gross_log ~ rating,mvAnalysis)
+```
+
+---
+
+# Categorical
+
+
+```r
+summary(mRating2)
+```
+
+```
+## 
+## Call:
+## lm(formula = gross_log ~ rating, data = mvAnalysis)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.6749 -0.8184  0.1610  1.1082  5.2339 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     17.26952    0.04296 402.005   &lt;2e-16 ***
+## ratingPG-13      1.14905    0.06242  18.408   &lt;2e-16 ***
+## ratingPG         1.52178    0.08802  17.289   &lt;2e-16 ***
+## ratingG          1.91231    0.22199   8.614   &lt;2e-16 ***
+## ratingNot Rated -2.51988    0.27782  -9.070   &lt;2e-16 ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.6 on 3154 degrees of freedom
+##   (18 observations deleted due to missingness)
+## Multiple R-squared:  0.1699,	Adjusted R-squared:  0.1689 
+## F-statistic: 161.4 on 4 and 3154 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Cross Validation
+
+- This is why `sample_n()` is useful
+
+
+```r
+set.seed(123)
+rmseRes_rating &lt;- NULL
+for(i in 1:100) {
+  train &lt;- mvAnalysis %&gt;%
+    group_by(rating) %&gt;%
+    sample_n(size = round(n()*.8),replace = F)
+  test &lt;- mvAnalysis %&gt;% anti_join(train)
+  
+  m &lt;- lm(gross_log ~ rating,train)
+  rmseRes_rating &lt;- test %&gt;%
+    mutate(preds = predict(m,newdata = test)) %&gt;%
+    summarise(rmse = sqrt(mean((gross_log - preds)^2,na.rm=T))) %&gt;%
+    bind_rows(rmseRes_rating)
+}
+```
+
+```
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+## Joining, by = c("title", "rating", "genre", "year",
+## "released", "score", "votes", "director", "writer", "star",
+## "country", "budget", "gross", "company", "runtime", "id",
+## "imdb_id", "bechdel_score", "boxoffice_a", "language",
+## "gross_log", "budget_log", "errors", "bechdel_bin",
+## "bechdel_factor")
+```
+
+```r
+rmseRes_rating %&gt;%
+  summarise(rmse = mean(rmse))
+```
+
+```
+## # A tibble: 1 × 1
+##    rmse
+##   &lt;dbl&gt;
+## 1  1.60
+```
+
+---
+
+# Quiz &amp; Homework
+
+- Go to Brightspace and take the **12th** quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 8496 --&gt;
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Study for midterm!
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

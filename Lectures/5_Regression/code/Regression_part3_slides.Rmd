@@ -3,7 +3,7 @@ title: "Regression"
 subtitle: "Part 3"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/02/27\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/10/18\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -52,7 +52,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
 ---
 
-# Recal of Movie Analysis
+# Recap of Movie Analysis
 
 ```{r,message=F}
 require(tidyverse)
@@ -732,3 +732,14 @@ rmseRes_rating %>%
 --
   
   1. Study for midterm!
+
+
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Regression_part3_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
