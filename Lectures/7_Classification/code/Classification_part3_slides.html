@@ -4,7 +4,7 @@
     <title>Classification</title>
     <meta charset="utf-8" />
     <meta name="author" content="Prof. Bisbee" />
-    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/lexis.css" type="text/css" />
     <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
@@ -26,8 +26,8 @@ class: center, middle, inverse, title-slide
 ### Vanderbilt University
 ]
 .date[
-### Lecture Date: 2023/03/27
-Slides Updated: 2023-03-26
+### Lecture Date: 2023/11/06
+Slides Updated: 2023-10-29
 ]
 
 ---
@@ -209,7 +209,7 @@ pred &lt;- ad %&gt;%
   mutate(predY = predict(mLG,type = 'response'), # NB: type = 'response' for glm()!
          truth = factor(yield,levels = c('1','0'))) # NB: reorder outcome so that 1 is first!
 # Evaluate
-roc_auc(data = pred,truth = 'truth',estimate = 'predY')
+roc_auc(data = pred,truth,predY)
 ```
 
 ```
@@ -247,9 +247,9 @@ for(i in 1:100) {
          predLG = predict(mLG,newdata = test,type = 'response'),
          truth = factor(yield,levels = c('1','0')))
   # Evaluate
-  resLG &lt;- roc_auc(data = pred,truth = 'truth',estimate = 'predLG') %&gt;%
+  resLG &lt;- roc_auc(data = pred,truth,predLG) %&gt;%
     mutate(algo = 'logit')
-  resLM &lt;- roc_auc(data = pred,truth = 'truth',estimate = 'predLM') %&gt;%
+  resLM &lt;- roc_auc(data = pred,truth,predLM) %&gt;%
     mutate(algo = 'linear') 
   cvRes &lt;- resLG %&gt;% bind_rows(resLM) %&gt;% bind_rows(cvRes)
 }
@@ -432,7 +432,7 @@ predict(mLGFinal,newdata = hypo_data,type = 'response')
 ##     sat legacy visit registered sent_scores income   gpa
 ##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
 ## 1 1200.      0     0          1           0 99712.  3.79
-## # … with 2 more variables: distance &lt;dbl&gt;, net_price &lt;dbl&gt;
+## # ℹ 2 more variables: distance &lt;dbl&gt;, net_price &lt;dbl&gt;
 ```
 
 ```r
@@ -795,13 +795,14 @@ toplot %&gt;%
 
 --
 
-  - The password to take the quiz is #### &lt;!-- 7277 --&gt;
+  - The password to take the quiz is #### &lt;!-- 3222 --&gt;
   
 --
 
 - **Homework:**
 
-  - Problem Set 7 (due 2023-03-31 by 11:59PM)
+  - Problem Set 7 (due 2023-11-10 by 11:59PM)
+
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

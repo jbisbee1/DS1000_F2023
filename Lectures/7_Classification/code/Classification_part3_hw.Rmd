@@ -3,7 +3,7 @@ title: "College Admissions, Part 3"
 subtitle: "Homework"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Due Date: 2023-03-27"
+date: "Due Date: 2023-11-06"
 output: html_document
 ---
 
@@ -350,3 +350,12 @@ So, this policy decreased enrollment slightly, but raised 500,000 dollars. Worth
 # INSERT CODE HERE
 ```
 
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'portrait'
+f <- 'Classification_part3_hw'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

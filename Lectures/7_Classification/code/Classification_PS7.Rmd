@@ -3,7 +3,7 @@ title: "Problem Set 7"
 subtitle: "Classification Part 2"
 author: "[YOUR NAME]"
 institute: "Vanderbilt University"
-date: "Due Date: 2023-03-31"
+date: "Due Date: 2023-11-10"
 output:
   html_document: default
 ---
@@ -11,7 +11,6 @@ output:
 ```{r,include=F}
 knitr::opts_chunk$set(error=TRUE)
 ```
-
 
 ## Getting Set Up
 
@@ -22,11 +21,15 @@ Copy and paste the contents of this file into your `[LAST NAME]_ps7.Rmd` file. T
 
 All of the following questions should be answered in this `.Rmd` file. There are code chunks with incomplete code that need to be filled in. 
 
-This problem set is worth 10 total points, plus three extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Furthermore, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
+This problem set is worth 10 total points, plus three extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Unlike the first two problem sets, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
 
-You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/03/31
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/11/10 Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
 
 **Good luck!**
+
+## ChatGPT Link [Optional]
+
+*Copy the link to ChatGPT you used here: _______________________.
 
 ## Question 0
 Require `tidyverse` and `tidymodels` (for calculating AUC), and load the [`admit_data.rds`](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/data/admit_data.rds?raw=true') data to an object called `ad`. (Tip: use the `read_rds()` function with the link to the raw data.)

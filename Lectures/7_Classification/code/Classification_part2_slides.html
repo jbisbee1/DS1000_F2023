@@ -4,7 +4,7 @@
     <title>Classification</title>
     <meta charset="utf-8" />
     <meta name="author" content="Prof. Bisbee" />
-    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/lexis.css" type="text/css" />
     <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
@@ -26,8 +26,8 @@ class: center, middle, inverse, title-slide
 ### Vanderbilt University
 ]
 .date[
-### Lecture Date: 2023/03/22
-Slides Updated: 2023-03-21
+### Lecture Date: 2023/11/01
+Slides Updated: 2023-10-29
 ]
 
 ---
@@ -73,7 +73,7 @@ Slides Updated: 2023-03-21
 ```r
 require(tidyverse)
 require(scales)
-ad &lt;- readRDS('../data/admit_data.rds')
+ad &lt;- read_rds('../data/admit_data.rds')
 ```
 
 ---
@@ -215,7 +215,7 @@ p + geom_smooth(method = 'lm')
 ```r
 x &lt;- runif(100,-4,4)
 pr_y &lt;- 1/(1 + exp(-x))
-as_tibble(pr_y,x) %&gt;%
+as_tibble(pr_y = pr_y,x = x) %&gt;%
   ggplot(aes(x = x,y = pr_y)) + 
   geom_smooth()
 ```
@@ -606,6 +606,9 @@ p
 --
 
 - How would you re-evaluate these models-X-predictors to account for overfitting?
+
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>

@@ -3,7 +3,7 @@ title: "Classification"
 subtitle: "Part 3"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/03/27\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/11/06\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -195,7 +195,7 @@ pred <- ad %>%
   mutate(predY = predict(mLG,type = 'response'), # NB: type = 'response' for glm()!
          truth = factor(yield,levels = c('1','0'))) # NB: reorder outcome so that 1 is first!
 # Evaluate
-roc_auc(data = pred,truth = 'truth',estimate = 'predY')
+roc_auc(data = pred,truth,predY)
 ```
 ]
 
@@ -225,9 +225,9 @@ for(i in 1:100) {
          predLG = predict(mLG,newdata = test,type = 'response'),
          truth = factor(yield,levels = c('1','0')))
   # Evaluate
-  resLG <- roc_auc(data = pred,truth = 'truth',estimate = 'predLG') %>%
+  resLG <- roc_auc(data = pred,truth,predLG) %>%
     mutate(algo = 'logit')
-  resLM <- roc_auc(data = pred,truth = 'truth',estimate = 'predLM') %>%
+  resLM <- roc_auc(data = pred,truth,predLM) %>%
     mutate(algo = 'linear') 
   cvRes <- resLG %>% bind_rows(resLM) %>% bind_rows(cvRes)
 }
@@ -668,5 +668,14 @@ toplot %>%
 
 - **Homework:**
 
-  - Problem Set 7 (due 2023-03-31 by 11:59PM)
+  - Problem Set 7 (due 2023-11-10 by 11:59PM)
 
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Classification_part3_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```
