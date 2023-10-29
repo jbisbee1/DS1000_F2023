@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Classification</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Classification
+]
+.subtitle[
+## Part 2
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/03/22
+Slides Updated: 2023-03-21
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Introducing **logit**
+
+2. Running logit
+
+3. Evaluating logit
+
+---
+
+# Logit Regression
+
+- A different **type** of **regression**
+  
+--
+
+  - What do we mean by **type**?
+  
+--
+
+- Let's take a step back
+
+--
+
+
+
+```r
+require(tidyverse)
+require(scales)
+ad &lt;- readRDS('../data/admit_data.rds')
+```
+
+---
+
+# Regression Types
+
+- "Linear" regression...why is it "linear"?
+
+--
+
+
+```r
+(p &lt;- ad %&gt;%
+  ggplot(aes(x = income,y = sat)) + 
+  geom_point() + scale_x_log10(labels = dollar))
+```
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Regression Types
+
+- "Linear" regression...why is it "linear"?
+
+- Because you can summarize it with a line!
+
+
+```r
+p + geom_smooth(method = 'lm')
+```
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Regression Types
+
+- But what if the outcome is binary?
+
+--
+
+
+```r
+(p &lt;- ad %&gt;% ggplot(aes(x = sat,y = yield)) + 
+   scale_y_continuous(breaks = c(0,1),limits = c(-.1,1.5)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25))
+```
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Regression Types
+
+- But what if the outcome is binary?
+
+- Lines seem too clumsy
+
+  - If `1` = attend, how can you go higher?
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Logit
+
+- .blue[Theory:] binary outcomes are **proxies** for some **latent** measure
+
+--
+
+  - Binary outcome `yield`: either attend or not attend
+  
+  - Latent outcome `willingness`: continuous measure
+  
+--
+
+- The higher your `willingness`, the more likely you are to attend
+
+--
+
+- Logit regression: model the `willingness`
+
+--
+
+  - What is `willingness` actually?
+  
+  - Probability of attending: `\(Pr(attend)\)`
+  
+--
+
+- Part of a broader class of models called "generalized linear model" (GLM)
+
+--
+
+`$$Pr(y = 1|x) = G(\alpha + \beta X)$$`
+
+---
+
+# GLMs
+
+- `\(Pr(y = 1|x) = G(\alpha + \beta X)\)`
+
+--
+
+- Does this look familiar?
+
+--
+
+- Linear regression: `\(Y = \alpha + \beta X\)`
+
+--
+
+  - Outcome: `\(Y\)` &amp;rarr; `\(Pr(y = 1|x)\)`
+  
+  - Mapping: `\(\alpha + \beta X\)` &amp;rarr; `\(G(\alpha + \beta X)\)`
+  
+--
+
+- `\(G\)` is the "link function"
+
+--
+
+  - Transforms values of `\(\alpha + \beta X\)` into **probabilities**
+  
+--
+
+- Logistic function: specific type of link function
+
+--
+
+`$$G(x) = \frac{1}{1+exp(-x)}$$`
+
+---
+
+# Logistic Function
+
+
+```r
+x &lt;- runif(100,-4,4)
+pr_y &lt;- 1/(1 + exp(-x))
+as_tibble(pr_y,x) %&gt;%
+  ggplot(aes(x = x,y = pr_y)) + 
+  geom_smooth()
+```
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Logistic Function
+
+- But what about real data like `\(\alpha + \beta X\)`?
+
+--
+
+- `\(G(X) = \frac{exp(\alpha + \beta X)}{1 + exp(\alpha + \beta X)}\)`
+
+--
+
+- We estimate this with `glm(formula,data,family)`
+
+--
+
+  - Note similarity to `lm(formula,data)`
+  
+--
+
+- `family = binomial(link = "logit")`
+
+---
+
+# Logistic Regression (logit)
+
+
+```r
+ad %&gt;% ggplot(aes(x = sat,y = yield)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25) + 
+  geom_smooth(method = 'lm',color = 'black') + 
+  geom_smooth(method = 'glm',color = 'red',
+              method.args = list(family = binomial(link = 'logit')))
+```
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Logistic Regression (logit)
+
+
+```r
+# Train model
+mLogit &lt;- glm(formula = yield ~ sat,data = ad,family = binomial(link = 'logit'))
+
+# Predict model
+ad &lt;- ad %&gt;%
+  mutate(prob_attend = predict(mLogit,type = 'response')) %&gt;%
+  mutate(pred_attend = ifelse(prob_attend &gt; .5,1,0))
+
+# Evaluate model
+eval &lt;- ad %&gt;%
+  group_by(yield) %&gt;%
+  mutate(total_attend = n()) %&gt;%
+  group_by(yield,pred_attend,total_attend) %&gt;%
+  summarise(nStudents=n(),.groups = 'drop') %&gt;%
+  mutate(prop = nStudents / total_attend) %&gt;%
+  ungroup() %&gt;%
+  mutate(accuracy = percent(sum((yield == pred_attend)*nStudents) / sum(nStudents)))
+```
+
+---
+
+# Logistic Regression (logit)
+
+
+```r
+eval
+```
+
+```
+## # A tibble: 4 × 6
+##   yield pred_attend total_attend nStudents  prop accuracy
+##   &lt;int&gt;       &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;   
+## 1     0           0          684       220 0.322 70%     
+## 2     0           1          684       464 0.678 70%     
+## 3     1           0         1466       173 0.118 70%     
+## 4     1           1         1466      1293 0.882 70%
+```
+
+---
+
+# Logistic Regression (logit)
+
+- Can also calculate ROC Curve and AUC
+
+
+```r
+toplot &lt;- NULL
+for(thresh in seq(0,1,by = .025)) {
+  toplot &lt;- ad %&gt;%
+    mutate(pred_attend = ifelse(predict(mLogit,type = 'response') &gt; thresh,1,0)) %&gt;%
+    group_by(yield) %&gt;%
+    mutate(total_attend = n()) %&gt;%
+    group_by(yield,pred_attend,total_attend) %&gt;%
+    summarise(nStudents=n(),.groups = 'drop') %&gt;%
+    mutate(prop = nStudents / total_attend) %&gt;%
+    ungroup() %&gt;%
+    mutate(threshold = thresh) %&gt;%
+    bind_rows(toplot)
+}
+```
+
+---
+
+# Logistic Regression (logit)
+
+
+```r
+p &lt;- toplot %&gt;%
+  mutate(metric = ifelse(yield == 1 &amp; pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 &amp; pred_attend == 0,'Specificity',NA))) %&gt;%
+  drop_na(metric) %&gt;%
+  select(prop,metric,threshold) %&gt;%
+  spread(metric,prop) %&gt;%
+  ggplot(aes(x = 1-Specificity,y = Sensitivity)) + 
+  geom_line() + 
+  xlim(c(0,1)) + ylim(c(0,1)) + 
+  geom_abline(slope = 1,intercept = 0,linetype = 'dotted')
+```
+
+---
+
+# Logistic Regression (logit)
+
+
+```r
+p
+```
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Logistic Regression (logit)
+
+
+```r
+require(tidymodels)
+roc_auc(data = ad %&gt;%
+  mutate(prob_attend = predict(mLogit,type = 'response'),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+  select(truth,prob_attend),truth,prob_attend)
+```
+
+```
+## # A tibble: 1 × 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.742
+```
+
+---
+
+# Comparing Models
+
+- Two big questions in prediction:
+
+--
+
+  1. Do I have the correct predictors `\(X\)`?
+  
+  2. Do I have the best model?
+  
+--
+
+- Two types of outcomes (thus far)
+
+--
+
+  1. Continuous `\(Y\)`: use **RMSE**
+  
+  2. Binary `\(Y\)`: use **AUC**
+  
+--
+
+- Let's determine the best model from the following:
+
+--
+
+  - `\(X\)`: (1) `sat + legacy` vs. (2) `sat + legacy + income`
+  
+  - Model: (1) conditional means vs. (2) `lm` vs. (3) `glm`
+  
+---
+
+# Comparing Models
+
+- Conditional means - simple `\(X\)`
+
+
+```r
+results &lt;- NULL
+
+# Train &amp; Predict
+toEval &lt;- ad %&gt;%
+  mutate(satDec = ntile(sat,n = 10)) %&gt;%
+  group_by(satDec,legacy) %&gt;%
+  mutate(prob_attend = mean(yield),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+    ungroup() %&gt;%
+    select(truth,prob_attend)
+
+# Evaluate
+results &lt;- roc_auc(data = toEval,truth,prob_attend) %&gt;%
+  mutate(model = 'CM',
+         predictors = 'Simple') %&gt;%
+  bind_rows(results)
+```
+
+---
+
+# Comparing Models
+
+- Conditional means - complex `\(X\)`
+
+
+```r
+# Train &amp; Predict
+toEval &lt;- ad %&gt;%
+  mutate(satDec = ntile(sat,n = 10),
+         incDec = ntile(income,n = 10)) %&gt;%
+  group_by(satDec,incDec,legacy) %&gt;%
+  mutate(prob_attend = mean(yield),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+    ungroup() %&gt;%
+    select(truth,prob_attend)
+
+# Evaluate
+results &lt;- roc_auc(data = toEval,truth,prob_attend) %&gt;%
+  mutate(model = 'CM',
+         predictors = 'Complex') %&gt;%
+  bind_rows(results)
+```
+
+---
+
+# Comparing Models
+
+- Linear regression (`lm`) - simple `\(X\)`
+
+
+```r
+# Train
+m &lt;- lm(yield ~ sat + legacy,ad)
+
+# Predict
+toEval &lt;- ad %&gt;%
+  mutate(prob_attend = predict(m),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+    ungroup() %&gt;%
+    select(truth,prob_attend)
+
+# Evaluate
+results &lt;- roc_auc(data = toEval,truth,prob_attend) %&gt;%
+  mutate(model = 'LM',
+         predictors = 'Simple') %&gt;%
+  bind_rows(results)
+```
+
+---
+
+# Comparing Models
+
+- Linear regression (`lm`) - complex `\(X\)`
+
+
+```r
+# Train
+m &lt;- lm(yield ~ sat + legacy + income,ad)
+
+# Predict
+toEval &lt;- ad %&gt;%
+  mutate(prob_attend = predict(m),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+    ungroup() %&gt;%
+    select(truth,prob_attend)
+
+# Evaluate
+results &lt;- roc_auc(data = toEval,truth,prob_attend) %&gt;%
+  mutate(model = 'LM',
+         predictors = 'Complex') %&gt;%
+  bind_rows(results)
+```
+
+---
+
+# Comparing Models
+
+- Logit regression (`glm`) - simple `\(X\)`
+
+
+```r
+# Train
+m &lt;- glm(yield ~ sat + legacy,ad,family = binomial(link = 'logit'))
+
+# Predict
+toEval &lt;- ad %&gt;%
+  mutate(prob_attend = predict(m,type = 'response'),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+    ungroup() %&gt;%
+    select(truth,prob_attend)
+
+# Evaluate
+results &lt;- roc_auc(data = toEval,truth,prob_attend) %&gt;%
+  mutate(model = 'GLM',
+         predictors = 'Simple') %&gt;%
+  bind_rows(results)
+```
+
+---
+
+# Comparing Models
+
+- Logit regression (`glm`) - complex `\(X\)`
+
+
+```r
+# Train
+m &lt;- glm(yield ~ sat + legacy + income,ad,family = binomial(link = 'logit'))
+
+# Predict
+toEval &lt;- ad %&gt;%
+  mutate(prob_attend = predict(m,type = 'response'),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+    ungroup() %&gt;%
+    select(truth,prob_attend)
+
+# Evaluate
+results &lt;- roc_auc(data = toEval,truth,prob_attend) %&gt;%
+  mutate(model = 'GLM',
+         predictors = 'Complex') %&gt;%
+  bind_rows(results)
+```
+
+---
+
+# Comparing Models
+
+
+```r
+p &lt;- results %&gt;%
+  ggplot(aes(x = reorder(model,.estimate),
+             y = reorder(predictors,.estimate),
+             fill = .estimate,label = round(.estimate,2))) + 
+  geom_tile() + 
+  scale_fill_continuous(low = 'grey90',high = 'darkred') + 
+  geom_text() + 
+  labs(title = 'AUC Results',
+       subtitle = 'Comparing Models with Different Predictors',
+       x = 'Models',y = 'Predictors',
+       fill = 'AUC') + 
+  theme_bw()
+```
+
+---
+
+# Comparing Models
+
+
+```r
+p
+```
+
+&lt;img src="Classification_part2_slides_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Conclusion
+
+- Conditional means outperform regression models?
+
+--
+
+  - Yes: conditional means allow for cell-specific predictions
+  
+--
+
+  - No: conditional means are more susceptible to **overfitting**
+  
+--
+
+- How would you re-evaluate these models-X-predictors to account for overfitting?
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

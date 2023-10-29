@@ -1,0 +1,171 @@
+---
+title: "Problem Set 7"
+subtitle: "Classification Part 2"
+author: "[YOUR NAME]"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-03-31"
+output:
+  html_document: default
+---
+
+```{r,include=F}
+knitr::opts_chunk$set(error=TRUE)
+```
+
+
+## Getting Set Up
+
+Open `RStudio` and create a new RMarkDown file (`.Rmd`) by going to `File -> New File -> R Markdown...`.
+Accept defaults and save this file as `[LAST NAME]_ps7.Rmd` to your `code` folder.
+
+Copy and paste the contents of this file into your `[LAST NAME]_ps7.Rmd` file. Then change the `author: [YOUR NAME]` (line 4) to your name.
+
+All of the following questions should be answered in this `.Rmd` file. There are code chunks with incomplete code that need to be filled in. 
+
+This problem set is worth 10 total points, plus three extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Furthermore, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
+
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/03/31
+
+**Good luck!**
+
+## Question 0
+Require `tidyverse` and `tidymodels` (for calculating AUC), and load the [`admit_data.rds`](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/data/admit_data.rds?raw=true') data to an object called `ad`. (Tip: use the `read_rds()` function with the link to the raw data.)
+```{r}
+# INSERT CODE HERE
+```
+
+
+
+## Question 1 [3 points]
+
+a. Compare a linear regression (`mLM <- lm(...)`) to a logit regression (`mLG <- glm(...)`) where you predict attendance (`yield`) as a function of the following $X$ predictors:
+
+- `distance`
+- `income`
+- `sat`
+- `gpa`
+- `visit`
+- `registered`
+- `legacy`
+- `net_price`
+
+Evaluate the model performance using `roc_auc` based on cross validation with 100 iterations, using an 80-20% split of the data [2 points]. 
+
+b. Does the linear regression model or the logit perform better? [1 point]
+
+```{r,warning = F}
+set.seed(123)
+# a. 
+cvRes <- NULL
+for(i in 1:100) {
+  # Prepare the train and test datasets with sample()
+  
+  # Linear
+  mLM <- lm() # Run linear regression on the train data
+  
+  # Logit
+  mLG <- glm() # Run logit regression on the train data
+  
+  toEval <- test %>%
+    mutate(predLM = , # Predict the linear regression output
+           predLG = ) %>% # Predict the logit regression output
+    mutate() # Prepare the yield outcome to have the '1' occur first
+
+  tmpLM <- roc_auc() %>% # Calculate AUC for the linear regression
+    mutate(cvInd = i,
+           algo = 'LM')
+  
+  tmpLG <- roc_auc() %>% # Calculate AUC for the logit regression
+    mutate(cvInd = i,
+           algo = 'Logit')
+  
+  
+  # Append to the cvRes object to save
+}
+
+# b. Calculate average AUC by regression type
+```
+
+b. Write a few sentences here.
+
+## Question 2 [3 points]
+
+a. Based on the result to question 1, choose the best classification algorithm and train it on the full data. [1 point]
+
+b. Calculate the specificity and sensitivity across different thresholds ranging from zero to one, and plot these as different colored lines. [1 point]
+
+c. What is the optimal threshold to balance the trade-off between sensitivity and specificity based on this plot? **HINT**: Use `geom_vline()` and test different `xintercept` values until you nail the intersection between the two lines. [1 point]
+
+
+```{r,warning = F}
+# a. Re-run the best regression model on the full data
+
+# b. Calculate sensitivity and specificity
+ad <- ad %>%
+  mutate(preds = predict()) # Calculate predicted values
+
+# Look over the threshold values between 0 and 1 by 0.025 and calculate proportion of correctly predicted students
+toplot <- NULL
+for(thresh in seq()) {
+  toplot <- ad %>%
+  mutate(pred_attend = ifelse()) %>% # Calculate predicted attendance if the probability is greater than the threshold
+  group_by() %>%
+  mutate() %>% # Calculate total students by whether they attended or not
+  group_by() %>%
+  summarise() %>% # Calculate number of students by whether they did / did not attend, and whether they were predicted to attend
+  mutate(prop = ) %>% # Calculate proportion of students that fall into each bin
+  ungroup() %>%
+  mutate(threshold = ) %>% # Save the indicator for the threshold value
+    bind_rows(toplot) # Add it to the toplot object
+}
+
+toplot %>%
+  mutate(metric = ifelse(, # Record the Sensitivity metric
+                         ifelse())) %>% # Record the Specificity metric, otherwise NA
+  drop_na(metric) %>% # Drop NAs
+  ggplot(aes()) + # Plot the proportion versus the metric (use color = metric)
+  geom_line() + 
+  geom_vline() + # c. Try different values of the xintercept until you find where the lines intersect
+  labs(title = '', # Make sure to label clearly!
+       subtitle = '',
+       x = '',
+       y = '',
+       color = '')
+```
+
+c. Write a few sentences here.
+
+## Question 3 [4 points]
+
+a. How many students with SAT scores higher than 1300 are currently enrolled (`yield`)? How many students with SAT scores higher than 1300 are predicted to enroll according to our model? [1 point]
+
+b. What is the average SAT score and total tuition among enrolled students? [1 point]
+
+c. Reduce the net price (`net_price`) for students with SAT scores higher than 1300 by $5,000. How many are now estimated to enroll? [1 point]
+
+d. What is the average SAT score among students predicted to enroll after adjusting the `net_price`? What is the total tuition? [1 point]
+
+
+```{r}
+# INSERT CODE HERE
+```
+
+a. Write answer here.
+b. Write answer here.
+c. Write answer here.
+
+## Extra Credit= [3 points]
+
+a. How high can you increase the average SAT score while maintaining current revenues, using only the `net_price` to induce changes? [1 point]
+
+b. Answer this question using a loop. [1 point]
+
+c. How does your answer change if you restrict the final `net_price` value per observation to be no lower than zero, and no higher than $45,000? [1 point]
+
+
+```{r}
+# INSERT CODE HERE
+```
+
+a. Write answer here.
+c. Write answer here.

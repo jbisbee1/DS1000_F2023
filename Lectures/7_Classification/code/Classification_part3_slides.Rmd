@@ -1,0 +1,672 @@
+---
+title: "Classification"
+subtitle: "Part 3"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/03/27\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+
+# Agenda
+
+1. Recap of classification
+
+2. Recap of evaluation
+
+2. Using classifiers
+
+---
+
+# Classification Recap
+
+- Similar to **prediction**
+
+--
+
+- Difference is in the **outcome variable** $Y$:
+
+--
+
+  - Continuous: use regression model
+  
+  - Categorical / Binary: use classification model
+  
+--
+
+- **NB:** *classification* is a type of *prediction*
+
+---
+
+# Classification Recap
+
+- Thus far, only used binary $Y$
+
+--
+
+  - *Can* use linear regression model
+  
+  - *Better* to use logistic regression model
+  
+--
+
+- Linear regression: `lm(formula,data)`
+
+--
+
+  - Predicts "latent" measures (`predict(mLM)`)
+  
+  - I.e., willingness to attend
+  
+--
+
+- Logistic: `glm(formula,data,family = binomial(link = 'logit'))`
+
+--
+
+  - Predicts probabilities (`predict(mLG,type = 'response')`)
+  
+  - I.e., probability of attending
+  
+```{r,message=F}
+require(tidyverse)
+require(tidymodels)
+ad <- readRDS('../data/admit_data.rds')
+```
+
+---
+
+# Classification Recap
+
+```{r,message = F}
+ad %>% ggplot(aes(x = sat,y = yield)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25) + 
+  geom_smooth(method = 'lm',color = 'black') + 
+  geom_smooth(method = 'glm',color = 'red',
+              method.args = list(family = binomial(link = 'logit')))
+```
+
+---
+
+# Classification Recap
+
+```{r,message = F,warning = F}
+ad %>% ggplot(aes(x = income,y = yield)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25) + 
+  geom_smooth(method = 'lm',color = 'black') + 
+  geom_smooth(method = 'glm',color = 'red',
+              method.args = list(family = binomial(link = 'logit')))
+```
+
+---
+
+# Classification Recap
+
+```{r,message = F,warning = F}
+ad %>% ggplot(aes(x = log(income),y = yield)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25) + 
+  geom_smooth(method = 'lm',color = 'black') + 
+  geom_smooth(method = 'glm',color = 'red',
+              method.args = list(family = binomial(link = 'logit')))
+```
+
+
+---
+
+# Classification Workflow
+
+1. Train: `mLG <- glm(formula,data,family = binomial(link = 'logit'))`
+
+2. Predict: `data$predY <- predict(mLG,type = 'response')`
+
+3. Evaluate: `roc_auc(data,truth,estimate)`
+
+--
+
+- **NB:** Evaluation stage is *DEEP*
+
+--
+
+  - Classify observations based on threshold: `ifelse(predY > 0.5,1,0)`
+  
+  - Calculate accuracy by group across thresholds
+  
+  - **Sensitivity** and **Specificity** &rarr; ROC curve &rarr; AUC
+  
+  - Should be estimated via cross validation to prevent **overfitting**
+  
+  - Make sure `truth` is ordered in **reverse**: `factor(truth,levels = c('1','0'))`
+
+
+---
+
+# Classification Workflow
+
+- What do we get out of all this effort?
+
+--
+
+- A single classification algorithm that we think is best
+
+--
+
+.small[
+```{r,message=F,warning=F}
+# Train
+form <- 'yield ~ sat + legacy + visit + registered + sent_scores + income + gpa + distance + net_price'
+mLG <- glm(formula = as.formula(form),
+           data = ad,family = binomial(link = 'logit'))
+# Predict
+pred <- ad %>%
+  mutate(predY = predict(mLG,type = 'response'), # NB: type = 'response' for glm()!
+         truth = factor(yield,levels = c('1','0'))) # NB: reorder outcome so that 1 is first!
+# Evaluate
+roc_auc(data = pred,truth = 'truth',estimate = 'predY')
+```
+]
+
+
+---
+
+# Classification Workflow
+
+- But we should actually do this with **cross validation**
+
+--
+
+.small[
+```{r,message = F,warning = F}
+cvRes <- NULL
+for(i in 1:100) {
+  inds <- sample(1:nrow(ad),size = round(nrow(ad)*.8),replace = F)
+  train <- ad %>% slice(inds)
+  test <- ad %>% slice(-inds)
+  
+  # Train
+  mLM <- lm(form,data = train)
+  mLG <- glm(form,data = train,family = binomial(link = 'logit'))
+  # Predict
+  pred <- test %>%
+  mutate(predLM = predict(mLM,newdata = test),
+         predLG = predict(mLG,newdata = test,type = 'response'),
+         truth = factor(yield,levels = c('1','0')))
+  # Evaluate
+  resLG <- roc_auc(data = pred,truth = 'truth',estimate = 'predLG') %>%
+    mutate(algo = 'logit')
+  resLM <- roc_auc(data = pred,truth = 'truth',estimate = 'predLM') %>%
+    mutate(algo = 'linear') 
+  cvRes <- resLG %>% bind_rows(resLM) %>% bind_rows(cvRes)
+}
+```
+]
+
+---
+
+# Classification Workflow
+
+```{r}
+cvRes %>%
+  ggplot(aes(x = .estimate,fill = algo)) + 
+  geom_density(alpha = .4)
+```
+
+---
+
+# Using the Algorithm
+
+- The algorithm can help us make decisions
+
+--
+
+- Recall the goals and constraints of this college:
+
+--
+
+  - **Goals**: Increase SAT to 1300
+  
+  - **Goals**: Admit 200 more students with incomes under $50,000
+  
+  - **Constraints**: Maintain total revenues of at least $30m
+  
+  - **Constraints**: Maintain entering class size of at least 1,466
+  
+--
+
+- Tools: 
+
+--
+
+  - Need-based and Merit-based aid
+  
+--
+
+  - Effort for visit and registration
+  
+--
+
+  - Other targeting? (ethics?)
+
+---
+
+# Using the Algorithm
+
+1. **Counterfactuals** for specific types of students
+
+--
+
+  - What is the probability a given student will attend?
+  
+  - `data_grid()` function from `modelr` package can help!
+  
+--
+
+2. **Consulting** for changes in policy
+
+--
+
+  - If we increase price, what will happen to attendance?
+  
+  - Just predict on the **full data**
+  
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- What is the probability that this student will attend?
+```{r,message = F,warning = F}
+mLGFinal <- glm(formula = as.formula(form),
+           data = ad,family = binomial(link = 'logit'))
+require(modelr)
+hypo_data <- ad %>%
+  data_grid(legacy = 0,
+            visit = 1,
+            registered = 1,
+            sent_scores = 1,
+            sat = 1400,
+            income = 95000,
+            gpa = 3.9,
+            distance = .1,
+            net_price = 6875)
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- What is the probability they will attend if we increase the price by $10k?
+```{r,message = F}
+hypo_data <- ad %>%
+  data_grid(legacy = 0,
+            visit = 1,
+            registered = 1,
+            sent_scores = 1,
+            sat = 1400,
+            income = 95000,
+            gpa = 3.9,
+            distance = .1,
+            net_price = 16875)
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Can combine with `data_grid()`
+
+```{r,message = F}
+hypo_data <- ad %>%
+  data_grid(legacy = 0,
+            visit = 1,
+            registered = 1,
+            sent_scores = 1,
+            sat = 1400,
+            income = 95000,
+            gpa = 3.9,
+            distance = .1,
+            net_price = c(6875,16875))
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Can use `data_grid()` to calculate "typical" values for every variable
+
+--
+
+  - **Typical**: Mean for continuous, mode for categorical
+  
+--
+
+```{r}
+(hypo_data <- ad %>%
+  data_grid(.model = mLGFinal))
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Compare otherwise typical admits who differ only in terms of GPA
+
+--
+
+```{r}
+hypo_data <- ad %>%
+  data_grid(.model = mLGFinal,
+            gpa = c(3.5,3.9))
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Multiple comparisons are possible
+
+--
+
+```{r,message = F}
+require(ggridges)
+hypo_data <- ad %>%
+  data_grid(.model = mLGFinal,
+            gpa = seq_range(gpa,n = 100),
+            legacy = c(0,1))
+
+toplot <- hypo_data %>%
+  mutate(preds = predict(mLGFinal,newdata = hypo_data,type = 'response'))
+
+p <- toplot %>%
+  ggplot(aes(x = gpa,y = preds,color = factor(legacy))) + 
+  geom_line() + 
+  theme_ridges() + 
+  scale_y_continuous(labels = scales::percent) + 
+  labs(title = 'Predicted Attendance by GPA and Legacy',
+       x = 'GPA',
+       y = 'Prob(Attend)')
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+```{r}
+p
+```
+
+---
+
+# 2. Consulting: full data
+
+- Currently, admit 1466 at ~$30.7m revenues
+
+```{r}
+ad %>%
+  filter(yield == 1) %>%
+  summarise(totRev = dollar(sum(net_price)),
+            totAtt = n())
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+--
+
+```{r}
+# Currently, 355 students who sent scores are predicted to attend
+ad %>%
+  mutate(preds = predict(mLGFinal,type = 'response')) %>%
+  mutate(pred_class = ifelse(preds > .5,1,0)) %>%
+  count(sent_scores,pred_class)
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+```{r}
+# If price increases by $5k, number of predicted drops to 338
+hypo <- ad %>%
+  mutate(net_price = ifelse(sent_scores == 1,
+                            net_price + 5000,net_price))
+
+hypo %>%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_class = ifelse(preds > .5,1,0)) %>%
+  count(sent_scores,pred_class)
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+```{r}
+# BUT we make more total revenue
+hypo %>%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_class = ifelse(preds > .5,1,0)) %>%
+  filter(pred_class == 1) %>%
+  summarise(tot_rev = scales::dollar(sum(net_price)))
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+```{r}
+# Although total admits declined
+hypo %>%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_class = ifelse(preds > .5,1,0)) %>%
+  filter(pred_class == 1) %>%
+  count()
+```
+
+---
+
+# 2. Consulting: full data
+
+- Can we increase SAT scores to 1300?
+
+--
+
+```{r}
+ad %>%
+  filter(yield == 1) %>%
+  summarise(satAvg = round(mean(sat)))
+```
+
+--
+
+- Reduce price for those above 1300
+
+---
+
+# 2. Consulting: full data
+
+- Can we increase SAT scores to 1300?
+
+- Reduce price for those above 1300
+
+```{r}
+hypo <- ad %>%
+  mutate(net_price = ifelse(sat >= 1300,
+                            net_price - 5000,net_price))
+
+hypo %>%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_class = ifelse(preds > .5,1,0)) %>%
+  filter(pred_class == 1) %>%
+  summarise(satAvg = round(mean(sat)),
+            tot_rev = scales::dollar(sum(net_price)),
+            totAttend = n())
+```
+
+---
+
+# 2. Consulting: full data
+
+- Can we increase SAT scores to 1300?
+
+- BUT need to make up losses
+
+```{r}
+hypo <- ad %>%
+  mutate(net_price = ifelse(sat >= 1300,net_price - 5000,
+                            ifelse(sat < 1300,net_price + 2500,net_price)))
+
+hypo %>%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_class = ifelse(preds > .5,1,0)) %>%
+  filter(pred_class == 1) %>%
+  summarise(satAvg = round(mean(sat)),
+            tot_rev = scales::dollar(sum(net_price)),
+            totAttend = n())
+```
+
+---
+
+# 2. Consulting: full data
+
+- Looking across many different values? **Loops**!
+
+```{r}
+toplot <- NULL
+for(aid in c(2500,5000,7500,10000)) {
+  for(charge in seq(2500,10000,by = 2500)) {
+    hypo <- ad %>%
+      mutate(net_price = ifelse(sat >= 1300,net_price - aid,
+                                ifelse(sat < 1300,net_price + charge,net_price)))
+    
+  tmp <- hypo %>%
+    mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %>%
+    mutate(pred_class = ifelse(preds > .5,1,0)) %>%
+    filter(pred_class == 1) %>%
+    summarise(satAvg = mean(sat),
+              tot_rev = sum(net_price),
+              totAttend = n()) %>%
+    ungroup() %>%
+    mutate(aid = aid,
+           charge = charge)
+  
+  toplot <- toplot %>%
+    bind_rows(tmp)
+  }
+}
+```
+
+---
+
+# 2. Consulting: full data
+
+```{r}
+toplot %>%
+  ggplot(aes(x = factor(aid),y = factor(charge),fill = satAvg)) + 
+  geom_tile()
+```
+
+---
+
+# 2. Consulting: full data
+
+```{r}
+toplot %>%
+  ggplot(aes(x = factor(aid),y = factor(charge),fill = tot_rev)) + 
+  geom_tile()
+```
+
+---
+
+# 2. Consulting: full data
+
+```{r}
+toplot %>%
+  ggplot(aes(x = factor(aid),y = factor(charge),fill = totAttend)) + 
+  geom_tile()
+```
+
+
+---
+
+# Conclusion
+
+- Remember the workflow:
+
+--
+
+  1. Train: `glm()`
+  
+  2. Predict: `predict()`
+  
+  3. Evaluate: `roc_auc()`
+  
+--
+
+  4. Adjust: `net_price = ifelse()`
+
+--
+
+- Go to Brightspace and take the **15th** quiz
+
+--
+
+  - The password to take the quiz is #### <!-- `r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
+  
+--
+
+- **Homework:**
+
+  - Problem Set 7 (due 2023-03-31 by 11:59PM)
+

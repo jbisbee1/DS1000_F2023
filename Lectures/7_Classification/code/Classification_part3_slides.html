@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Classification</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Classification
+]
+.subtitle[
+## Part 3
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/03/27
+Slides Updated: 2023-03-26
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+
+# Agenda
+
+1. Recap of classification
+
+2. Recap of evaluation
+
+2. Using classifiers
+
+---
+
+# Classification Recap
+
+- Similar to **prediction**
+
+--
+
+- Difference is in the **outcome variable** `\(Y\)`:
+
+--
+
+  - Continuous: use regression model
+  
+  - Categorical / Binary: use classification model
+  
+--
+
+- **NB:** *classification* is a type of *prediction*
+
+---
+
+# Classification Recap
+
+- Thus far, only used binary `\(Y\)`
+
+--
+
+  - *Can* use linear regression model
+  
+  - *Better* to use logistic regression model
+  
+--
+
+- Linear regression: `lm(formula,data)`
+
+--
+
+  - Predicts "latent" measures (`predict(mLM)`)
+  
+  - I.e., willingness to attend
+  
+--
+
+- Logistic: `glm(formula,data,family = binomial(link = 'logit'))`
+
+--
+
+  - Predicts probabilities (`predict(mLG,type = 'response')`)
+  
+  - I.e., probability of attending
+  
+
+```r
+require(tidyverse)
+require(tidymodels)
+ad &lt;- readRDS('../data/admit_data.rds')
+```
+
+---
+
+# Classification Recap
+
+
+```r
+ad %&gt;% ggplot(aes(x = sat,y = yield)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25) + 
+  geom_smooth(method = 'lm',color = 'black') + 
+  geom_smooth(method = 'glm',color = 'red',
+              method.args = list(family = binomial(link = 'logit')))
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Classification Recap
+
+
+```r
+ad %&gt;% ggplot(aes(x = income,y = yield)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25) + 
+  geom_smooth(method = 'lm',color = 'black') + 
+  geom_smooth(method = 'glm',color = 'red',
+              method.args = list(family = binomial(link = 'logit')))
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Classification Recap
+
+
+```r
+ad %&gt;% ggplot(aes(x = log(income),y = yield)) + 
+  geom_jitter(width = .01,height = .05,alpha = .25) + 
+  geom_smooth(method = 'lm',color = 'black') + 
+  geom_smooth(method = 'glm',color = 'red',
+              method.args = list(family = binomial(link = 'logit')))
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Classification Workflow
+
+1. Train: `mLG &lt;- glm(formula,data,family = binomial(link = 'logit'))`
+
+2. Predict: `data$predY &lt;- predict(mLG,type = 'response')`
+
+3. Evaluate: `roc_auc(data,truth,estimate)`
+
+--
+
+- **NB:** Evaluation stage is *DEEP*
+
+--
+
+  - Classify observations based on threshold: `ifelse(predY &gt; 0.5,1,0)`
+  
+  - Calculate accuracy by group across thresholds
+  
+  - **Sensitivity** and **Specificity** &amp;rarr; ROC curve &amp;rarr; AUC
+  
+  - Should be estimated via cross validation to prevent **overfitting**
+  
+  - Make sure `truth` is ordered in **reverse**: `factor(truth,levels = c('1','0'))`
+
+
+---
+
+# Classification Workflow
+
+- What do we get out of all this effort?
+
+--
+
+- A single classification algorithm that we think is best
+
+--
+
+.small[
+
+```r
+# Train
+form &lt;- 'yield ~ sat + legacy + visit + registered + sent_scores + income + gpa + distance + net_price'
+mLG &lt;- glm(formula = as.formula(form),
+           data = ad,family = binomial(link = 'logit'))
+# Predict
+pred &lt;- ad %&gt;%
+  mutate(predY = predict(mLG,type = 'response'), # NB: type = 'response' for glm()!
+         truth = factor(yield,levels = c('1','0'))) # NB: reorder outcome so that 1 is first!
+# Evaluate
+roc_auc(data = pred,truth = 'truth',estimate = 'predY')
+```
+
+```
+## # A tibble: 1 × 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.915
+```
+]
+
+
+---
+
+# Classification Workflow
+
+- But we should actually do this with **cross validation**
+
+--
+
+.small[
+
+```r
+cvRes &lt;- NULL
+for(i in 1:100) {
+  inds &lt;- sample(1:nrow(ad),size = round(nrow(ad)*.8),replace = F)
+  train &lt;- ad %&gt;% slice(inds)
+  test &lt;- ad %&gt;% slice(-inds)
+  
+  # Train
+  mLM &lt;- lm(form,data = train)
+  mLG &lt;- glm(form,data = train,family = binomial(link = 'logit'))
+  # Predict
+  pred &lt;- test %&gt;%
+  mutate(predLM = predict(mLM,newdata = test),
+         predLG = predict(mLG,newdata = test,type = 'response'),
+         truth = factor(yield,levels = c('1','0')))
+  # Evaluate
+  resLG &lt;- roc_auc(data = pred,truth = 'truth',estimate = 'predLG') %&gt;%
+    mutate(algo = 'logit')
+  resLM &lt;- roc_auc(data = pred,truth = 'truth',estimate = 'predLM') %&gt;%
+    mutate(algo = 'linear') 
+  cvRes &lt;- resLG %&gt;% bind_rows(resLM) %&gt;% bind_rows(cvRes)
+}
+```
+]
+
+---
+
+# Classification Workflow
+
+
+```r
+cvRes %&gt;%
+  ggplot(aes(x = .estimate,fill = algo)) + 
+  geom_density(alpha = .4)
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Using the Algorithm
+
+- The algorithm can help us make decisions
+
+--
+
+- Recall the goals and constraints of this college:
+
+--
+
+  - **Goals**: Increase SAT to 1300
+  
+  - **Goals**: Admit 200 more students with incomes under $50,000
+  
+  - **Constraints**: Maintain total revenues of at least $30m
+  
+  - **Constraints**: Maintain entering class size of at least 1,466
+  
+--
+
+- Tools: 
+
+--
+
+  - Need-based and Merit-based aid
+  
+--
+
+  - Effort for visit and registration
+  
+--
+
+  - Other targeting? (ethics?)
+
+---
+
+# Using the Algorithm
+
+1. **Counterfactuals** for specific types of students
+
+--
+
+  - What is the probability a given student will attend?
+  
+  - `data_grid()` function from `modelr` package can help!
+  
+--
+
+2. **Consulting** for changes in policy
+
+--
+
+  - If we increase price, what will happen to attendance?
+  
+  - Just predict on the **full data**
+  
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- What is the probability that this student will attend?
+
+```r
+mLGFinal &lt;- glm(formula = as.formula(form),
+           data = ad,family = binomial(link = 'logit'))
+require(modelr)
+hypo_data &lt;- ad %&gt;%
+  data_grid(legacy = 0,
+            visit = 1,
+            registered = 1,
+            sent_scores = 1,
+            sat = 1400,
+            income = 95000,
+            gpa = 3.9,
+            distance = .1,
+            net_price = 6875)
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+```
+##         1 
+## 0.9643731
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- What is the probability they will attend if we increase the price by $10k?
+
+```r
+hypo_data &lt;- ad %&gt;%
+  data_grid(legacy = 0,
+            visit = 1,
+            registered = 1,
+            sent_scores = 1,
+            sat = 1400,
+            income = 95000,
+            gpa = 3.9,
+            distance = .1,
+            net_price = 16875)
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+```
+##         1 
+## 0.9392844
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Can combine with `data_grid()`
+
+
+```r
+hypo_data &lt;- ad %&gt;%
+  data_grid(legacy = 0,
+            visit = 1,
+            registered = 1,
+            sent_scores = 1,
+            sat = 1400,
+            income = 95000,
+            gpa = 3.9,
+            distance = .1,
+            net_price = c(6875,16875))
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+```
+##         1         2 
+## 0.9643731 0.9392844
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Can use `data_grid()` to calculate "typical" values for every variable
+
+--
+
+  - **Typical**: Mean for continuous, mode for categorical
+  
+--
+
+
+```r
+(hypo_data &lt;- ad %&gt;%
+  data_grid(.model = mLGFinal))
+```
+
+```
+## # A tibble: 1 × 9
+##     sat legacy visit registered sent_scores income   gpa
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 1200.      0     0          1           0 99712.  3.79
+## # … with 2 more variables: distance &lt;dbl&gt;, net_price &lt;dbl&gt;
+```
+
+```r
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+```
+##         1 
+## 0.8655441
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Compare otherwise typical admits who differ only in terms of GPA
+
+--
+
+
+```r
+hypo_data &lt;- ad %&gt;%
+  data_grid(.model = mLGFinal,
+            gpa = c(3.5,3.9))
+
+predict(mLGFinal,newdata = hypo_data,type = 'response')
+```
+
+```
+##         1         2 
+## 0.7936923 0.8865843
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+- Multiple comparisons are possible
+
+--
+
+
+```r
+require(ggridges)
+hypo_data &lt;- ad %&gt;%
+  data_grid(.model = mLGFinal,
+            gpa = seq_range(gpa,n = 100),
+            legacy = c(0,1))
+
+toplot &lt;- hypo_data %&gt;%
+  mutate(preds = predict(mLGFinal,newdata = hypo_data,type = 'response'))
+
+p &lt;- toplot %&gt;%
+  ggplot(aes(x = gpa,y = preds,color = factor(legacy))) + 
+  geom_line() + 
+  theme_ridges() + 
+  scale_y_continuous(labels = scales::percent) + 
+  labs(title = 'Predicted Attendance by GPA and Legacy',
+       x = 'GPA',
+       y = 'Prob(Attend)')
+```
+
+---
+
+# 1. Counterfactuals: `data_grid()`
+
+
+```r
+p
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# 2. Consulting: full data
+
+- Currently, admit 1466 at ~$30.7m revenues
+
+
+```r
+ad %&gt;%
+  filter(yield == 1) %&gt;%
+  summarise(totRev = dollar(sum(net_price)),
+            totAtt = n())
+```
+
+```
+##        totRev totAtt
+## 1 $30,674,149   1466
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+--
+
+
+```r
+# Currently, 355 students who sent scores are predicted to attend
+ad %&gt;%
+  mutate(preds = predict(mLGFinal,type = 'response')) %&gt;%
+  mutate(pred_class = ifelse(preds &gt; .5,1,0)) %&gt;%
+  count(sent_scores,pred_class)
+```
+
+```
+##   sent_scores pred_class    n
+## 1           0          0  627
+## 2           0          1 1093
+## 3           1          0   75
+## 4           1          1  355
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+
+```r
+# If price increases by $5k, number of predicted drops to 338
+hypo &lt;- ad %&gt;%
+  mutate(net_price = ifelse(sent_scores == 1,
+                            net_price + 5000,net_price))
+
+hypo %&gt;%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %&gt;%
+  mutate(pred_class = ifelse(preds &gt; .5,1,0)) %&gt;%
+  count(sent_scores,pred_class)
+```
+
+```
+##   sent_scores pred_class    n
+## 1           0          0  627
+## 2           0          1 1093
+## 3           1          0   92
+## 4           1          1  338
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+
+```r
+# BUT we make more total revenue
+hypo %&gt;%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %&gt;%
+  mutate(pred_class = ifelse(preds &gt; .5,1,0)) %&gt;%
+  filter(pred_class == 1) %&gt;%
+  summarise(tot_rev = scales::dollar(sum(net_price)))
+```
+
+```
+##       tot_rev
+## 1 $31,264,662
+```
+
+---
+
+# 2. Consulting: full data
+
+- What if we increased the price for those who submit scores?
+
+
+```r
+# Although total admits declined
+hypo %&gt;%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %&gt;%
+  mutate(pred_class = ifelse(preds &gt; .5,1,0)) %&gt;%
+  filter(pred_class == 1) %&gt;%
+  count()
+```
+
+```
+##      n
+## 1 1431
+```
+
+---
+
+# 2. Consulting: full data
+
+- Can we increase SAT scores to 1300?
+
+--
+
+
+```r
+ad %&gt;%
+  filter(yield == 1) %&gt;%
+  summarise(satAvg = round(mean(sat)))
+```
+
+```
+##   satAvg
+## 1   1226
+```
+
+--
+
+- Reduce price for those above 1300
+
+---
+
+# 2. Consulting: full data
+
+- Can we increase SAT scores to 1300?
+
+- Reduce price for those above 1300
+
+
+```r
+hypo &lt;- ad %&gt;%
+  mutate(net_price = ifelse(sat &gt;= 1300,
+                            net_price - 5000,net_price))
+
+hypo %&gt;%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %&gt;%
+  mutate(pred_class = ifelse(preds &gt; .5,1,0)) %&gt;%
+  filter(pred_class == 1) %&gt;%
+  summarise(satAvg = round(mean(sat)),
+            tot_rev = scales::dollar(sum(net_price)),
+            totAttend = n())
+```
+
+```
+##   satAvg     tot_rev totAttend
+## 1   1234 $28,294,452      1450
+```
+
+---
+
+# 2. Consulting: full data
+
+- Can we increase SAT scores to 1300?
+
+- BUT need to make up losses
+
+
+```r
+hypo &lt;- ad %&gt;%
+  mutate(net_price = ifelse(sat &gt;= 1300,net_price - 5000,
+                            ifelse(sat &lt; 1300,net_price + 2500,net_price)))
+
+hypo %&gt;%
+  mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %&gt;%
+  mutate(pred_class = ifelse(preds &gt; .5,1,0)) %&gt;%
+  filter(pred_class == 1) %&gt;%
+  summarise(satAvg = round(mean(sat)),
+            tot_rev = scales::dollar(sum(net_price)),
+            totAttend = n())
+```
+
+```
+##   satAvg     tot_rev totAttend
+## 1   1236 $30,084,732      1414
+```
+
+---
+
+# 2. Consulting: full data
+
+- Looking across many different values? **Loops**!
+
+
+```r
+toplot &lt;- NULL
+for(aid in c(2500,5000,7500,10000)) {
+  for(charge in seq(2500,10000,by = 2500)) {
+    hypo &lt;- ad %&gt;%
+      mutate(net_price = ifelse(sat &gt;= 1300,net_price - aid,
+                                ifelse(sat &lt; 1300,net_price + charge,net_price)))
+    
+  tmp &lt;- hypo %&gt;%
+    mutate(preds = predict(mLGFinal,newdata = hypo,type = 'response')) %&gt;%
+    mutate(pred_class = ifelse(preds &gt; .5,1,0)) %&gt;%
+    filter(pred_class == 1) %&gt;%
+    summarise(satAvg = mean(sat),
+              tot_rev = sum(net_price),
+              totAttend = n()) %&gt;%
+    ungroup() %&gt;%
+    mutate(aid = aid,
+           charge = charge)
+  
+  toplot &lt;- toplot %&gt;%
+    bind_rows(tmp)
+  }
+}
+```
+
+---
+
+# 2. Consulting: full data
+
+
+```r
+toplot %&gt;%
+  ggplot(aes(x = factor(aid),y = factor(charge),fill = satAvg)) + 
+  geom_tile()
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# 2. Consulting: full data
+
+
+```r
+toplot %&gt;%
+  ggplot(aes(x = factor(aid),y = factor(charge),fill = tot_rev)) + 
+  geom_tile()
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# 2. Consulting: full data
+
+
+```r
+toplot %&gt;%
+  ggplot(aes(x = factor(aid),y = factor(charge),fill = totAttend)) + 
+  geom_tile()
+```
+
+&lt;img src="Classification_part3_slides_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Conclusion
+
+- Remember the workflow:
+
+--
+
+  1. Train: `glm()`
+  
+  2. Predict: `predict()`
+  
+  3. Evaluate: `roc_auc()`
+  
+--
+
+  4. Adjust: `net_price = ifelse()`
+
+--
+
+- Go to Brightspace and take the **15th** quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 7277 --&gt;
+  
+--
+
+- **Homework:**
+
+  - Problem Set 7 (due 2023-03-31 by 11:59PM)
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

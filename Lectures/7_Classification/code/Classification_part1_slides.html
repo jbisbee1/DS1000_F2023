@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Classification</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Classification
+]
+.subtitle[
+## Part 1
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/10/30
+Slides Updated: 2023-10-29
+]
+
+---
+
+
+&lt;style type="text/css"&gt;
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+&lt;/style&gt;
+
+
+
+# Agenda
+
+1. Classification
+
+2. College Admissions
+
+---
+
+# Definitions
+
+- *Classification:* predicting the **class** of given data points via **predictive modeling**
+
+--
+
+  - *Class*: AKA targets, labels, or categories
+  
+--
+
+  - *Predictive Modeling*: Approximate mapping function `\(f: X \rightarrow Y\)`
+  
+--
+
+  - `\(X\)`: predictor variables
+  
+  - `\(Y\)`: outcome variable
+  
+  - `\(f\)`: ??
+  
+---
+
+# Mapping Functions
+
+- We have already used a mapping functions!
+
+--
+
+- Linear Regression
+
+--
+
+  - `\(f\)`: `\(Y = \alpha + \beta X + \varepsilon\)`
+  
+--
+
+- Underlying idea: `\(X\)` contain information about `\(Y\)`
+
+---
+
+# It is in the `\(Y\)`
+
+- If `\(Y\)` is continuous, we use OLS regression
+
+--
+
+- If `\(Y\)` is **binary**, we use "logistic" regression (AKA "logit")
+
+--
+
+  - As always, this is a **deep** area of study for those interested
+  
+--
+
+- Today, using OLS for binary `\(Y\)`
+
+--
+
+  - Next few classes: replacing OLS regression with logit
+  
+
+---
+
+# College Admissions
+
+&lt;center&gt;&lt;img src="https://www.curacubby.com/hubfs/Curacubby_March2022/Images/5fb814029f2614f386d260f1_iVGtj4dy_OUgZcvBtAb__7gGzmeuWNIjqvDfukNUE8JzKNvXPkRuq1wMCTZsgRXZeVPLRtCfuF_MZSNmJipAEHb8wkcoxSpTsWCN8Aiqy7XxH8RwvS7RDDUHbR49cWpw1mAWlu_O.png" width="90%"&gt;&lt;/center&gt;
+
+--
+
+- [A live interactive infographic](https://iraps.ucsc.edu/iraps-public-dashboards/student-demand/admissions-funnel.html)
+
+---
+
+# College Admissions
+
+- The math of college admissions
+
+--
+
+1. **Tuition** ($)
+  
+--
+
+  - How they stay in business
+  
+--
+
+2. **Reputation**
+
+--
+
+  - Higher reputation &amp;rarr; more **tuition**
+  
+--
+
+  - Based on academic qualifications
+  
+
+---
+
+# Data Science!
+
+- This is a big industry for data scientists!
+
+--
+
+- Why?
+
+--
+
+  - If you screw this up, you lose A LOT OF MONEY
+  
+--
+
+  - Too few students &amp;rarr; not enough money to operate
+  
+  - Too many students &amp;rarr; not enough capacity &amp;rarr; bad reputation &amp;rarr; not enough money
+  
+--
+
+- Thus, we need people who are good at **classification**
+
+---
+
+# Our Task
+
+- Colleges hire data scientists to do more than just predict yield
+
+--
+
+- College **goals**: Increase reputation
+
+--
+
+  - Increase average SAT score to 1300
+  
+  - Admit at least 200 more students with incomes under $50,000
+  
+--
+
+- College **constraints**: Stay in operation!
+  
+--
+
+  - Maintain total revenues of $30m
+  
+  - Maintain entering class size of 1,500
+
+---
+
+# How do we do this?
+
+- Tuition discounting / targeting
+
+--
+
+  - Incentivize certain students to enroll
+  
+--
+
+  - Make it cheaper for them to attend via **need-based** and **merit-based** aid
+  
+--
+
+- **Need-based aid**: `$$need_{aid} = 500 + (income / 1000 - 100)*-425$$`
+
+--
+
+  - For every $1,000 less than $100,000, student receives +$425
+  
+--
+
+- **Merit-based aid**: `$$merit_{aid} = 5000 + (sat / 1001500)$$`
+
+--
+
+  - For every 10 points in SAT scores above 1250, student receives extra $1,500
+
+---
+
+# So how do we do this?
+
+- Use tuition discounting to attract certain students
+
+--
+
+  - Those with higher SAT scores
+  
+  - Those with lower incomes
+  
+--
+
+- Could give aid to everyone who fits these criteria
+
+--
+
+- But this is inefficient! Giving money to those would might not attend
+
+--
+
+- Want to **target** the aid toward those most likely to attend
+
+--
+
+- Again...**prediction**
+
+---
+
+# Ethics
+
+- Is this **ethical**?
+
+--
+
+- Ethics in data science is crucial
+
+--
+
+&gt; [J]ust as the invention of the telescope revolutionized the study of the heavens, so too by **rendering the unmeasurable measurable**, the technological revolution in mobile, Web, and Internet communications has the potential to revolutionize our understanding of ourselves and how we interact.
+
+&gt; &lt;footer&gt;-- Duncan Watts (2011, p. 266)&lt;/footer&gt;
+
+--
+
+- We will return to this topic in our final meeting
+
+---
+
+# The Data
+
+
+```r
+library(tidyverse)
+library(scales)
+ad&lt;-read_rds("../data/admit_data.rds")%&gt;%ungroup()
+glimpse(ad)
+```
+
+```
+## Rows: 2,150
+## Columns: 14
+## $ ID          &lt;chr&gt; "0001", "0002", "0003", "0004", "0005"…
+## $ income      &lt;dbl&gt; 289720.59, 176763.29, 81204.02, 93320.…
+## $ sat         &lt;dbl&gt; 1107.403, 1387.607, 1000.000, 1134.883…
+## $ gpa         &lt;dbl&gt; 3.597153, 4.000000, 3.072323, 3.682776…
+## $ visit       &lt;dbl&gt; 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0,…
+## $ legacy      &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ registered  &lt;dbl&gt; 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0,…
+## $ sent_scores &lt;dbl&gt; 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,…
+## $ distance    &lt;dbl&gt; 10.23279, 89.75984, 152.29961, 317.502…
+## $ tuition     &lt;dbl&gt; 45000, 45000, 45000, 45000, 45000, 450…
+## $ need_aid    &lt;dbl&gt; 0.000, 0.000, 8488.293, 3338.779, 0.00…
+## $ merit_aid   &lt;dbl&gt; 0.00, 35190.18, 0.00, 0.00, 30567.16, …
+## $ net_price   &lt;dbl&gt; 45000.000, 9809.815, 36511.707, 41661.…
+## $ yield       &lt;int&gt; 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0,…
+```
+
+---
+
+# The Data
+
+- Start with the basics:
+
+--
+
+  1. What is the unit of analysis?
+  
+  2. Which variables are we interested in?
+
+
+---
+
+# Prediction
+
+`$$Y = \alpha + \beta_1 X_1 + \beta_2 X_2 + \dots + \varepsilon$$`
+
+--
+
+- `\(Y\)`: enrollment (`yield`)
+
+--
+
+- `\(X\)`: ??
+
+--
+
+  - In prediction, we don't care about **theory** or **research questions**
+  
+--
+
+  - Just want to maximize **accuracy**...which `\(X\)`'s are the "best"?
+  
+--
+
+- Look at univariate &amp; conditional relationships
+
+---
+
+# The Data
+
+- Outcome `\(Y\)`: `yield`
+
+
+```r
+ad %&gt;%
+  summarise(`Yield Rate` = percent(mean(yield)))
+```
+
+```
+##   Yield Rate
+## 1        68%
+```
+
+--
+
+- Multivariate analysis?
+
+---
+
+# Which `\(X\)`?
+
+
+```r
+ad %&gt;%
+  group_by(legacy) %&gt;%
+  summarise(pr_attend = mean(yield))
+```
+
+```
+## # A tibble: 2 × 2
+##   legacy pr_attend
+##    &lt;dbl&gt;     &lt;dbl&gt;
+## 1      0     0.641
+## 2      1     0.780
+```
+
+---
+
+# Which `\(X\)`?
+
+
+```r
+ad %&gt;%
+  group_by(visit) %&gt;%
+  summarise(pr_attend = mean(yield))
+```
+
+```
+## # A tibble: 2 × 2
+##   visit pr_attend
+##   &lt;dbl&gt;     &lt;dbl&gt;
+## 1     0     0.644
+## 2     1     0.736
+```
+
+---
+
+# Which `\(X\)`?
+
+
+```r
+ad %&gt;%
+  group_by(sent_scores) %&gt;%
+  summarise(pr_attend = mean(yield))
+```
+
+```
+## # A tibble: 2 × 2
+##   sent_scores pr_attend
+##         &lt;dbl&gt;     &lt;dbl&gt;
+## 1           0     0.651
+## 2           1     0.805
+```
+
+---
+
+# Which `\(X\)`?
+
+
+```r
+ad %&gt;%
+  ggplot(aes(x = sat,y = yield)) + 
+  geom_point()
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Which `\(X\)`?
+
+
+```r
+ad %&gt;%
+  ggplot(aes(x = sat,y = yield)) + 
+  geom_jitter()
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Heatmaps
+
+- Look at 3-dimensions of data
+
+--
+
+  - Done this before by tweaking `fill`, `color`, or `size`
+  
+--
+
+- `geom_tile()`: create a heatmap
+
+
+```r
+p &lt;- ad %&gt;%
+  mutate(sat_decile = ntile(sat,n=10)) %&gt;% # Bin SAT by decile (10%)
+  group_by(sat_decile,legacy) %&gt;% # Calculate average yield by SAT &amp; legacy
+  summarise(pr_attend = mean(yield), 
+            .groups = 'drop') %&gt;% 
+  ggplot(aes(x = factor(legacy),y = factor(sat_decile), # Both x and y-axes are factors
+             fill = pr_attend)) + # Fill by third dimension
+  geom_tile() + # Creates rectangles
+  scale_fill_gradient(limits = c(0,1)) # Set fill color (can do much more here)
+```
+
+---
+
+# Heatmaps
+
+
+```r
+p
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Simplest Predictions
+
+- Remember: regression is just fancier conditional means
+
+
+```r
+ad &lt;- ad %&gt;%
+  mutate(sat_decile = ntile(sat,n=10)) %&gt;% # Bin SAT by decile (10%)
+  group_by(sat_decile,legacy) %&gt;% # Calculate average yield by SAT &amp; legacy
+  mutate(prob_attend = mean(yield)) %&gt;% # use mutate() instead of summarise() to avoid collapsing the data
+  mutate(pred_attend = ifelse(prob_attend &gt; .5,1,0)) %&gt;% # If the probability is greater than 50-50, predict they attend
+  ungroup()
+```
+
+---
+
+# Simplest Predictions
+
+- Conditional means
+
+
+```r
+ad %&gt;%
+  group_by(yield,pred_attend) %&gt;%
+  summarise(nStudents=n(),.groups = 'drop')
+```
+
+```
+## # A tibble: 4 × 3
+##   yield pred_attend nStudents
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;int&gt;
+## 1     0           0       304
+## 2     0           1       380
+## 3     1           0       210
+## 4     1           1      1256
+```
+
+---
+
+# Accuracy
+
+- What is "accuracy"?
+
+--
+
+  - Proportion "correct" predictions
+  
+--
+
+- For a binary outcome, "accuracy" has two dimensions
+
+--
+
+  - Proportion of correct `1`s: **Sensitivity**
+  
+  - Proportion of correct `0`s: **Specificity**
+  
+---
+
+# Accuracy
+
+
+```r
+ad %&gt;%
+  group_by(yield) %&gt;%
+  mutate(total_attend = n()) %&gt;%
+  group_by(yield,pred_attend,total_attend) %&gt;%
+  summarise(nStudents=n(),.groups = 'drop') %&gt;%
+  mutate(prop = nStudents / total_attend)
+```
+
+```
+## # A tibble: 4 × 5
+##   yield pred_attend total_attend nStudents  prop
+##   &lt;int&gt;       &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt; &lt;dbl&gt;
+## 1     0           0          684       304 0.444
+## 2     0           1          684       380 0.556
+## 3     1           0         1466       210 0.143
+## 4     1           1         1466      1256 0.857
+```
+
+--
+
+- Overall accuracy: `(304 + 1256) / 2150` = 73%
+
+---
+
+# 
+
+---
+
+# Regression
+
+
+```r
+ad %&gt;%
+  ggplot(aes(x = sat,y = yield)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm')
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Regression
+
+- Binary outcome variable!
+
+--
+
+  - A linear regression is not the best solution
+  
+--
+
+  - Predictions can exceed support of `\(Y\)`
+
+--
+
+- But it can still work! **linear probability model**
+
+
+```r
+mLM &lt;- lm(yield ~ sat + net_price + legacy,ad)
+```
+
+---
+
+# Linear Regression
+
+
+```r
+require(broom) # broom package makes it easy to read regression output
+```
+
+```
+## Loading required package: broom
+```
+
+```r
+tidy(mLM) %&gt;% # This would be the same as summary(mLM)
+  mutate_at(vars(-term),function(x) round(x,5))
+```
+
+```
+## # A tibble: 4 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept) -2.98      0.151      -19.7        0
+## 2 sat          0.00284   0.00012     24.2        0
+## 3 net_price    0.00001   0           14.1        0
+## 4 legacy       0.0950    0.0195       4.86       0
+```
+
+---
+
+# Linear Regression
+
+
+```r
+mLM &lt;- lm(yield ~ scale(sat) + scale(net_price) + legacy,ad)
+tidy(mLM)
+```
+
+```
+## # A tibble: 4 × 5
+##   term             estimate std.error statistic   p.value
+##   &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)        0.654     0.0105     62.3  0        
+## 2 scale(sat)         0.280     0.0116     24.2  8.84e-115
+## 3 scale(net_price)   0.164     0.0116     14.1  2.30e- 43
+## 4 legacy             0.0950    0.0195      4.86 1.24e-  6
+```
+
+```r
+ad %&gt;%
+  summarise_at(vars(sat,net_price),function(x) round(sd(x),1))
+```
+
+```
+## # A tibble: 1 × 2
+##     sat net_price
+##   &lt;dbl&gt;     &lt;dbl&gt;
+## 1  98.6    15569.
+```
+
+---
+
+# Evaluating Predictions
+
+
+```r
+ad %&gt;%
+  mutate(preds = predict(mLM)) %&gt;%
+  mutate(predBinary = ifelse(preds &gt; .5,1,0)) %&gt;%
+  select(yield,predBinary,preds)
+```
+
+```
+## # A tibble: 2,150 × 3
+##    yield predBinary preds
+##    &lt;int&gt;      &lt;dbl&gt; &lt;dbl&gt;
+##  1     1          1 0.735
+##  2     1          1 1.07 
+##  3     1          0 0.245
+##  4     0          1 0.683
+##  5     1          1 0.589
+##  6     0          0 0.358
+##  7     1          1 0.559
+##  8     1          1 0.757
+##  9     0          0 0.366
+## 10     0          1 0.698
+## # ℹ 2,140 more rows
+```
+
+---
+
+# Evaluating Predictions
+
+
+
+```r
+ad %&gt;%
+  mutate(pred_attend = ifelse(predict(mLM) &gt; .5,1,0)) %&gt;%
+  group_by(yield) %&gt;%
+  mutate(total_attend = n()) %&gt;%
+  group_by(yield,pred_attend,total_attend) %&gt;%
+  summarise(nStudents=n(),.groups = 'drop') %&gt;%
+  mutate(prop = nStudents / total_attend) %&gt;%
+  ungroup() %&gt;%
+  mutate(accuracy = percent(sum((yield == pred_attend)*nStudents) / sum(nStudents)))
+```
+
+```
+## # A tibble: 4 × 6
+##   yield pred_attend total_attend nStudents   prop accuracy
+##   &lt;int&gt;       &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt;  &lt;dbl&gt; &lt;chr&gt;   
+## 1     0           0          684       282 0.412  76%     
+## 2     0           1          684       402 0.588  76%     
+## 3     1           0         1466       113 0.0771 76%     
+## 4     1           1         1466      1353 0.923  76%
+```
+
+---
+
+# Evaluating Predictions
+
+- Overall accuracy is just the number of correct predictions (either `0` or `1`) out of all possible
+
+--
+
+  - Is 76% good?
+
+--
+
+  - What would the dumbest guess be? Everyone will attend! 68%
+
+--
+
+- Might also want to care about just `1`s
+
+--
+
+  - **Sensitivity**: Predicted attendees / actual attendees = 92.3%
+  
+--
+
+- Also might care about just `0`s
+
+--
+
+  - **Specificity**: Predicted non-attendees / actual non-attendees = 41.2%
+  
+---
+
+# Thresholds
+
+- Shifting the threshold for `0` or `1` prediction can matter
+
+--
+
+
+```r
+ad %&gt;%
+  mutate(pred_attend = ifelse(predict(mLM) &gt; .4,1,0)) %&gt;%
+  group_by(yield) %&gt;%
+  mutate(total_attend = n()) %&gt;%
+  group_by(yield,pred_attend,total_attend) %&gt;%
+  summarise(nStudents=n(),.groups = 'drop') %&gt;%
+  mutate(prop = percent(nStudents / total_attend)) %&gt;%
+  ungroup() %&gt;%
+  mutate(accuracy = percent(sum((yield == pred_attend)*nStudents) / sum(nStudents)))
+```
+
+```
+## # A tibble: 4 × 6
+##   yield pred_attend total_attend nStudents prop  accuracy
+##   &lt;int&gt;       &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt; &lt;chr&gt; &lt;chr&gt;   
+## 1     0           0          684       176 26%   74%     
+## 2     0           1          684       508 74%   74%     
+## 3     1           0         1466        58 4%    74%     
+## 4     1           1         1466      1408 96%   74%
+```
+
+---
+
+# Thresholds
+
+- Shifting the threshold for `0` or `1` prediction can matter
+
+
+```r
+ad %&gt;%
+  mutate(pred_attend = ifelse(predict(mLM) &gt; 1,1,0)) %&gt;%
+  group_by(yield) %&gt;%
+  mutate(total_attend = n()) %&gt;%
+  group_by(yield,pred_attend,total_attend) %&gt;%
+  summarise(nStudents=n(),.groups = 'drop') %&gt;%
+  mutate(prop = percent(nStudents / total_attend)) %&gt;%
+  ungroup() %&gt;%
+  mutate(accuracy = percent(sum((yield == pred_attend)*nStudents) / sum(nStudents)))
+```
+
+```
+## # A tibble: 4 × 6
+##   yield pred_attend total_attend nStudents prop  accuracy
+##   &lt;int&gt;       &lt;dbl&gt;        &lt;int&gt;     &lt;int&gt; &lt;chr&gt; &lt;chr&gt;   
+## 1     0           0          684       683 99.9% 38%     
+## 2     0           1          684         1 0.1%  38%     
+## 3     1           0         1466      1342 91.5% 38%     
+## 4     1           1         1466       124 8.5%  38%
+```
+
+---
+
+# Thresholds
+
+- Let's loop it!
+
+--
+
+
+
+```r
+toplot &lt;- NULL
+for(thresh in seq(0,1,by = .025)) {
+  toplot &lt;- ad %&gt;%
+  mutate(pred_attend = ifelse(predict(mLM) &gt; thresh,1,0)) %&gt;%
+  group_by(yield) %&gt;%
+  mutate(total_attend = n()) %&gt;%
+  group_by(yield,pred_attend,total_attend) %&gt;%
+  summarise(nStudents=n(),.groups = 'drop') %&gt;%
+  mutate(prop = nStudents / total_attend) %&gt;%
+  ungroup() %&gt;%
+  mutate(accuracy = sum((yield == pred_attend)*nStudents) / sum(nStudents)) %&gt;%
+  mutate(threshold = thresh) %&gt;%
+    bind_rows(toplot)
+}
+```
+
+---
+
+# Thresholds
+
+.small[
+
+```r
+toplot %&gt;%
+  mutate(metric = ifelse(yield == 1 &amp; pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 &amp; pred_attend == 0,'Specificity',NA))) %&gt;%
+  drop_na(metric) %&gt;%
+  ggplot(aes(x = threshold,y = prop,color = metric)) + 
+  geom_line()
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+
+# ROC Curve
+
+- Receiver-Operator Characteristic (ROC) Curve
+
+--
+
+- Commonly used to evaluate classification methods
+
+--
+
+  - X-axis: 1-specificity
+
+  - Y-axis: sensitivity
+
+--
+
+
+```r
+p &lt;- toplot %&gt;%
+  mutate(metric = ifelse(yield == 1 &amp; pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 &amp; pred_attend == 0,'Specificity',NA))) %&gt;%
+  drop_na(metric) %&gt;%
+  select(prop,metric,threshold) %&gt;%
+  spread(metric,prop) %&gt;%
+  ggplot(aes(x = 1-Specificity,y = Sensitivity)) + 
+  geom_line() + 
+  xlim(c(0,1)) + ylim(c(0,1)) + 
+  geom_abline(slope = 1,intercept = 0,linetype = 'dotted') + 
+  ggridges::theme_ridges()
+```
+
+---
+
+# ROC Curve
+
+
+```r
+p
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+--
+
+- Better models have high levels of sensitivity **and** specificity at every threshold
+
+---
+
+# AUC Measure
+
+- Area Under the Curve (AUC)
+
+--
+
+  - A single number summarizing classification performance
+  
+--
+
+
+```r
+require(tidymodels)
+roc_auc(data = ad %&gt;%
+  mutate(pred_attend = predict(mLM),
+         truth = factor(yield,levels = c('1','0'))) %&gt;%
+  select(truth,pred_attend),truth,pred_attend)
+```
+
+```
+## # A tibble: 1 × 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.801
+```
+
+---
+
+# Party time!
+
+- Adding more variables / trying different combinations
+
+--
+
+- **Workflow**
+
+--
+
+  1. Train models
+  
+  2. Predict models
+  
+  3. Evaluate models
+  
+---
+
+# Train models
+
+
+```r
+m1 &lt;- lm(yield ~ sat + net_price + legacy,ad)
+m2 &lt;- lm(yield ~ sat + net_price + legacy + income,ad)
+m3 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa,ad)
+m4 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa + distance,ad)
+m5 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit,ad)
+m6 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit + registered + sent_scores,ad)
+```
+
+---
+
+# Predict models
+
+
+```r
+toEval &lt;- ad %&gt;%
+  mutate(m1Preds = predict(m1),
+         m2Preds = predict(m2),
+         m3Preds = predict(m3),
+         m4Preds = predict(m4),
+         m5Preds = predict(m5),
+         m6Preds = predict(m6),
+         truth = factor(yield,levels = c('1','0')))
+```
+
+---
+
+# Evaluate models
+
+
+```r
+rocRes &lt;- NULL
+for(model in 1:6) {
+  rocRes &lt;- roc_auc(toEval,truth,paste0('m',model,'Preds')) %&gt;%
+    mutate(model = model) %&gt;%
+    bind_rows(rocRes)
+}
+```
+
+---
+
+# Evaluate models
+
+
+```r
+rocRes %&gt;%
+  ggplot(aes(x = .estimate,y = reorder(model,.estimate))) + 
+  geom_bar(stat = 'identity') + 
+  ggridges::theme_ridges()
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# OVERFITTING
+
+- Cross validation to the rescue!
+
+.tiny[
+
+```r
+set.seed(123)
+cvRes &lt;- NULL
+for(i in 1:100) {
+  # Cross validation prep
+  inds &lt;- sample(1:nrow(ad),size = round(nrow(ad)*.8),replace = F)
+  train &lt;- ad %&gt;% slice(inds)
+  test &lt;- ad %&gt;% slice(-inds)
+
+  # Training models
+  m1 &lt;- lm(yield ~ sat + net_price + legacy,train)
+  m2 &lt;- lm(yield ~ sat + net_price + legacy + income,train)
+  m3 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa,train)
+  m4 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa + distance,train)
+  m5 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit,train)
+  m6 &lt;- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit + registered + sent_scores,train)
+
+  # Predicting models
+  toEval &lt;- test %&gt;%
+    mutate(m1Preds = predict(m1,newdata = test),
+           m2Preds = predict(m2,newdata = test),
+           m3Preds = predict(m3,newdata = test),
+           m4Preds = predict(m4,newdata = test),
+           m5Preds = predict(m5,newdata = test),
+           m6Preds = predict(m6,newdata = test),
+           truth = factor(yield,levels = c('1','0')))
+
+  # Evaluating models
+  rocRes &lt;- NULL
+  for(model in 1:6) {
+    rocRes &lt;- roc_auc(toEval,truth,paste0('m',model,'Preds')) %&gt;%
+      mutate(model = model) %&gt;%
+      bind_rows(rocRes)
+  }
+  cvRes &lt;- rocRes %&gt;%
+    mutate(bsInd = i) %&gt;%
+    bind_rows(cvRes)
+}
+```
+]
+---
+
+# Cross Validation AUC
+
+
+```r
+cvRes %&gt;%
+  ggplot(aes(x = .estimate,y = factor(reorder(model,.estimate)))) + 
+  geom_boxplot() + 
+  ggridges::theme_ridges()
+```
+
+&lt;img src="Classification_part1_slides_files/figure-html/unnamed-chunk-33-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Conclusion
+
+- Classification is just a type of prediction
+
+--
+
+  - We used linear regression
+  
+--
+
+  - But there are **much** fancier algorithms out there
+  
+--
+
+- Next class:
+
+  - A *slightly* fancier algorithm: logistic regression
+  
+  - How to use the models to achieve the university's goals
+  
+- Go to Brightspace and take the **12th** quiz
+
+--
+
+  - The password to take the quiz is #### &lt;!-- 5266 --&gt;
+  
+--
+
+- **Homework:**
+
+  - Problem Set 6 (due 2023-11-03 by 11:59PM)
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
