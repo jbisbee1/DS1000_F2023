@@ -1,0 +1,138 @@
+---
+title: "Lecture 16 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-10-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+ad <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/7_Classification/data/admit_data.rds')
+
+
+# Looking at the outcome variable yield
+ad %>%
+  count(yield)
+
+summary(ad %>% select(yield))
+
+# Visualize
+ad %>%
+  ggplot(aes(x = yield)) + 
+  geom_bar()
+
+# Look for missingness
+summary(ad %>%
+          select(distance,visit,merit_aid))
+
+# Visualize
+# Distance
+ad %>%
+  ggplot(aes(x = distance)) + 
+  geom_histogram()
+
+# Merit Aid
+ad %>%
+  ggplot(aes(x = merit_aid)) + 
+  geom_histogram()
+
+ad %>%
+  mutate(merit_aid_bin = ifelse(merit_aid == 0,0,1)) %>%
+  ggplot(aes(x = merit_aid_bin)) + 
+  geom_bar()
+
+# Visit
+ad %>%
+  ggplot(aes(x = visit)) + 
+  geom_bar()
+
+```
+
+# Multivariate Visualization
+
+```{r}
+ad %>% select(yield) %>% head(20)
+ad %>%
+  mutate(distance_log = log(distance)) %>%
+  ggplot(aes( x= distance_log,color = factor(yield))) + 
+  geom_density()
+
+ad %>%
+  mutate(merit_aid_bin = ifelse(merit_aid == 0,0,1)) %>%
+  count(merit_aid_bin,yield)
+
+ad %>%
+  count(visit,yield)
+
+
+ad %>%
+  summarise(pred_attend = mean(yield))
+
+ad %>%
+  group_by(visit) %>%
+  summarise(pred_attend = mean(yield))
+
+ad %>%
+  mutate(merit_aid_bin = ifelse(merit_aid == 0,0,1)) %>%
+  group_by(merit_aid_bin) %>%
+  summarise(pred_attend = mean(yield))
+
+ad %>%
+  mutate(dist_log = log(distance)) %>%
+  group_by(dist_log) %>%
+  summarise(pred_attend = mean(yield)) %>%
+  head(20)
+
+ad <- ad %>%
+  mutate(dist_log = log(distance),
+         merit_aid_bin = ifelse(merit_aid == 0,0,1))
+
+ad %>%
+  ggplot(aes(x = dist_log,y = yield)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm')
+```
+
+# Trivariate Visualization
+
+```{r}
+ad %>%
+  group_by(visit,merit_aid_bin) %>%
+  summarise(yield = mean(yield)) %>%
+  ggplot(aes(x = factor(visit),
+             y = factor(merit_aid_bin),
+             fill = yield)) + 
+  geom_tile()
+
+ad %>%
+  mutate(dist_log_decile = ntile(dist_log,n = 10)) %>%
+  group_by(dist_log_decile,merit_aid_bin) %>%
+  summarise(yield = mean(yield)) %>%
+  ggplot(aes(x = factor(merit_aid_bin),
+             y = dist_log_decile,
+             fill = yield)) + 
+  geom_tile()
+
+
+ad %>%
+  mutate(dist_log_decile = ntile(dist_log,n = 10)) %>%
+  group_by(dist_log_decile,merit_aid_bin) %>%
+  mutate(pred_attend = mean(yield)) %>%
+  ungroup() %>%
+  select(dist_log_decile,merit_aid_bin,yield,pred_attend) %>%
+  mutate(pred_attend_bin = ifelse(pred_attend > .5,1,0)) %>%
+  count(yield,pred_attend_bin) %>%
+  group_by(yield) %>%
+  mutate(tot = sum(n)) %>%
+  ungroup() %>%
+  mutate(prop = n / tot)
+
+(238 + 1275)/2150
+```
+
+
+

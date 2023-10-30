@@ -40,7 +40,7 @@ Require `tidyverse` and `tidymodels` (for calculating AUC), and load the [`admit
 
 
 ## Question 1 [2 points + 1 EC]
-Plot the univariate visualizations for `yield`, `income`, and `sat`. Justify your choices for how you are visualizing these variables. Then plot the conditional variation between `yield` and `income`, and `yield` and `sat`. Again, justify your choices and then interpret the results. Do these variables matter for `yield`?
+Plot the univariate visualizations for `yield`, `income`, and `sat`. Justify your choices for how you are visualizing these variables. Then plot the conditional variation between `yield` and `income`, and `yield` and `sat` (two separate plots). Again, justify your choices and then interpret the results. Do these variables matter for `yield`?
 
 EXTRA CREDIT (+1 point): Explain the pattern you observe in the univariate visualization of the SAT scores. What might explain this? 
 
