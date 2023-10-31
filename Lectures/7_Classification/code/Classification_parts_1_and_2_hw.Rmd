@@ -120,7 +120,7 @@ Essentially every private college engages heavily in tuition discounting. This h
 
 The institution is currently awarding need-based aid for families making less than \$100,0000 on the following formula:
 
-$need_aid=500+(income/1000-100)\*-425$
+$need_{aid}=500+(income/1000-100)*-425$
 
 Translated, this means for every \$1,000 the family makes less than \$100,000 the student receives an additional 425 dollars. So for a family making \$50,000, need-based aid will be $500+(50,000/1000-100)*-425= 500+ (-50*-425)$=\$21,750. Need based aid is capped at total tuition.
 
@@ -132,7 +132,7 @@ ad%>%
 
 The institution is currently awarding merit-based aid for students with SAT scores above 1250 on the following formula:
 
-$merit_aid=5000+(sat/100\*1500)$
+$merit_{aid}=5000+(sat/100*250)$
 
 Translated, this means that for every 10 points in SAT scores above 1250, the student will receive an additional \$1,500. So for a student with 1400 SAT, merit based aid will be : $5000+ (1400/10 *250)= 500+140*250$
 
@@ -168,7 +168,7 @@ ad%>%
   summarize(pr_attend=mean(yield))
 ```
 
-That's a big difference! Legacy students are abut 17 percentage points more likely to yield than non-legacies.
+That's a big difference! Legacy students are abut 14 percentage points more likely to yield than non-legacies.
 
 Next, let's look at SAT scores. This is a continuouos variable, so we need to first break it up into a smaller number of groups. Let's look at yield rates by quintile of SAT scores among admitted students:
 
@@ -245,9 +245,9 @@ ad%>%
          `Number of Students`=`n()`)
 ```
 
-Here's how to read this: There were 312 students that our algorithm said would not attend who didn't attend. This means out of the 674 students who were admitted but did not attend, our algorithm correctly classified 46 percent. There were 362 students who our model said would not attend who actually showed up. 
+Here's how to read this: There were 304 students that our algorithm said would not attend who didn't attend. This means out of the 684 students who were admitted but did not attend, our algorithm correctly classified 44 percent. There were 380 students who our model said would not attend who actually showed up. 
 
-On the other side, There were 225 students who our model said would not show up, who actually attended. And last, there were  1251 students who our model said would attend who actually did-- we correctly classified 85 percent of actual attendees. The overall accuracy of our model ends up being (312+1251)/2150 or 72 percent. 
+On the other side, There were 210 students who our model said would not show up, who actually attended. And last, there were  1256 students who our model said would attend who actually did-- we correctly classified 85 percent of actual attendees. The overall accuracy of our model ends up being (304+1256)/2150 or 73 percent. 
 
 *Question: is this a good model?*
 
