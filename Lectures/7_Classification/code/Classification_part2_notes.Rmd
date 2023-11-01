@@ -1,0 +1,162 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-11-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+ad <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/7_Classification/data/admit_data.rds')
+
+
+ad <- ad %>%
+  mutate(sat_decile = ntile(sat,n=10)) %>% # Bin SAT by decile (10%)
+  group_by(sat_decile,legacy) %>% # Calculate average yield by SAT & legacy
+  mutate(prob_attend = mean(yield)) %>% # use mutate() instead of summarise() to avoid collapsing the data
+  mutate(pred_attend = ifelse(prob_attend > .7,1,0)) %>% # If the probability is greater than 50-50, predict they attend
+  ungroup()
+
+ad %>%
+  select(sat_decile,legacy,yield,prob_attend,pred_attend)
+
+ad %>%
+  group_by(yield,pred_attend) %>%
+  summarise(nStudentes = n(),.groups = 'drop')
+
+# Show as fractions
+ad %>%
+  group_by(yield) %>%
+  mutate(total_attend = n()) %>%
+  group_by(yield,pred_attend,total_attend) %>%
+  summarise(nStudents = n(),.groups = 'drop') %>%
+  ungroup() %>%
+  mutate(prop = nStudents / total_attend)
+(515 + 965) / 2150
+```
+# Loop it for thresholds
+
+```{r}
+toplot <- NULL
+for(thresh in seq(0,1,by = .025)) {
+  tmp <- ad %>%
+    mutate(pred_attend = ifelse(prob_attend > thresh,1,0)) %>%
+    group_by(yield) %>%
+    mutate(total_attend = n()) %>%
+    group_by(yield,pred_attend,total_attend) %>%
+    summarise(nStudents = n(),.groups = 'drop') %>%
+    mutate(prop = nStudents / total_attend) %>%
+    mutate(accuracy = sum((yield == pred_attend)*nStudents) / sum(nStudents)) %>%
+    mutate(threshold = thresh)
+  
+  toplot <- toplot %>%
+    bind_rows(tmp)
+}
+
+toplot %>%
+  mutate(metric = ifelse(yield == 1 & pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 & pred_attend == 0,'Specificity',NA))) %>%
+  drop_na(metric) %>%
+  ggplot(aes(x = threshold,y = prop,color = metric)) + 
+  geom_line() +
+  geom_vline(xintercept = .635)
+
+# ROC Curve
+toplot %>%
+  mutate(metric = ifelse(yield == 1 & pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 & pred_attend == 0,'Specificity',NA))) %>%
+  drop_na(metric) %>%
+  select(prop,metric,threshold) %>%
+  spread(metric,prop) %>%
+  ggplot(aes(x = 1 - Specificity,y = Sensitivity)) + 
+  geom_line() + 
+  geom_abline(intercept = 0,slope = 1,linetype = 'dashed')
+
+# AUC calculation
+# install.packages("tidymodels")
+require(tidymodels)
+
+aucDat <- ad %>%
+  mutate(truth = factor(yield,levels = c('1','0'))) %>%
+  select(truth,prob_attend)
+
+roc_auc(data = aucDat,truth,prob_attend)
+```
+
+# Trying different models
+
+```{r}
+ad <- ad %>%
+  mutate(distance_log = log(distance),
+         merit_bin = ifelse(merit_aid > 0,1,0))
+
+mLM <- lm(yield ~ visit + distance_log + merit_bin + sat + legacy,ad)
+
+summary(mLM)
+
+# TO Evaluate
+ad$prob_attend <- predict(mLM)
+
+aucDat <- ad %>%
+  mutate(truth = factor(yield,levels = c('1','0'))) %>%
+  select(truth,prob_attend)
+
+roc_auc(aucDat,truth,prob_attend)
+
+# Logistic Regression
+mLG <- glm(yield ~ visit + distance_log + merit_bin + legacy,ad,family = binomial(link = "logit"))
+
+summary(mLG)
+
+ad$prob_attend_LG <- predict(mLG,type = 'response')
+
+aucDat <- ad %>%
+  mutate(truth = factor(yield,levels = c('1','0'))) %>%
+  select(truth,prob_attend_LG)
+
+roc_auc(aucDat,truth,prob_attend_LG)
+
+
+# Cross Validation
+ad_analysis <- ad %>%
+  select(yield,distance_log,merit_bin,visit,legacy,registered) %>%
+  drop_na()
+
+set.seed(123)
+cvRes <- NULL
+for(i in 1:100) {
+  inds <- sample(1:nrow(ad_analysis),size = round(nrow(ad_analysis)*.8),replace = F)
+  train <- ad_analysis %>% 
+    slice(inds)
+  test <- ad_analysis %>%
+    slice(-inds)
+  
+  mLM <- lm(yield ~ distance_log + merit_bin,train)
+  mLG <- glm(yield ~ distance_log + merit_bin,train,family = binomial(link = 'logit'))
+  
+  test$prob_attend_LM <- predict(mLM,newdata = test)
+  test$prob_attend_LG <- predict(mLG,newdata = test,type = 'response')
+  
+  tmpAUC_LM <- roc_auc(test %>%
+            mutate(truth = factor(yield,levels = c('1','0'))) %>%
+            select(truth,prob_attend_LM),truth,prob_attend_LM)
+
+  
+  tmpAUC_LG <- roc_auc(test %>%
+            mutate(truth = factor(yield,levels = c('1','0'))) %>%
+            select(truth,prob_attend_LG),truth,prob_attend_LG)
+  
+  cvRes <- cvRes %>%
+    bind_rows(tmpAUC_LM %>% mutate(model = 'LM'),
+              tmpAUC_LG  %>% mutate(model = 'Logit'))
+}
+cvRes
+
+
+```
+
+
+
