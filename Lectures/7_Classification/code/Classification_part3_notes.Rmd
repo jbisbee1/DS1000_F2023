@@ -1,0 +1,148 @@
+---
+title: "Lecture 17 Notes"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2023-11-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Prediction / classification
+
+```{r}
+require(tidyverse)
+ad <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/7_Classification/data/admit_data.rds')
+
+form <- 'yield ~ sat + legacy + visit + registered + sent_scores + income + gpa + distance + net_price'
+
+mLG <- glm(formula = as.formula(form),
+           data = ad,
+           family = binomial(link = 'logit'))
+
+summary(mLG)
+
+hypothetical_student <- ad %>%
+  slice(1)
+
+predict(mLG,newdata = hypothetical_student,
+        type = 'response')
+
+hypothetical_student <- data.frame(sat = 1200,
+                                   legacy = 0,
+                                   visit = 1,
+                                   registered = 1,
+                                   sent_scores = 0,
+                                   income = 35000,
+                                   gpa = 3.9,
+                                   distance = 100,
+                                   net_price = 35000)
+
+hypothetical_student <- data.frame(sat = 1200,
+                                   legacy = 0,
+                                   visit = 1,
+                                   registered = 1,
+                                   sent_scores = 0,
+                                   income = 35000,
+                                   gpa = 3.9,
+                                   distance = 100,
+                                   net_price = 55000)
+
+
+predict(mLG,newdata = hypothetical_student,
+        type = 'response')
+
+# Changing X value for everyone
+hypothetical_data <- ad %>%
+  mutate(net_price = net_price - 1000)
+
+ad <- ad %>%
+  mutate(preds_1000_discount = predict(mLG,newdata = hypothetical_data,
+        type = 'response'))
+
+ad %>%
+  select(yield,preds_1000_discount) %>%
+  mutate(pred_attend_1000_discount = ifelse(preds_1000_discount > .5,1,0)) %>%
+  count(pred_attend_1000_discount)
+
+ad %>%
+  count(yield)
+
+
+# Adding more to the price
+hypothetical_data <- ad %>%
+  mutate(net_price = net_price + 1000)
+
+ad <- ad %>%
+  mutate(preds_1000_discount = predict(mLG,newdata = hypothetical_data,
+        type = 'response'))
+
+ad %>%
+  select(yield,preds_1000_discount) %>%
+  mutate(pred_attend_1000_discount = ifelse(preds_1000_discount > .5,1,0)) %>%
+  count(pred_attend_1000_discount)
+
+# Visiting Student's Day
+hypothetical_data <- ad %>%
+  mutate(visit = ifelse(income < 45000,1,visit))
+
+ad <- ad %>%
+  mutate(preds = predict(mLG,newdata = hypothetical_data,
+        type = 'response'))
+
+ad %>%
+  select(yield,preds) %>%
+  mutate(pred_attend = ifelse(preds > .5,1,0)) %>%
+  count(pred_attend)
+
+# Looking at other outcomes
+ad %>%
+  mutate(pred_attend = ifelse(preds > .5,1,0)) %>%
+  group_by(pred_attend) %>%
+  summarise(tot_attend = n(),
+            revenues = sum(net_price),
+            avg_sat = mean(sat))
+
+
+# Let's nuke costs
+hypothetical_data <- ad %>%
+  mutate(net_price = net_price  - 20000)
+
+hypothetical_data <- hypothetical_data %>%
+  mutate(preds = predict(mLG,newdata = hypothetical_data,
+        type = 'response'))
+
+hypothetical_data %>%
+  mutate(pred_attend = ifelse(preds > .5,1,0)) %>%
+  group_by(pred_attend) %>%
+  summarise(tot_attend = n(),
+            revenues = sum(net_price),
+            avg_sat = mean(sat))
+
+# Reminder: how to calculate optimal threshold
+threshRes <- NULL
+for(thresh in seq(0,1,by = .025)) {
+threshRes <- threshRes %>%
+  bind_rows(ad %>%
+  mutate(prob = predict(mLG,type = 'response')) %>%
+  mutate(pred = ifelse(prob > thresh,1,0)) %>%
+  group_by(yield) %>%
+  mutate(tot_attend = n()) %>%
+  ungroup() %>%
+  group_by(yield,pred,tot_attend) %>%
+  summarise(nStudents = n(),.groups = 'drop') %>%
+  ungroup() %>%
+  mutate(prop = nStudents / tot_attend) %>%
+    mutate(threshold = thresh))
+}
+
+threshRes %>%
+  mutate(metric = ifelse(yield == 0 & pred == 0,'Sensitivity',
+                         ifelse(yield == 1 & pred == 1,'Specificity',NA))) %>%
+  drop_na(metric) %>%
+  ggplot(aes(x = threshold,y = prop,color = metric)) + 
+  geom_line() + 
+  geom_vline(xintercept = .61)
+
+```
