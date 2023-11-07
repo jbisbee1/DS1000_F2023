@@ -4,7 +4,7 @@
     <title>Classification</title>
     <meta charset="utf-8" />
     <meta name="author" content="Prof. Bisbee" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.16/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/lexis.css" type="text/css" />
     <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
@@ -27,7 +27,7 @@ class: center, middle, inverse, title-slide
 ]
 .date[
 ### Lecture Date: 2023/11/06
-Slides Updated: 2023-10-29
+Slides Updated: 2023-11-06
 ]
 
 ---
@@ -429,10 +429,11 @@ predict(mLGFinal,newdata = hypo_data,type = 'response')
 
 ```
 ## # A tibble: 1 × 9
-##     sat legacy visit registered sent_scores income   gpa
-##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1 1200.      0     0          1           0 99712.  3.79
-## # ℹ 2 more variables: distance &lt;dbl&gt;, net_price &lt;dbl&gt;
+##     sat legacy visit registered sent_…¹ income   gpa dista…²
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1 1200.      0     0          1       0 99712.  3.79    100.
+## # … with 1 more variable: net_price &lt;dbl&gt;, and abbreviated
+## #   variable names ¹​sent_scores, ²​distance
 ```
 
 ```r
@@ -795,7 +796,7 @@ toplot %&gt;%
 
 --
 
-  - The password to take the quiz is #### &lt;!-- 3222 --&gt;
+  - The password to take the quiz is #### &lt;!-- 2423 --&gt;
   
 --
 
