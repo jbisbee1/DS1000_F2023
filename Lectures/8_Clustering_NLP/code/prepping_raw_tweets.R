@@ -1,3 +1,5 @@
+rm(list = ls())
+gc()
 require(tidyverse)
 
 raw <- read_csv('../data/trump_tweets.csv')
@@ -68,3 +70,4 @@ tweet_words <- raw %>%
 
 write_rds(raw,file = '../data/Trumptweets.Rds')
 write_rds(tweet_words,file = '../data/Trump_tweet_words.Rds')
+getwd()
