@@ -51,7 +51,7 @@ tweets <- read_rds(file="https://github.com/jbisbee1/DS1000_F2023/blob/main/Lect
 
 Using the `tweet_words` object, calculate the most frequently used word by year. 
 
-a. Which is Trump's most commonly used word in 2011 and how often did he use it? [1 point] 
+a. Which is Trump's most commonly used word in 2010 and how often did he use it? [1 point] 
 
 b. EXTRA CREDIT: can you determine what this word means, using the `tweets` object to see it in context? [1 point] Based on this analysis, do you think we should drop this word? Why? [1 point] **HINT** get the list of tweet IDs (`document`) from the `tweet_words` object, then filter the `tweets` object based on the `id` column. (NB: `document` in the `tweet_words` object is the same as the `id` column from the `tweets` object.)
 
