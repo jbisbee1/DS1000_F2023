@@ -3,7 +3,7 @@ title: "Clustering"
 subtitle: "Part 1"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/04/03\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/11/13\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -1183,3 +1183,14 @@ ggplotly(ggClust,tooltip = 'text')
 --
 
 - Next lecture: clustering applied to **TEXT**
+
+
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Clustering_part1_slides'
+
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

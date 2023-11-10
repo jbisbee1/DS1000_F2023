@@ -34,15 +34,11 @@ You are free to rely on whatever resources you need to complete this problem set
 
 
 ## Question 0
-Require `tidyverse` and `tidytext` (for calculating AUC), and load the [`Trump_tweet_words.Rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds?raw=true) data to an object called `tweet_words`. (Tip: use the `read_rds()` function with the link to the raw data.)
+Require `tidyverse`, `tidytext`, and `tidymodels`, and load the [`Trump_tweet_words.Rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds?raw=true) data to an object called `tweet_words`.
 
 Also, load the [`Trumptweets.Rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trumptweets.Rds?raw=true) data to an object called `tweets`.
 ```{r}
-require(tidyverse)
-require(tidytext)
-tweet_words <- read_rds(file="https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds?raw=true")
-
-tweets <- read_rds(file="https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trumptweets.Rds?raw=true")
+# INSERT CODE HERE
 ```
 
 
@@ -58,25 +54,27 @@ b. EXTRA CREDIT: can you determine what this word means, using the `tweets` obje
 ```{r,warning = F}
 # INSERT CODE HERE
 ```
->- Write answer(s) here.
+>- Write response here
 
-## Question 2 [3 points]
+## Question 2 [4 points]
 
-a. Calculate the proportion of times each word is used per year. [1 point]
+a. Plot the total number of times the word "trump" is used each year. [1 point]
 
 b. Plot the proportion of times the word "trump" is used each year. Make sure to justify your choice of `geom_...()`! [1 point] 
 
-c. Do the same analysis, except calculate by hour of the day. [1 point]
+c. Why are these plots so different? Which measure is better? Why? [2 points]
 
 ```{r,warning = F}
-# INSERT CODE HERE
+# a. Plot total number of times "trump" is used by year
+
+# b. Plot proportion of times "trump" is used by year
 ```
 
-> - Write answer here.
+> - Write answer here
 
 ## Question 3 [3 points]
 
-We want to only look at tweets written during Trump's campaign for president (June 16th, 2015 through November 8th, 2016), and are interested if there are patterns in what he talks about *by day*.
+We want to only look at tweets written during Trump's final year as president until he was kicked off Twitter (January 1st, 2020 through January 8th, 2021), and are interested if there are patterns in what he talks about *by day*.
 
 Prepare the data for topic modeling via $k$-means clustering, filtering to the campaign period and using `document` as the document.
 
@@ -87,7 +85,11 @@ b. Calculate the TF-IDF using the appropriate function from the `tidytext` packa
 c. Cast the DTM to wide format using the `cast_dtm()` function. [1 point]
 
 ```{r}
-# INSERT CODE HERE
+#a. Create dtm
+
+#b. Calculate TF-IDF
+
+#c. Cast DTM
 ```
 
 
@@ -98,10 +100,10 @@ Determine the optimal number of clusters / centers / topics / $k$ by creating an
 
 ```{r,warning = F}
 set.seed(42) # Set common seed to ensure reproducability
-#INSERT CODE HERE
+#INSERT CODE HERE: Loop over different choices of k
 ```
 
-> - Write answer here.
+> - Write answer here and justify based on plot.
 
 ## Question 5 [2 points]
 
@@ -112,7 +114,12 @@ a. Which are the top 5 most popular topics for Donald Trump in this period? [1 p
 b. Plot the top 10 highest scoring words for each of the top 5 most popular topics. What is each "about"? [1 point]
 
 ```{r,warning = F}
-# INSERT CODE HERE
+# INSERT CODE HERE: Re-run the k-means analysis using number identified in Q4
+
+#a. Identify top 5 most popular topics
+
+#b. Plot ten highest scoring words for these
 ```
 
-> - Write answers here.
+> - Write response here
+
