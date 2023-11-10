@@ -1,0 +1,118 @@
+---
+title: "Problem Set 8"
+subtitle: "Clustering Part 1"
+author: "[YOUR NAME]"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-11-17"
+output:
+  html_document: default
+---
+
+```{r,include=F}
+knitr::opts_chunk$set(error=TRUE)
+```
+
+
+## Getting Set Up
+
+Open `RStudio` and create a new RMarkDown file (`.Rmd`) by going to `File -> New File -> R Markdown...`.
+Accept defaults and save this file as `[LAST NAME]_ps8.Rmd` to your `code` folder.
+
+Copy and paste the contents of this file into your `[LAST NAME]_ps8.Rmd` file. Then change the `author: [YOUR NAME]` (line 4) to your name.
+
+All of the following questions should be answered in this `.Rmd` file. There are code chunks with incomplete code that need to be filled in. 
+
+This problem set is worth 10 total points, plus two extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Furthermore, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
+
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/11/17 Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
+
+**Good luck!**
+
+## ChatGPT Link [Optional]
+
+*Copy the link to ChatGPT you used here: _______________________.
+
+
+## Question 0
+Require `tidyverse` and `tidytext` (for calculating AUC), and load the [`Trump_tweet_words.Rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds?raw=true) data to an object called `tweet_words`. (Tip: use the `read_rds()` function with the link to the raw data.)
+
+Also, load the [`Trumptweets.Rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trumptweets.Rds?raw=true) data to an object called `tweets`.
+```{r}
+require(tidyverse)
+require(tidytext)
+tweet_words <- read_rds(file="https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds?raw=true")
+
+tweets <- read_rds(file="https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/Trumptweets.Rds?raw=true")
+```
+
+
+
+## Question 1 [1 point + 2 EC]
+
+Using the `tweet_words` object, calculate the most frequently used word by year. 
+
+a. Which is Trump's most commonly used word in 2011 and how often did he use it? [1 point] 
+
+b. EXTRA CREDIT: can you determine what this word means, using the `tweets` object to see it in context? [1 point] Based on this analysis, do you think we should drop this word? Why? [1 point] **HINT** get the list of tweet IDs (`document`) from the `tweet_words` object, then filter the `tweets` object based on the `id` column. (NB: `document` in the `tweet_words` object is the same as the `id` column from the `tweets` object.)
+
+```{r,warning = F}
+# INSERT CODE HERE
+```
+>- Write answer(s) here.
+
+## Question 2 [3 points]
+
+a. Calculate the proportion of times each word is used per year. [1 point]
+
+b. Plot the proportion of times the word "trump" is used each year. Make sure to justify your choice of `geom_...()`! [1 point] 
+
+c. Do the same analysis, except calculate by hour of the day. [1 point]
+
+```{r,warning = F}
+# INSERT CODE HERE
+```
+
+> - Write answer here.
+
+## Question 3 [3 points]
+
+We want to only look at tweets written during Trump's campaign for president (June 16th, 2015 through November 8th, 2016), and are interested if there are patterns in what he talks about *by day*.
+
+Prepare the data for topic modeling via $k$-means clustering, filtering to the campaign period and using `document` as the document.
+
+a. Create a document-term matrix (`dtm`), dropping any words that appear fewer than 20 times total. [1 point]
+
+b. Calculate the TF-IDF using the appropriate function from the `tidytext` package. [1 point]
+
+c. Cast the DTM to wide format using the `cast_dtm()` function. [1 point]
+
+```{r}
+# INSERT CODE HERE
+```
+
+
+
+## Question 4 [1 point]
+
+Determine the optimal number of clusters / centers / topics / $k$ by creating and manually inspecting an elbow plot. To save time, only examine the following sizes: `c(1,10,50,100,250,500,1000)` (this will still take a little while to run so be patient!). What value would you choose? [1 point]
+
+```{r,warning = F}
+set.seed(42) # Set common seed to ensure reproducability
+#INSERT CODE HERE
+```
+
+> - Write answer here.
+
+## Question 5 [2 points]
+
+Re-run the $k$-means analysis using the number of clustered identified above and then `tidy()` the output.
+
+a. Which are the top 5 most popular topics for Donald Trump in this period? [1 point]
+
+b. Plot the top 10 highest scoring words for each of the top 5 most popular topics. What is each "about"? [1 point]
+
+```{r,warning = F}
+# INSERT CODE HERE
+```
+
+> - Write answers here.

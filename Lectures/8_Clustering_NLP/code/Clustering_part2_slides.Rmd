@@ -1,0 +1,877 @@
+---
+title: "Clustering"
+subtitle: "Part 2"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/04/05\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+# Agenda
+
+1. Tweets as data
+
+2. Words &rarr; topics
+
+3. Application
+
+---
+
+# Social Media
+
+- Unprecedented access to our leaders
+
+--
+
+  - (If they let us)
+  
+--
+
+<center><img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2271049/settings_images/TFQe2IEJSWuLQrrYueXd_pasted_image_0_28.png" width="80%"></center>
+
+---
+
+# Social Media
+
+- Unprecedented access to our leaders 
+
+  - (If they let us)
+
+<center><img src="https://media-cldnry.s-nbcnews.com/image/upload/newscms/2020_29/3391138/200618-donald-trump-cellphone-smartphone-cell-ac-1059p.jpg" width="80%"></center>
+
+---
+
+# Social Media
+
+- For researchers, social media is two things
+
+--
+
+  1. A source of .red[data]
+  
+--
+
+  2. An object of .blue[interest]
+  
+--
+
+<center><img src="https://ichef.bbci.co.uk/news/1024/cpsprodpb/173D6/production/_116409159_tweet6.png" width="80%"></center>
+
+---
+
+# Twitter as Data
+
+- Not the most popular social media app
+
+<center><img src="https://www.pewresearch.org/internet/wp-content/uploads/sites/9/2021/04/PI_2021.04.07_social-media_0-01.png?w=640" width="60%"></center>
+
+---
+
+# Twitter as Data
+
+- But an outsized platform for the elite
+
+--
+
+- As of 2020
+
+--
+
+  - every U.S. governor had a Twitter account
+  
+--
+
+  - 49 had a Facebook account
+  
+--
+
+  - 44 had an Instagram account
+
+--
+
+  - 44 had a YouTube account
+  
+--
+
+- In professional networks, particularly media, Twitter is almost *lingua franca*
+
+---
+
+# Twitter as Data
+
+- Today?
+
+--
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Twitter has had a massive drop in revenue, due to activist groups pressuring advertisers, even though nothing has changed with content moderation and we did everything we could to appease the activists.<br><br>Extremely messed up! They’re trying to destroy free speech in America.</p>&mdash; Elon Musk (@elonmusk) <a href="https://twitter.com/elonmusk/status/1588538640401018880?ref_src=twsrc%5Etfw">November 4, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+---
+
+# Trump and Twitter
+
+- Today, looking at Trump's tweets
+
+--
+
+  - Treating it as a .red[data source]
+  
+--
+
+  - What can his tweets tell us about the man?
+  
+```{r,message=F}
+require(tidyverse)
+tweets <- readRDS(file="../data/Trumptweets.Rds")
+```
+
+--
+
+- The **process**
+
+--
+
+  - Univariate visualisation: how often does he tweet?
+  
+--
+
+```{r}
+p <- tweets %>% 
+  count(Tweeting.date) %>%
+  ggplot() +
+  geom_point(aes(x=Tweeting.date,y=n),alpha=.4) +
+  scale_x_date(date_breaks = 'years',date_labels = '%Y') + 
+  labs(x="Date",y="Number of Tweets",title="Tweeting by Trump")
+```
+
+---
+
+# Trump and Twitter
+
+```{r}
+p
+```
+
+---
+
+# Trump and Twitter
+
+- Research questions abound!
+
+--
+
+1. What happened in...
+  
+  - June of 2011?
+    
+  - June of 2012?
+    
+  - November of 2016? (duh)
+    
+--
+
+2. Overtime increase during presidency?
+
+--
+
+3. Others?
+
+---
+
+# Trump and Twitter
+
+- .blue[Research Question:] Did Trump's twitter account benefit from his presidency?
+
+--
+
+```{r,message = F}
+require(scales)
+p <- tweets %>% 
+  group_by(Tweeting.date) %>%
+  summarize(AvgRetweet = mean(retweets)) %>%
+  ggplot() +
+  geom_point(aes(x=Tweeting.date,y=AvgRetweet),alpha=.4) +
+  labs(x="Date",y="Average Retweets",title="Tweeting by Trump") +
+  scale_y_continuous(label=comma)
+```
+
+---
+
+# Trump and Twitter
+
+- .blue[Research Question:] Did Trump's twitter account benefit from his presidency?
+
+- **Yes**
+
+```{r,echo = F}
+p
+```
+
+
+---
+
+# Looking with `plotly`
+
+```{r message=FALSE}
+library(plotly)
+gg <- tweets %>%
+  filter(retweets > quantile(retweets,.75)) %>% 
+  ggplot(aes(x=Tweeting.date,y=retweets,text=stringr::str_wrap(content,width = 60))) +
+  geom_point(alpha=.4) +
+  labs(x="Date",y="Retweets",title="Tweeting by Trump") +
+  scale_y_continuous(label=comma)
+```
+
+---
+
+# Looking with `plotly`
+
+```{r}
+ggplotly(gg,tooltip = "text")
+```
+
+---
+
+# When is Trump online?
+
+- Visualize posts by hour
+
+```{r}
+p <- tweets %>% 
+  group_by(Tweeting.hour) %>%
+  count() %>%
+  ggplot() +
+  geom_point(aes(x=Tweeting.hour,y=n),size = 4) +
+  labs(x="Hour",y="Number of Tweets",title="Tweeting by Trump: Hour of Day (EST)")
+```
+
+---
+
+# When is Trump online?
+
+```{r}
+p
+```
+
+---
+
+# When is Trump online?
+
+- Did his use of Twitter change with the presidency?
+
+--
+
+  - Certainly his popularity did
+  
+--
+
+```{r}
+p <- tweets %>% 
+  mutate(PostPresident = date > "2016-11-03") %>%
+  group_by(PostPresident,Tweeting.hour) %>%
+  count() %>%
+  ggplot() +
+  geom_point(aes(x=Tweeting.hour,y=n,color=PostPresident),size = 4) +
+  labs(x="Hour",y="Number of Tweets",title="Tweeting by Trump: Hour of Day (EST)",color="Is President?")
+```
+
+---
+
+# When is Trump online?
+
+```{r}
+p
+```
+
+---
+
+# When is Trump online?
+
+- Is the total count of tweets useful here?
+
+--
+
+  - Want the **proportion** instead
+  
+```{r}
+p <- tweets %>% 
+  mutate(PostPresident = date > "2016-11-03") %>%
+  group_by(PostPresident,Tweeting.hour) %>%
+  count() %>%
+  ungroup(Tweeting.hour) %>%
+  mutate(Prop = n/sum(n)) %>%
+  ggplot() +
+  geom_point(aes(x=Tweeting.hour,y=Prop,
+                 color=PostPresident),size = 4) +
+  labs(x="Hour (EST)",y="Percentage of Tweets in Period",
+       title="Tweeting by Trump: Hour of Day (EST)",
+       color="Is President?") + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+```
+
+
+---
+
+# When is Trump online?
+
+```{r}
+p
+```
+
+---
+
+# How does Trump tweet?
+
+- Interested in the content of Trump's tweets
+
+--
+
+  1. Tweets as .red[data]: we can understand him better
+  
+  2. Tweets as .blue[object of interest]: how do his tweets influence public discourse?
+  
+--
+
+- We will be using pre-processed tweets
+
+--
+
+  - Lots of **data wrangling** went into this
+  
+  - See the `trump_preprocess.Rmd` file for more details
+
+--
+
+```{r}
+tweet_words <- readRDS(file="../data/Trump_tweet_words.Rds")
+```
+
+---
+
+# NLP Definitions
+
+- Before we dig in, some important definitions
+
+--
+  
+1. **Word / Term:** The core unit of interest
+
+--
+
+  - Often pre-processed to remove "stop words" and to "stem" the words
+  
+  - "Stop word": an uninteresting, commonly used word
+  
+  - "Stem / Lemmatize": the core component of a word that contains its meaning (eat, ate, eaten &rarr; eat)
+  
+--
+  
+2. **Document:** A collection of words with a single purpose / idea (i.e., a tweet, an essay)
+
+--
+  
+3. **Corpus:** A collection of documents
+
+--
+
+4. **BOW:** Bag-of-words. Convert a **document** into a count of how many times **words** appear
+
+--
+
+5. **DTM:** Document-term matrix. A dataset where rows are **documents**, columns are **words**, and the values are the counts from **BOW**
+
+
+---
+
+# What does Trump tweet about?
+
+- Core idea: word frequencies can help:
+
+--
+
+  - Help us understand **documents**
+  
+--
+
+  - Which help us understand **authors**
+  
+```{r}
+counts <- tweet_words %>% 
+  count(word) %>%
+  arrange(-n)
+```
+
+---
+
+# What does Trump tweet about?
+
+```{r}
+counts
+```
+
+---
+
+# What does Trump tweet about?
+
+```{r}
+p <- tweet_words %>%
+  count(word, sort = TRUE) %>% # New ways of doing old things
+  head(20) %>%
+  ggplot(aes(x = n,y = reorder(word, n))) +
+  geom_bar(stat = "identity") +
+  ylab("Occurrences") +
+  scale_x_continuous(label=comma)
+```
+
+---
+
+# What does Trump tweet about?
+
+```{r}
+p
+```
+
+
+---
+
+# Effect of becoming president
+
+- Did his focus change when he became president?
+
+```{r}
+tweet_words <- tweet_words %>%
+  mutate(PostPresident = Tweeting.date > as.Date("2016-11-03"))
+```
+
+--
+
+```{r}
+p <- tweet_words %>%
+  count(PostPresident,word) %>%
+  group_by(PostPresident) %>%
+  arrange(-n) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = n,y = reorder(word, n),
+             fill = PostPresident)) +
+  geom_bar(stat = "identity") +
+  ylab("Occurrences") +
+  scale_x_continuous(label=comma)
+```
+
+---
+
+# Effect of becoming president
+
+```{r}
+p
+```
+
+---
+
+# Document Term Matrix
+
+- "DTM" counts all the words in each document
+
+--
+
+- In this case, a "document" is a tweet
+
+```{r}
+dtm <- tweet_words %>%
+  count(document,word)
+glimpse(dtm)
+```
+
+---
+
+# Document Term Matrix
+
+- However, each tweet is very short
+
+--
+
+- Let's consider the `Tweeting.date` the document
+
+--
+
+  - Concept: What is Trump tweeting about on a given day?
+  
+```{r}
+dtm <- tweet_words %>%
+  count(Tweeting.date,word) %>%
+  group_by(word) %>%
+  mutate(tot_n = sum(n)) %>% # Also calculate TOTAL number of times a word appears
+  ungroup()
+```
+
+---
+
+# Wrangle
+
+- Extremely rare words should be dropped (typos, etc.)
+
+```{r}
+dtm %>%
+  arrange(tot_n) %>% head() # Trump tweeted "barnesandnoblecom" only once in his life
+
+dtm <- dtm %>%
+  filter(tot_n > 20) # Drop these rarely occurring words
+```
+
+---
+
+# Wordcloud
+
+- One of the cheesiest "visualizations"
+
+--
+
+- Summarizes what corpus is "about"
+
+--
+
+```{r, warning=FALSE,eval = FALSE}
+library(wordcloud)
+wordcloud(words = dtm$word,
+          freq = dtm$n,
+          max.words = 200,
+          random.order=FALSE, 
+          rot.per=0.35)
+```
+
+
+---
+
+# Wordcloud
+
+- Can apply to a subset of documents
+
+--
+
+```{r,eval = F}
+# Pre-presidency
+dtmPre <- dtm %>% 
+  filter(Tweeting.date < as.Date('2016-01-01'))  %>%
+  arrange(-n)
+wordcloud(words = dtmPre$word,
+          freq = dtmPre$n,
+          max.words = 20,
+          rot.per=0.35)
+```
+
+---
+
+# Wordcloud
+
+- Can apply to a subset of documents
+
+--
+
+```{r,eval = F}
+# Post-presidency
+dtmPost <- dtm %>% 
+  filter(Tweeting.date > as.Date('2016-11-01'))  %>%
+  arrange(-n)
+wordcloud(words = dtmPost$word,
+          freq = dtmPost$n,
+          max.words = 20,
+          rot.per=0.35)
+```
+
+
+---
+
+# Conclusion?
+
+- What might you infer from this comparison?
+
+--
+
+- The presidency made Trump less vain?
+
+---
+
+# Analyzing BOW
+
+- Some words are frequently found in many documents
+
+--
+
+- We want to find words that are **uniquely** used
+
+--
+
+  - "Unique" &rarr; used frequently in one document but not in any others
+  
+--
+
+- "TF-IDF": Term frequency-inverse document frequency
+
+--
+
+- "TF": $\frac{\text{word count}}{\text{total words}}$
+
+- "DF": $\frac{\text{documents with word}}{\text{total documents}}$
+
+--
+
+  - "IDF": Just invert it $\frac{\text{total documents}}{\text{documents with word}}$
+  
+$$tf-idf(w,d) = tf(w,d) \times log \left( \frac{N}{df(w)}\right) $$
+
+---
+
+# TF-IDF
+
+```{r,warning=F,message=F}
+require(tidytext) # Required to calculate TF-IDF
+dtm.tfidf <- bind_tf_idf(tbl = dtm, term = word, document = Tweeting.date, n = n) # Calculate TF-IDF
+dtm.tfidf  %>%
+  select(word,tf_idf) %>%
+  distinct() %>%
+  arrange(-tf_idf) %>%
+  slice(1:10)
+```
+
+---
+
+# $K$-means
+
+- How to summarize this? $k$-means clustering!
+
+--
+
+- Recall that `kmeans()` function clusters over every column in a data frame
+
+--
+
+- But our `dtm.tfidf` is organized "long" (i.e., each row is a word-by-document)
+
+--
+
+- Want to convert to "wide" (i.e., rows are documents, columns are words)
+
+--
+
+- In the past, we have used `spread()`, but for *k*-means with text: `cast_dtm()`
+
+--
+
+```{r}
+castdtm <- cast_dtm(data = dtm.tfidf, document = Tweeting.date, term = word, value = tf_idf)
+```
+
+--
+
+- Now let's calculate `kmeans()` (this will take a few seconds)
+
+```{r}
+set.seed(42)
+km_out <- kmeans(castdtm, 
+                 centers = 50, # Number of "topics"
+                 nstart = 5)
+```
+
+---
+
+# Looking at Clusters
+
+- Some quick wrangling
+
+```{r}
+km_out_tidy <- tidy(km_out) %>%
+  gather(word,mean_tfidf,-size,-cluster,-withinss) %>% # Convert to long data
+  mutate(mean_tfidf = as.numeric(mean_tfidf)) # Calculate average TF-IDF
+km_out_tidy
+```
+
+---
+
+# Looking at Clusters
+
+- And can plot! (Just look at first 10 "topics")
+
+```{r}
+p <- km_out_tidy %>%
+  filter(cluster %in% 1:9) %>%
+  group_by(cluster) %>%
+  arrange(-mean_tfidf) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = mean_tfidf,y = reorder(word,mean_tfidf),
+             fill = factor(cluster))) + 
+  geom_bar(stat = 'identity') + 
+  facet_wrap(~cluster,scales = 'free') + 
+  labs(title = 'k-means Clusters',
+       subtitle = 'Clustered by TF-IDF',
+       x = 'Centroid',
+       y = NULL,
+       fill = 'Cluster ID')
+```
+
+---
+
+# Looking at Clusters
+
+```{r}
+p
+```
+
+---
+
+# Looking at clusters
+
+- What are these clusters?
+
+--
+
+- Topic 2?
+
+--
+
+  - Looks like foreign policy, specifically Asia and the U.S. economy!
+  
+--
+
+- Topic 3?
+
+--
+
+  - Looks like domestic policy, specifically partisanship and the border!
+  
+--
+
+- Topic 8?
+
+--
+
+  - Sports?
+  
+---
+
+# Other topics?
+
+```{r}
+p <- km_out_tidy %>%
+  filter(cluster %in% 10:18) %>%
+  group_by(cluster) %>%
+  arrange(-mean_tfidf) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = mean_tfidf,y = reorder(word,mean_tfidf),
+             fill = factor(cluster))) + 
+  geom_bar(stat = 'identity') + 
+  facet_wrap(~cluster,scales = 'free') + 
+  labs(title = 'k-means Clusters',
+       subtitle = 'Clustered by TF-IDF',
+       x = 'Centroid',
+       y = NULL,
+       fill = 'Cluster ID')
+```
+
+---
+
+# Other topics?
+
+```{r}
+p
+```
+
+---
+
+# Apply to documents
+
+- See when different topics are emphasized
+
+```{r}
+data.frame(Tweeting.date = castdtm$dimnames$Docs,
+           cluster = km_out$cluster) %>%
+  as_tibble() %>%
+  mutate(Tweeting.date = as.Date(as.numeric(Tweeting.date),origin = '1970-01-01')) %>%
+  ggplot(aes(x = Tweeting.date,y = factor(cluster))) + 
+  geom_tile()
+```
+
+---
+
+# Checking on topics
+
+```{r}
+p <- km_out_tidy %>%
+  filter(cluster %in% c(3,13,49)) %>%
+  group_by(cluster) %>%
+  arrange(-mean_tfidf) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = mean_tfidf,y = reorder(word,mean_tfidf),
+             fill = factor(cluster))) + 
+  geom_bar(stat = 'identity') + 
+  facet_wrap(~cluster,scales = 'free') + 
+  labs(title = 'k-means Clusters',
+       subtitle = 'Clustered by TF-IDF',
+       x = 'Centroid',
+       y = NULL,
+       fill = 'Cluster ID')
+```
+
+---
+
+# Checking on topics
+
+- Trump talks about 49 prior to presidency, 13 during 2016 campaign, and 3 after becoming president
+
+```{r}
+p
+```
+
+---
+
+# Conclusion
+
+- $k$-means clustering on text &rarr; **topics**
+
+--
+
+- As always, this is a deep area of study
+
+--
+
+  - Superior methods are out there (Latent Dirichlet Allocation, Structural Topic Modeling, etc.)
+  
+--
+
+- NOTE: even with text, always start with simple descriptives
+
+--
+
+  - **Looking** at your data is the heart of data science

@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Text, Tweets, and Sentiment</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Text, Tweets, and Sentiment
+]
+.subtitle[
+## Part 3
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/04/10
+Slides Updated: 2023-04-09
+]
+
+---
+
+
+
+
+---
+
+# Returning to Trump
+
+
+```r
+require(tidyverse)
+tweet_words &lt;- readRDS(file="../data/Trump_tweet_words.Rds")
+tweet_words &lt;- tweet_words %&gt;% mutate(PostPresident = Tweeting.date &gt; as.Date('2016-11-06'))
+```
+
+
+---
+
+# Log-Odds
+
+- **Odds**: Probability a word is used pre/post presidency
+  
+- **Log**: Useful for removing skew in data!
+  
+--
+
+- Interactive code time!
+
+---
+
+# Odds Step 1
+
+
+```r
+(odds1 &lt;- tweet_words %&gt;%
+  count(word, PostPresident) %&gt;%
+  filter(sum(n) &gt;= 5) %&gt;%
+  spread(PostPresident, n, fill = 0) %&gt;%
+  ungroup() %&gt;%
+  mutate(totFALSE = sum(`FALSE`),
+         totTRUE = sum(`TRUE`)))
+```
+
+```
+## # A tibble: 23,453 × 5
+##    word      `FALSE` `TRUE` totFALSE totTRUE
+##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+##  1 aa              1      0   183927  114138
+##  2 aaa            11      1   183927  114138
+##  3 aand            0      1   183927  114138
+##  4 aaron           2      0   183927  114138
+##  5 aarons          1      0   183927  114138
+##  6 ab              1      0   183927  114138
+##  7 abandon         6      4   183927  114138
+##  8 abandoned      15      8   183927  114138
+##  9 abbas           0      2   183927  114138
+## 10 abbott          1      1   183927  114138
+## # … with 23,443 more rows
+```
+
+---
+
+# Odds Step 2
+
+
+```r
+(odds2 &lt;- odds1 %&gt;%
+  mutate(propFALSE = (`FALSE` + 1) / (totFALSE + 1),
+         propTRUE = (`TRUE` + 1) / (totTRUE + 1)))
+```
+
+```
+## # A tibble: 23,453 × 7
+##    word      `FALSE` `TRUE` totFALSE totTRUE propF…¹ propT…²
+##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 aa              1      0   183927  114138 1.09e-5 8.76e-6
+##  2 aaa            11      1   183927  114138 6.52e-5 1.75e-5
+##  3 aand            0      1   183927  114138 5.44e-6 1.75e-5
+##  4 aaron           2      0   183927  114138 1.63e-5 8.76e-6
+##  5 aarons          1      0   183927  114138 1.09e-5 8.76e-6
+##  6 ab              1      0   183927  114138 1.09e-5 8.76e-6
+##  7 abandon         6      4   183927  114138 3.81e-5 4.38e-5
+##  8 abandoned      15      8   183927  114138 8.70e-5 7.89e-5
+##  9 abbas           0      2   183927  114138 5.44e-6 2.63e-5
+## 10 abbott          1      1   183927  114138 1.09e-5 1.75e-5
+## # … with 23,443 more rows, and abbreviated variable names
+## #   ¹​propFALSE, ²​propTRUE
+```
+
+---
+
+# Odds Step 3
+
+
+```r
+(odds3 &lt;- odds2 %&gt;%
+  mutate(odds = propTRUE / propFALSE))
+```
+
+```
+## # A tibble: 23,453 × 8
+##    word      `FALSE` `TRUE` totFALSE totTRUE propF…¹ propT…²
+##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 aa              1      0   183927  114138 1.09e-5 8.76e-6
+##  2 aaa            11      1   183927  114138 6.52e-5 1.75e-5
+##  3 aand            0      1   183927  114138 5.44e-6 1.75e-5
+##  4 aaron           2      0   183927  114138 1.63e-5 8.76e-6
+##  5 aarons          1      0   183927  114138 1.09e-5 8.76e-6
+##  6 ab              1      0   183927  114138 1.09e-5 8.76e-6
+##  7 abandon         6      4   183927  114138 3.81e-5 4.38e-5
+##  8 abandoned      15      8   183927  114138 8.70e-5 7.89e-5
+##  9 abbas           0      2   183927  114138 5.44e-6 2.63e-5
+## 10 abbott          1      1   183927  114138 1.09e-5 1.75e-5
+## # … with 23,443 more rows, 1 more variable: odds &lt;dbl&gt;, and
+## #   abbreviated variable names ¹​propFALSE, ²​propTRUE
+```
+
+---
+
+# Why log?
+
+
+```r
+odds3 %&gt;%
+  ggplot(aes(x = odds)) + 
+  geom_histogram()
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Why log?
+
+
+```r
+odds3 %&gt;%
+  ggplot(aes(x = odds)) + 
+  geom_histogram(bins = 15) + 
+  scale_x_log10()
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Odds Step 4
+
+
+```r
+(prepost_logodds &lt;- odds3 %&gt;%
+  mutate(logodds = log(odds)))
+```
+
+```
+## # A tibble: 23,453 × 9
+##    word      `FALSE` `TRUE` totFALSE totTRUE propF…¹ propT…²
+##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 aa              1      0   183927  114138 1.09e-5 8.76e-6
+##  2 aaa            11      1   183927  114138 6.52e-5 1.75e-5
+##  3 aand            0      1   183927  114138 5.44e-6 1.75e-5
+##  4 aaron           2      0   183927  114138 1.63e-5 8.76e-6
+##  5 aarons          1      0   183927  114138 1.09e-5 8.76e-6
+##  6 ab              1      0   183927  114138 1.09e-5 8.76e-6
+##  7 abandon         6      4   183927  114138 3.81e-5 4.38e-5
+##  8 abandoned      15      8   183927  114138 8.70e-5 7.89e-5
+##  9 abbas           0      2   183927  114138 5.44e-6 2.63e-5
+## 10 abbott          1      1   183927  114138 1.09e-5 1.75e-5
+## # … with 23,443 more rows, 2 more variables: odds &lt;dbl&gt;,
+## #   logodds &lt;dbl&gt;, and abbreviated variable names
+## #   ¹​propFALSE, ²​propTRUE
+```
+
+---
+
+# Effect of becoming president
+
+
+```r
+p &lt;- prepost_logodds %&gt;%
+  group_by(logodds &gt; 0) %&gt;%
+  top_n(15, abs(logodds)) %&gt;%
+  ungroup() %&gt;%
+  mutate(word = reorder(word, logodds)) %&gt;%
+  ggplot(aes(word, logodds, fill = logodds &lt; 0)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  ylab("Post-President/Pre-President log ratio") +
+  scale_fill_manual(name = "", labels = c("President", "Pre-President"),
+                    values = c("red", "lightblue"))
+```
+
+---
+
+# Effect of becoming president
+
+
+```r
+p
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Meaning
+
+- Thus far, everything is **topic**-related
+
+--
+
+  - How often he talks about things
+  
+--
+
+- But what does he **mean** when he talks about Mueller?
+
+--
+
+  - We can probably guess
+  
+--
+
+- But we want a more systematic method
+
+--
+
+  - **Sentiment**: the *feeling* behind words
+  
+---
+
+# Meaning
+
+- **Sentiment** analysis is based on **dictionaries**
+
+--
+
+  - Just like **stop words** from last week!
+  
+--
+
+  - Prepared lists of words, but tagged according to **emotion**
+  
+--
+
+- Good dictionary included in `tidytext` package
+
+
+```r
+require(tidytext)
+```
+
+```
+## Loading required package: tidytext
+```
+
+```r
+nrc &lt;- get_sentiments("nrc")
+# If this doesn't work on your computer, just load it with read_rds()
+nrc &lt;- read_rds('https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/data/nrc.Rds?raw=true')
+```
+
+---
+
+# Meaning
+
+
+```r
+nrc
+```
+
+```
+## # A tibble: 13,901 × 2
+##    word        sentiment
+##    &lt;chr&gt;       &lt;chr&gt;    
+##  1 abacus      trust    
+##  2 abandon     fear     
+##  3 abandon     negative 
+##  4 abandon     sadness  
+##  5 abandoned   anger    
+##  6 abandoned   fear     
+##  7 abandoned   negative 
+##  8 abandoned   sadness  
+##  9 abandonment anger    
+## 10 abandonment fear     
+## # … with 13,891 more rows
+```
+
+---
+
+# Sentiment by Pre/Post Presidency
+
+- Measure sentiment by proportion of words
+
+--
+
+- Divide by pre/post presidency
+
+--
+
+
+```r
+word_freq &lt;- tweet_words %&gt;%
+  group_by(PostPresident) %&gt;%
+  count(word) %&gt;%
+  filter(sum(n) &gt;= 5) %&gt;%
+   mutate(prop = prop.table(n)) # Faster way of calculating proportions!
+```
+
+---
+
+# Sentiment by Pre/Post Presidency
+
+- Attaching sentiment from `nrc`
+
+--
+
+  - `inner_join()`: only keeps words that appear in `nrc`
+  
+
+```r
+word_freq_sentiment &lt;- word_freq %&gt;%
+    inner_join(nrc, by = "word") 
+```
+
+---
+
+# Sentiment overall
+
+
+```r
+p &lt;- word_freq_sentiment %&gt;%
+  group_by(sentiment) %&gt;%
+  top_n(10, n) %&gt;%
+  ungroup() %&gt;%
+  mutate(word = reorder(word, n)) %&gt;%
+  ggplot(aes(y = word, x = n)) +
+  facet_wrap(~ sentiment, scales = "free", nrow = 3) + 
+  geom_bar(stat = "identity")
+```
+
+---
+
+# Sentiment Overall
+
+
+```r
+p
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Sentiment overall
+
+- Could also just calculate positive sentiments - negative sentiments
+
+--
+
+  - Want to do this at the tweet level
+  
+--
+
+
+```r
+tweet_sentiment &lt;- tweet_words %&gt;%
+    inner_join(nrc, by = "word") 
+  
+tweet_sentiment_summary &lt;- tweet_sentiment %&gt;%
+  group_by(PostPresident, sentiment) %&gt;%
+  count(document,sentiment) %&gt;%
+  pivot_wider(names_from = sentiment, 
+              values_from = n, 
+              values_fill = 0) %&gt;% # same as spread()!
+  mutate(sentiment = positive - negative)
+```
+
+---
+
+# Sentiment overall
+
+
+```r
+tweet_sentiment_summary
+```
+
+```
+## # A tibble: 33,480 × 13
+## # Groups:   PostPresident [2]
+##    PostP…¹ docum…² anger antic…³ disgust  fear   joy negat…⁴
+##    &lt;lgl&gt;     &lt;dbl&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
+##  1 FALSE    1.70e9     1       3       1     0     2       1
+##  2 FALSE    1.74e9     1       1       1     0     1       1
+##  3 FALSE    1.92e9     1       1       0     0     1       1
+##  4 FALSE    2.05e9     1       0       0     0     0       1
+##  5 FALSE    2.32e9     1       0       0     1     0       1
+##  6 FALSE    2.35e9     2       1       1     2     1       2
+##  7 FALSE    2.40e9     1       2       1     2     1       0
+##  8 FALSE    3.69e9     1       0       1     1     0       2
+##  9 FALSE    7.68e9     1       1       1     0     2       2
+## 10 FALSE    8.08e9     1       1       1     0     1       1
+## # … with 33,470 more rows, 5 more variables:
+## #   positive &lt;int&gt;, sadness &lt;int&gt;, surprise &lt;int&gt;,
+## #   trust &lt;int&gt;, sentiment &lt;int&gt;, and abbreviated variable
+## #   names ¹​PostPresident, ²​document, ³​anticipation,
+## #   ⁴​negative
+```
+
+---
+
+# Sentiment by presidency
+
+- Calculate total number of tweets by sentiment
+
+--
+
+
+```r
+tweet_sentiment_summary  %&gt;%
+  group_by(PostPresident) %&gt;%
+  mutate(ntweet = 1) %&gt;%
+  summarize(across(-document, sum)) 
+```
+
+```
+## # A tibble: 2 × 13
+##   PostPr…¹ anger antic…² disgust  fear   joy negat…³ posit…⁴
+##   &lt;lgl&gt;    &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt;
+## 1 FALSE     8326   13803    5527  8213 12800   15319   28141
+## 2 TRUE      7108    6826    4894  6827  5554   12667   14959
+## # … with 5 more variables: sadness &lt;int&gt;, surprise &lt;int&gt;,
+## #   trust &lt;int&gt;, sentiment &lt;int&gt;, ntweet &lt;dbl&gt;, and
+## #   abbreviated variable names ¹​PostPresident,
+## #   ²​anticipation, ³​negative, ⁴​positive
+```
+
+---
+
+# Sentiment by presidency
+
+- Univariate distributions!
+
+--
+
+
+```r
+p &lt;- tweet_sentiment_summary %&gt;%
+  ggplot(aes(x = sentiment, y = PostPresident)) + 
+  geom_boxplot() +
+  labs(y= "Trump is president", x = "Sentiment Score: Positive - Negative")
+```
+
+
+
+---
+
+# Sentiment by presidency
+
+- Univariate distributions!
+
+
+```r
+p
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Sentiment by hour
+
+- Univariate distributions
+
+  - Comparing sentiment by hour
+  
+--
+
+
+```r
+p &lt;- tweet_sentiment %&gt;%
+  group_by(PostPresident,Tweeting.hour,sentiment) %&gt;%
+  count(document,sentiment) %&gt;%
+  pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) %&gt;% 
+  mutate(sentiment = positive - negative) %&gt;%
+  summarize(AvgSentiment = mean(sentiment)) %&gt;%
+  ggplot(aes(y = AvgSentiment, x= Tweeting.hour, color=PostPresident)) + 
+  geom_point(size = 4) +
+  geom_hline(yintercept = 0,linetype = 'dashed') + 
+  labs(x = "Tweeting Hour (EST)", y = "Average Tweet Sentiment: Positive - Negative", color = "Is President?")
+```
+
+---
+
+# Sentiment by hour
+
+- Comparing sentiment by hour
+
+
+```r
+p
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Understanding Trump
+
+- When Trump is coded as "positive" or "negative", what is he saying?
+
+--
+
+- Look at log-odds ratio words, matched to sentiment!
+
+
+```r
+p &lt;- prepost_logodds %&gt;%
+  inner_join(nrc, by = "word") %&gt;%
+  filter(!sentiment %in% c("positive", "negative")) %&gt;%
+  mutate(sentiment = reorder(sentiment, -logodds),
+         word = reorder(word, -logodds)) %&gt;%
+  group_by(sentiment) %&gt;%
+  top_n(10, abs(logodds)) %&gt;%
+  ungroup() %&gt;%
+  ggplot(aes(y = word, x = logodds, fill = logodds &lt; 0)) +
+  facet_wrap(~ sentiment, scales = "free", nrow = 2) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "", y = "Post / Pre log ratio") +
+  scale_fill_manual(name = "", labels = c("Post", "Pre"),
+                    values = c("red", "lightblue")) + 
+  theme(legend.position = 'bottom')
+```
+
+---
+
+# Understanding Trump
+
+
+```r
+p
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Text as predictors
+
+- Let's say we didn't know when each tweet was written
+
+--
+
+- Could we predict whether it was written during his presidency or not?
+
+--
+
+  - Logit model using **text** as predictors
+  
+  
+---
+
+# Text as Data
+
+- Predict tweets by average of words' log-odds!
+
+
+```r
+toanal &lt;- tweet_words %&gt;%
+  select(document,word,PostPresident) %&gt;%
+  left_join(prepost_logodds %&gt;% select(word,logodds)) %&gt;% # Link data with log-odds
+  group_by(document,PostPresident) %&gt;%
+  summarise(logodds = mean(logodds)) %&gt;% # Calculate average log-odds by document
+  ungroup()
+
+m &lt;- glm(PostPresident ~ logodds,toanal,family = binomial) # logit regression
+```
+
+---
+
+# Text as Data
+
+- Evaluate the performance
+
+
+```r
+require(tidymodels)
+forAUC &lt;- toanal %&gt;% # Evaluate model performance
+  mutate(preds = predict(m,type = 'response'),
+         truth = factor(PostPresident,levels = c('TRUE','FALSE')))
+
+roc_auc(forAUC,'truth','preds')
+```
+
+```
+## # A tibble: 1 × 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.952
+```
+
+```r
+p &lt;- roc_curve(forAUC,'truth','preds') %&gt;%
+  ggplot(aes(x = 1-specificity,y = sensitivity)) + 
+  geom_line() + 
+  geom_abline(intercept = 0,slope = 1,linetype = 'dashed')
+```
+
+---
+
+# Evaluate performance
+
+
+```r
+p
+```
+
+&lt;img src="Clustering_part3_slides_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Evaluate on some sample tweets
+
+
+```r
+raw_tweets &lt;- read_rds('../data/Trumptweets.Rds')
+set.seed(20)
+toCheck &lt;- raw_tweets %&gt;% slice(sample(1:nrow(.),size = 10))
+
+toCheck %&gt;%
+  select(content)
+```
+
+```
+## # A tibble: 10 × 1
+##    content                                                  
+##    &lt;chr&gt;                                                    
+##  1 "Getting ready to leave for Europe. First meeting - NATO…
+##  2 "We should remember that during this entire Petraeus epi…
+##  3 "\" @ ZacharySmitty: @ realDonaldTrump I just listened t…
+##  4 "Arena was packed, totally electric!"                    
+##  5 "Without momentum there’s a lack of energy that can lead…
+##  6 "# CelebrityApprentice Listening to the advice from @ jo…
+##  7 "@ Abspara @ pennjillette @ CelebApprentice March 3rd. T…
+##  8 "@ sassybrowning Thanks Sassy"                           
+##  9 "How can Hillary run the economy when she can't even sen…
+## 10 "\" @ hasantaleb: If @ realDonaldTrump was The President…
+```
+
+---
+
+# Evaluate on some sample tweets
+
+
+```r
+toTest &lt;- toCheck %&gt;% left_join(toanal,by = c('id' = 'document')) # Merge the raw text with the log-odds
+
+toTest %&gt;%
+  mutate(preds = predict(m,newdata = toTest,type = 'response')) %&gt;%
+  select(content,PostPresident,preds) %&gt;%
+  mutate(pred_binary = preds &gt; .5) %&gt;%
+  filter(PostPresident != pred_binary)
+```
+
+```
+## # A tibble: 1 × 4
+##   content                             PostPr…¹ preds pred_…²
+##   &lt;chr&gt;                               &lt;lgl&gt;    &lt;dbl&gt; &lt;lgl&gt;  
+## 1 Arena was packed, totally electric! FALSE    0.533 TRUE   
+## # … with abbreviated variable names ¹​PostPresident,
+## #   ²​pred_binary
+```
+
+```r
+# We only make 1 mistake! And it is on a tough tweet
+```
+
+
+---
+
+# Can we do better if we add sentiment?
+
+
+```r
+toanal &lt;- toanal %&gt;%
+  left_join(tweet_sentiment_summary) %&gt;%
+  drop_na()
+```
+
+```
+## Joining, by = c("document", "PostPresident")
+```
+
+```r
+m1 &lt;- glm(PostPresident ~ logodds,toanal,family = binomial)
+m2 &lt;- glm(PostPresident ~ logodds + sentiment,toanal,family = binomial)
+m3 &lt;- glm(PostPresident ~ logodds + anger + anticipation + disgust + fear + joy + sadness + surprise + trust,toanal,family = binomial)
+
+forAUC &lt;- toanal %&gt;%
+  mutate(preds1 = predict(m1,type = 'response'),
+         preds2 = predict(m2,type = 'response'),
+         preds3 = predict(m3,type = 'response'),
+         truth = factor(PostPresident,levels = c('TRUE','FALSE')))
+```
+
+---
+
+# Can we do better if we add sentiment?
+
+
+```r
+roc_auc(forAUC,'truth','preds1') %&gt;% mutate(model = 'logodds') %&gt;%
+  bind_rows(roc_auc(forAUC,'truth','preds2') %&gt;% mutate(model = 'logodds &amp; net sentiment')) %&gt;%
+  bind_rows(roc_auc(forAUC,'truth','preds3') %&gt;% mutate(model = 'logodds &amp; detailed sentiment'))
+```
+
+```
+## # A tibble: 3 × 4
+##   .metric .estimator .estimate model                       
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                       
+## 1 roc_auc binary         0.962 logodds                     
+## 2 roc_auc binary         0.963 logodds &amp; net sentiment     
+## 3 roc_auc binary         0.964 logodds &amp; detailed sentiment
+```
+
+--
+
+- Not really
+
+---
+
+# Conclusion
+
+- Sentiment can...
+
+--
+
+  - ...help us describe the data (i.e., infer what someone meant)
+  
+  - ...help us predict the data (RQ: do positive tweets get more likes?)
+  
+--
+
+- Housekeeping stuff!
+
+--
+
+  - Pset 8 due Friday, April 14th
+  
+  - Pset 9 due Friday, April 21st (EC for using advanced ML!)
+  
+  - Final exam due Friday, April 28th
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
