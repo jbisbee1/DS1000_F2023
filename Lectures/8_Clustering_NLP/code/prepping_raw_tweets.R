@@ -43,7 +43,7 @@ clean_tweets <- function(x) {
 }
 
 # may need to revisit above if passing thru links
-raw$content <- clean_tweets(raw$content)
+raw$content_clean <- clean_tweets(raw$content)
 
 library(tidytext)
 library(qdapRegex)
@@ -54,8 +54,8 @@ reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
 library(SnowballC)
 
 tweet_words <- raw %>%
-  filter(!str_detect(content, '^"')) %>%
-  unnest_tokens(word, content, token = "regex", pattern = reg)  %>%
+  filter(!str_detect(content_clean, '^"')) %>%
+  unnest_tokens(word, content_clean, token = "regex", pattern = reg)  %>%
   filter(!word %in% stop_words$word,str_detect(word, "[a-z]")) %>%
   mutate(word = str_replace_all(word, "\\d+", "")) %>%  # drop numbers
   mutate(word = str_replace_all(word, "twitter[A-Za-z\\d]+|&amp;", "")) %>%

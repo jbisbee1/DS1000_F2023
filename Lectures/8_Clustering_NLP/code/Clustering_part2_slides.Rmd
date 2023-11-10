@@ -3,7 +3,7 @@ title: "Clustering"
 subtitle: "Part 2"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/04/05\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/11/15\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -155,7 +155,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   
 ```{r,message=F}
 require(tidyverse)
-tweets <- readRDS(file="../data/Trumptweets.Rds")
+tweets <- read_rds(file="https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/Trumptweets.Rds")
 ```
 
 --
