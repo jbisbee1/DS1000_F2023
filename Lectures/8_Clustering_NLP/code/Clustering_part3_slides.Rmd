@@ -3,7 +3,7 @@ title: "Text, Tweets, and Sentiment"
 subtitle: "Part 3"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
-date: "Lecture Date: 2023/04/10\n Slides Updated: `r Sys.Date()`"
+date: "Lecture Date: 2023/11/27\n Slides Updated: `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     # self_contained: true
@@ -31,12 +31,11 @@ knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
 
 # Returning to Trump
 
-```{r,message=F}
+```{r,message=F,warning=F}
 require(tidyverse)
 tweet_words <- readRDS(file="../data/Trump_tweet_words.Rds")
 tweet_words <- tweet_words %>% mutate(PostPresident = Tweeting.date > as.Date('2016-11-06'))
 ```
-
 
 ---
 
@@ -187,7 +186,7 @@ p
 require(tidytext)
 nrc <- get_sentiments("nrc")
 # If this doesn't work on your computer, just load it with read_rds()
-nrc <- read_rds('https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/data/nrc.Rds?raw=true')
+nrc <- read_rds('https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/nrc.Rds?raw=true')
 ```
 
 ---
@@ -537,14 +536,13 @@ roc_auc(forAUC,'truth','preds1') %>% mutate(model = 'logodds') %>%
   
   - ...help us predict the data (RQ: do positive tweets get more likes?)
   
---
 
-- Housekeeping stuff!
+```{r,message=F,echo=F,warning=F,results='hide',error=TRUE}
+# IGNORE THIS CHUNK...THIS IS FOR COMPILING TO A PDF ON THE PROFESSOR'S COMPUTER
+dir <- getwd()
+type <- 'pdf'
+format <- 'landscape'
+f <- 'Clustering_part3_slides'
 
---
-
-  - Pset 8 due Friday, April 14th
-  
-  - Pset 9 due Friday, April 21st (EC for using advanced ML!)
-  
-  - Final exam due Friday, April 28th
+system(paste('Rscript ../../../NFGH/chromeprint.R',dir,type,format,f),wait = F)
+```

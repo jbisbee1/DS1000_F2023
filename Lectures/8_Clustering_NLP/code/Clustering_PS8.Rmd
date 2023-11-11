@@ -3,7 +3,7 @@ title: "Problem Set 8"
 subtitle: "Clustering Part 1"
 author: "[YOUR NAME]"
 institute: "Vanderbilt University"
-date: "Due Date: 2023-11-17"
+date: "Due Date: 2023-11-24"
 output:
   html_document: default
 ---
@@ -24,7 +24,7 @@ All of the following questions should be answered in this `.Rmd` file. There are
 
 This problem set is worth 10 total points, plus two extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Furthermore, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
 
-You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/11/17 Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/11/24 Also note that the TAs and professors will not respond to Campuswire posts after 5PM on Friday, so don't wait until the last minute to get started!
 
 **Good luck!**
 
@@ -56,13 +56,13 @@ b. EXTRA CREDIT: can you determine what this word means, using the `tweets` obje
 ```
 >- Write response here
 
-## Question 2 [4 points]
+## Question 2 [3 points]
 
 a. Plot the total number of times the word "trump" is used each year. [1 point]
 
 b. Plot the proportion of times the word "trump" is used each year. Make sure to justify your choice of `geom_...()`! [1 point] 
 
-c. Why are these plots so different? Which measure is better? Why? [2 points]
+c. Why are these plots so different? Which measure is better? Why? [1 points]
 
 ```{r,warning = F}
 # a. Plot total number of times "trump" is used by year

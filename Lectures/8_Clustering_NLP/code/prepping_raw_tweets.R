@@ -66,7 +66,8 @@ tweet_words <- raw %>%
   # mutate(word = wordStem(word)) %>%
   mutate(document = id) %>%
   select(-id) %>%
-  filter(word != "")   # drop any empty strings
+  filter(word != "") %>%
+  select(-content) # drop any empty strings
 
 write_rds(raw,file = '../data/Trumptweets.Rds')
 write_rds(tweet_words,file = '../data/Trump_tweet_words.Rds')

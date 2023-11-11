@@ -26,8 +26,8 @@ class: center, middle, inverse, title-slide
 ### Vanderbilt University
 ]
 .date[
-### Lecture Date: 2023/04/10
-Slides Updated: 2023-04-09
+### Lecture Date: 2023/11/27
+Slides Updated: 2023-11-10
 ]
 
 ---
@@ -45,7 +45,6 @@ require(tidyverse)
 tweet_words &lt;- readRDS(file="../data/Trump_tweet_words.Rds")
 tweet_words &lt;- tweet_words %&gt;% mutate(PostPresident = Tweeting.date &gt; as.Date('2016-11-06'))
 ```
-
 
 ---
 
@@ -75,20 +74,20 @@ tweet_words &lt;- tweet_words %&gt;% mutate(PostPresident = Tweeting.date &gt; a
 ```
 
 ```
-## # A tibble: 23,453 × 5
+## # A tibble: 45,221 × 5
 ##    word      `FALSE` `TRUE` totFALSE totTRUE
 ##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-##  1 aa              1      0   183927  114138
-##  2 aaa            11      1   183927  114138
-##  3 aand            0      1   183927  114138
-##  4 aaron           2      0   183927  114138
-##  5 aarons          1      0   183927  114138
-##  6 ab              1      0   183927  114138
-##  7 abandon         6      4   183927  114138
-##  8 abandoned      15      8   183927  114138
-##  9 abbas           0      2   183927  114138
-## 10 abbott          1      1   183927  114138
-## # … with 23,443 more rows
+##  1 a               6     27   189217  257487
+##  2 aa              1      2   189217  257487
+##  3 aaa            11      1   189217  257487
+##  4 aamp            1      0   189217  257487
+##  5 aand            0      1   189217  257487
+##  6 aaron           2      1   189217  257487
+##  7 ab              1      2   189217  257487
+##  8 abaco           0      1   189217  257487
+##  9 abandon         6      8   189217  257487
+## 10 abandoned      13     11   189217  257487
+## # ℹ 45,211 more rows
 ```
 
 ---
@@ -103,21 +102,20 @@ tweet_words &lt;- tweet_words %&gt;% mutate(PostPresident = Tweeting.date &gt; a
 ```
 
 ```
-## # A tibble: 23,453 × 7
-##    word      `FALSE` `TRUE` totFALSE totTRUE propF…¹ propT…²
-##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-##  1 aa              1      0   183927  114138 1.09e-5 8.76e-6
-##  2 aaa            11      1   183927  114138 6.52e-5 1.75e-5
-##  3 aand            0      1   183927  114138 5.44e-6 1.75e-5
-##  4 aaron           2      0   183927  114138 1.63e-5 8.76e-6
-##  5 aarons          1      0   183927  114138 1.09e-5 8.76e-6
-##  6 ab              1      0   183927  114138 1.09e-5 8.76e-6
-##  7 abandon         6      4   183927  114138 3.81e-5 4.38e-5
-##  8 abandoned      15      8   183927  114138 8.70e-5 7.89e-5
-##  9 abbas           0      2   183927  114138 5.44e-6 2.63e-5
-## 10 abbott          1      1   183927  114138 1.09e-5 1.75e-5
-## # … with 23,443 more rows, and abbreviated variable names
-## #   ¹​propFALSE, ²​propTRUE
+## # A tibble: 45,221 × 7
+##    word   `FALSE` `TRUE` totFALSE totTRUE propFALSE propTRUE
+##    &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 a            6     27   189217  257487   3.70e-5  1.09e-4
+##  2 aa           1      2   189217  257487   1.06e-5  1.17e-5
+##  3 aaa         11      1   189217  257487   6.34e-5  7.77e-6
+##  4 aamp         1      0   189217  257487   1.06e-5  3.88e-6
+##  5 aand         0      1   189217  257487   5.28e-6  7.77e-6
+##  6 aaron        2      1   189217  257487   1.59e-5  7.77e-6
+##  7 ab           1      2   189217  257487   1.06e-5  1.17e-5
+##  8 abaco        0      1   189217  257487   5.28e-6  7.77e-6
+##  9 aband…       6      8   189217  257487   3.70e-5  3.50e-5
+## 10 aband…      13     11   189217  257487   7.40e-5  4.66e-5
+## # ℹ 45,211 more rows
 ```
 
 ---
@@ -131,21 +129,21 @@ tweet_words &lt;- tweet_words %&gt;% mutate(PostPresident = Tweeting.date &gt; a
 ```
 
 ```
-## # A tibble: 23,453 × 8
-##    word      `FALSE` `TRUE` totFALSE totTRUE propF…¹ propT…²
-##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-##  1 aa              1      0   183927  114138 1.09e-5 8.76e-6
-##  2 aaa            11      1   183927  114138 6.52e-5 1.75e-5
-##  3 aand            0      1   183927  114138 5.44e-6 1.75e-5
-##  4 aaron           2      0   183927  114138 1.63e-5 8.76e-6
-##  5 aarons          1      0   183927  114138 1.09e-5 8.76e-6
-##  6 ab              1      0   183927  114138 1.09e-5 8.76e-6
-##  7 abandon         6      4   183927  114138 3.81e-5 4.38e-5
-##  8 abandoned      15      8   183927  114138 8.70e-5 7.89e-5
-##  9 abbas           0      2   183927  114138 5.44e-6 2.63e-5
-## 10 abbott          1      1   183927  114138 1.09e-5 1.75e-5
-## # … with 23,443 more rows, 1 more variable: odds &lt;dbl&gt;, and
-## #   abbreviated variable names ¹​propFALSE, ²​propTRUE
+## # A tibble: 45,221 × 8
+##    word   `FALSE` `TRUE` totFALSE totTRUE propFALSE propTRUE
+##    &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 a            6     27   189217  257487   3.70e-5  1.09e-4
+##  2 aa           1      2   189217  257487   1.06e-5  1.17e-5
+##  3 aaa         11      1   189217  257487   6.34e-5  7.77e-6
+##  4 aamp         1      0   189217  257487   1.06e-5  3.88e-6
+##  5 aand         0      1   189217  257487   5.28e-6  7.77e-6
+##  6 aaron        2      1   189217  257487   1.59e-5  7.77e-6
+##  7 ab           1      2   189217  257487   1.06e-5  1.17e-5
+##  8 abaco        0      1   189217  257487   5.28e-6  7.77e-6
+##  9 aband…       6      8   189217  257487   3.70e-5  3.50e-5
+## 10 aband…      13     11   189217  257487   7.40e-5  4.66e-5
+## # ℹ 45,211 more rows
+## # ℹ 1 more variable: odds &lt;dbl&gt;
 ```
 
 ---
@@ -186,22 +184,21 @@ odds3 %&gt;%
 ```
 
 ```
-## # A tibble: 23,453 × 9
-##    word      `FALSE` `TRUE` totFALSE totTRUE propF…¹ propT…²
-##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-##  1 aa              1      0   183927  114138 1.09e-5 8.76e-6
-##  2 aaa            11      1   183927  114138 6.52e-5 1.75e-5
-##  3 aand            0      1   183927  114138 5.44e-6 1.75e-5
-##  4 aaron           2      0   183927  114138 1.63e-5 8.76e-6
-##  5 aarons          1      0   183927  114138 1.09e-5 8.76e-6
-##  6 ab              1      0   183927  114138 1.09e-5 8.76e-6
-##  7 abandon         6      4   183927  114138 3.81e-5 4.38e-5
-##  8 abandoned      15      8   183927  114138 8.70e-5 7.89e-5
-##  9 abbas           0      2   183927  114138 5.44e-6 2.63e-5
-## 10 abbott          1      1   183927  114138 1.09e-5 1.75e-5
-## # … with 23,443 more rows, 2 more variables: odds &lt;dbl&gt;,
-## #   logodds &lt;dbl&gt;, and abbreviated variable names
-## #   ¹​propFALSE, ²​propTRUE
+## # A tibble: 45,221 × 9
+##    word   `FALSE` `TRUE` totFALSE totTRUE propFALSE propTRUE
+##    &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 a            6     27   189217  257487   3.70e-5  1.09e-4
+##  2 aa           1      2   189217  257487   1.06e-5  1.17e-5
+##  3 aaa         11      1   189217  257487   6.34e-5  7.77e-6
+##  4 aamp         1      0   189217  257487   1.06e-5  3.88e-6
+##  5 aand         0      1   189217  257487   5.28e-6  7.77e-6
+##  6 aaron        2      1   189217  257487   1.59e-5  7.77e-6
+##  7 ab           1      2   189217  257487   1.06e-5  1.17e-5
+##  8 abaco        0      1   189217  257487   5.28e-6  7.77e-6
+##  9 aband…       6      8   189217  257487   3.70e-5  3.50e-5
+## 10 aband…      13     11   189217  257487   7.40e-5  4.66e-5
+## # ℹ 45,211 more rows
+## # ℹ 2 more variables: odds &lt;dbl&gt;, logodds &lt;dbl&gt;
 ```
 
 ---
@@ -290,7 +287,7 @@ require(tidytext)
 ```r
 nrc &lt;- get_sentiments("nrc")
 # If this doesn't work on your computer, just load it with read_rds()
-nrc &lt;- read_rds('https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/data/nrc.Rds?raw=true')
+nrc &lt;- read_rds('https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/nrc.Rds?raw=true')
 ```
 
 ---
@@ -316,7 +313,7 @@ nrc
 ##  8 abandoned   sadness  
 ##  9 abandonment anger    
 ## 10 abandonment fear     
-## # … with 13,891 more rows
+## # ℹ 13,891 more rows
 ```
 
 ---
@@ -354,6 +351,15 @@ word_freq &lt;- tweet_words %&gt;%
 ```r
 word_freq_sentiment &lt;- word_freq %&gt;%
     inner_join(nrc, by = "word") 
+```
+
+```
+## Warning in inner_join(., nrc, by = "word"): Detected an unexpected many-to-many relationship between
+## `x` and `y`.
+## ℹ Row 7 of `x` matches multiple rows in `y`.
+## ℹ Row 2 of `y` matches multiple rows in `x`.
+## ℹ If a many-to-many relationship is expected, set
+##   `relationship = "many-to-many"` to silence this warning.
 ```
 
 ---
@@ -399,7 +405,18 @@ p
 ```r
 tweet_sentiment &lt;- tweet_words %&gt;%
     inner_join(nrc, by = "word") 
-  
+```
+
+```
+## Warning in inner_join(., nrc, by = "word"): Detected an unexpected many-to-many relationship between
+## `x` and `y`.
+## ℹ Row 2 of `x` matches multiple rows in `y`.
+## ℹ Row 12751 of `y` matches multiple rows in `x`.
+## ℹ If a many-to-many relationship is expected, set
+##   `relationship = "many-to-many"` to silence this warning.
+```
+
+```r
 tweet_sentiment_summary &lt;- tweet_sentiment %&gt;%
   group_by(PostPresident, sentiment) %&gt;%
   count(document,sentiment) %&gt;%
@@ -419,25 +436,24 @@ tweet_sentiment_summary
 ```
 
 ```
-## # A tibble: 33,480 × 13
+## # A tibble: 45,592 × 13
 ## # Groups:   PostPresident [2]
-##    PostP…¹ docum…² anger antic…³ disgust  fear   joy negat…⁴
-##    &lt;lgl&gt;     &lt;dbl&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
-##  1 FALSE    1.70e9     1       3       1     0     2       1
-##  2 FALSE    1.74e9     1       1       1     0     1       1
-##  3 FALSE    1.92e9     1       1       0     0     1       1
-##  4 FALSE    2.05e9     1       0       0     0     0       1
-##  5 FALSE    2.32e9     1       0       0     1     0       1
-##  6 FALSE    2.35e9     2       1       1     2     1       2
-##  7 FALSE    2.40e9     1       2       1     2     1       0
-##  8 FALSE    3.69e9     1       0       1     1     0       2
-##  9 FALSE    7.68e9     1       1       1     0     2       2
-## 10 FALSE    8.08e9     1       1       1     0     1       1
-## # … with 33,470 more rows, 5 more variables:
+##    PostPresident   document anger anticipation disgust  fear
+##    &lt;lgl&gt;              &lt;dbl&gt; &lt;int&gt;        &lt;int&gt;   &lt;int&gt; &lt;int&gt;
+##  1 FALSE         1701461182     1            3       1     0
+##  2 FALSE         1741160716     1            1       1     0
+##  3 FALSE         1924074459     1            1       0     0
+##  4 FALSE         2045871770     1            0       0     0
+##  5 FALSE         2317112756     1            0       0     1
+##  6 FALSE         2346367430     2            1       1     2
+##  7 FALSE         2403435685     1            2       1     2
+##  8 FALSE         3688564134     1            0       1     1
+##  9 FALSE         7677152231     1            1       1     0
+## 10 FALSE         8083871612     1            1       1     0
+## # ℹ 45,582 more rows
+## # ℹ 7 more variables: joy &lt;int&gt;, negative &lt;int&gt;,
 ## #   positive &lt;int&gt;, sadness &lt;int&gt;, surprise &lt;int&gt;,
-## #   trust &lt;int&gt;, sentiment &lt;int&gt;, and abbreviated variable
-## #   names ¹​PostPresident, ²​document, ³​anticipation,
-## #   ⁴​negative
+## #   trust &lt;int&gt;, sentiment &lt;int&gt;
 ```
 
 ---
@@ -458,14 +474,13 @@ tweet_sentiment_summary  %&gt;%
 
 ```
 ## # A tibble: 2 × 13
-##   PostPr…¹ anger antic…² disgust  fear   joy negat…³ posit…⁴
-##   &lt;lgl&gt;    &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt;
-## 1 FALSE     8326   13803    5527  8213 12800   15319   28141
-## 2 TRUE      7108    6826    4894  6827  5554   12667   14959
-## # … with 5 more variables: sadness &lt;int&gt;, surprise &lt;int&gt;,
-## #   trust &lt;int&gt;, sentiment &lt;int&gt;, ntweet &lt;dbl&gt;, and
-## #   abbreviated variable names ¹​PostPresident,
-## #   ²​anticipation, ³​negative, ⁴​positive
+##   PostPresident anger anticipation disgust  fear   joy
+##   &lt;lgl&gt;         &lt;int&gt;        &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1 FALSE          8138        13333    5356  7999 12440
+## 2 TRUE          13892        14095    8933 14051 10973
+## # ℹ 7 more variables: negative &lt;int&gt;, positive &lt;int&gt;,
+## #   sadness &lt;int&gt;, surprise &lt;int&gt;, trust &lt;int&gt;,
+## #   sentiment &lt;int&gt;, ntweet &lt;dbl&gt;
 ```
 
 ---
@@ -620,6 +635,13 @@ m &lt;- glm(PostPresident ~ logodds,toanal,family = binomial) # logit regression
 
 ```r
 require(tidymodels)
+```
+
+```
+## Warning: package 'broom' was built under R version 4.2.3
+```
+
+```r
 forAUC &lt;- toanal %&gt;% # Evaluate model performance
   mutate(preds = predict(m,type = 'response'),
          truth = factor(PostPresident,levels = c('TRUE','FALSE')))
@@ -631,7 +653,7 @@ roc_auc(forAUC,'truth','preds')
 ## # A tibble: 1 × 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 roc_auc binary         0.952
+## 1 roc_auc binary         0.962
 ```
 
 ```r
@@ -639,6 +661,22 @@ p &lt;- roc_curve(forAUC,'truth','preds') %&gt;%
   ggplot(aes(x = 1-specificity,y = sensitivity)) + 
   geom_line() + 
   geom_abline(intercept = 0,slope = 1,linetype = 'dashed')
+```
+
+```
+## Warning: Returning more (or less) than 1 row per `summarise()` group
+## was deprecated in dplyr 1.1.0.
+## ℹ Please use `reframe()` instead.
+## ℹ When switching from `summarise()` to `reframe()`,
+##   remember that `reframe()` always returns an ungrouped
+##   data frame and adjust accordingly.
+## ℹ The deprecated feature was likely used in the yardstick
+##   package.
+##   Please report the issue at
+##   &lt;https://github.com/tidymodels/yardstick/issues&gt;.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where
+## this warning was generated.
 ```
 
 ---
@@ -670,16 +708,16 @@ toCheck %&gt;%
 ## # A tibble: 10 × 1
 ##    content                                                  
 ##    &lt;chr&gt;                                                    
-##  1 "Getting ready to leave for Europe. First meeting - NATO…
-##  2 "We should remember that during this entire Petraeus epi…
-##  3 "\" @ ZacharySmitty: @ realDonaldTrump I just listened t…
-##  4 "Arena was packed, totally electric!"                    
-##  5 "Without momentum there’s a lack of energy that can lead…
-##  6 "# CelebrityApprentice Listening to the advice from @ jo…
-##  7 "@ Abspara @ pennjillette @ CelebApprentice March 3rd. T…
-##  8 "@ sassybrowning Thanks Sassy"                           
-##  9 "How can Hillary run the economy when she can't even sen…
-## 10 "\" @ hasantaleb: If @ realDonaldTrump was The President…
+##  1 "RT @ShannonBream: BREAKING:  POTUS commutes Roger Stone…
+##  2 "Congratulations to a future STAR of the Republican Part…
+##  3 "@Seanelmi  Thanks Sean."                                
+##  4 "\"\"\"@007lLisav: @CNN @realDonaldTrump @CNNPolitics ca…
+##  5 "RT @thejtlewis: @realDonaldTrump https://t.co/W7L9kCZK3…
+##  6 "RT @TrumpWarRoom: WATCH: @KatrinaPierson explains Joe B…
+##  7 "The State Department's 'shadow government' #DrainTheSwa…
+##  8 "Sexual pervert Anthony Weiner has zero business holding…
+##  9 "TO MY FAVORITE PEOPLE IN THE WORLD! https://t.co/38DbQt…
+## 10 "Small businesses will have an ally in the White House w…
 ```
 
 ---
@@ -698,12 +736,12 @@ toTest %&gt;%
 ```
 
 ```
-## # A tibble: 1 × 4
-##   content                             PostPr…¹ preds pred_…²
-##   &lt;chr&gt;                               &lt;lgl&gt;    &lt;dbl&gt; &lt;lgl&gt;  
-## 1 Arena was packed, totally electric! FALSE    0.533 TRUE   
-## # … with abbreviated variable names ¹​PostPresident,
-## #   ²​pred_binary
+## # A tibble: 3 × 4
+##   content                    PostPresident preds pred_binary
+##   &lt;chr&gt;                      &lt;lgl&gt;         &lt;dbl&gt; &lt;lgl&gt;      
+## 1 @Seanelmi  Thanks Sean.    FALSE         0.985 TRUE       
+## 2 The State Department's 's… FALSE         0.731 TRUE       
+## 3 TO MY FAVORITE PEOPLE IN … TRUE          0.316 FALSE
 ```
 
 ```r
@@ -723,7 +761,7 @@ toanal &lt;- toanal %&gt;%
 ```
 
 ```
-## Joining, by = c("document", "PostPresident")
+## Joining with `by = join_by(document, PostPresident)`
 ```
 
 ```r
@@ -753,9 +791,9 @@ roc_auc(forAUC,'truth','preds1') %&gt;% mutate(model = 'logodds') %&gt;%
 ## # A tibble: 3 × 4
 ##   .metric .estimator .estimate model                       
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                       
-## 1 roc_auc binary         0.962 logodds                     
-## 2 roc_auc binary         0.963 logodds &amp; net sentiment     
-## 3 roc_auc binary         0.964 logodds &amp; detailed sentiment
+## 1 roc_auc binary         0.966 logodds                     
+## 2 roc_auc binary         0.967 logodds &amp; net sentiment     
+## 3 roc_auc binary         0.968 logodds &amp; detailed sentiment
 ```
 
 --
@@ -774,17 +812,8 @@ roc_auc(forAUC,'truth','preds1') %&gt;% mutate(model = 'logodds') %&gt;%
   
   - ...help us predict the data (RQ: do positive tweets get more likes?)
   
---
 
-- Housekeeping stuff!
 
---
-
-  - Pset 8 due Friday, April 14th
-  
-  - Pset 9 due Friday, April 21st (EC for using advanced ML!)
-  
-  - Final exam due Friday, April 28th
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
