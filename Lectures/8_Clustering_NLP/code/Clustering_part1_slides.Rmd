@@ -1107,7 +1107,7 @@ table(c1$cluster,c2$cluster)
 
 # Is Polarization Increasing?
 
-- Compare to 117th Congress (2021-2023)
+- Compare 97th Congress (1981-1983) to 117th Congress (2021-2023)
 
 ```{r,warning=F,message=F}
 dat <- read_csv('../data/H117_members.csv')
@@ -1158,7 +1158,7 @@ ggClust <- datClust %>%
   geom_point() +
   labs(x = 'DW-Nominate Dimension 1',
        y = 'DW-Nominate Dimension 2',
-       title="97th Congress Ideology",
+       title="117th Congress Ideology",
        color = "Cluster")
 ggplotly(ggClust,tooltip = 'text')
 ```

@@ -1,0 +1,52 @@
+---
+title: "Clustering Part 1 Notes"
+output: html_document
+date: "2023-11-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+require(tidymodels)
+
+dat <- read_csv('https://raw.githubusercontent.com/jbisbee1/DS1000_F2023/main/Lectures/8_Clustering_NLP/data/H117_members.csv')
+
+datClust <- dat %>%
+  mutate(party = ifelse(party_code == 200,'R',
+                        ifelse(party_code == 100,'D','I'))) %>%
+  select(nominate_dim1,nominate_dim2,party) %>%
+  drop_na()
+
+# Elbow plot
+totWSS <- NULL
+for(k in 1:10) {
+  tmp.cluster <- datClust %>%
+  select(-party) %>%
+  kmeans(centers = k,nstart = 25)
+
+  tmpRes <- data.frame(totWSS = tmp.cluster$tot.withinss,
+           k = k)
+  
+  totWSS <- totWSS %>%
+    bind_rows(tmpRes)
+}
+
+totWSS %>%
+    ggplot(aes(x = k,y = totWSS)) + 
+  geom_point() + 
+  geom_line() + 
+  geom_text(aes(label = k),hjust = 1)
+
+m <- kmeans(x = datClust %>% select(-party),
+            centers = 2,nstart = 25)
+
+datClust %>%
+  mutate(cluster = m$cluster) %>%
+  ggplot(aes(x = nominate_dim1,y = nominate_dim2,color = factor(cluster))) +
+  geom_point()
+
+```
+
