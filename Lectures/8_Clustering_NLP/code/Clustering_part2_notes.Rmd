@@ -1,0 +1,84 @@
+---
+title: "CLassification Part 2 Notes"
+output: html_document
+date: "2023-11-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+
+tweets <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/Trumptweets.Rds")
+
+tweet_words <- read_rds("https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds")
+
+# Effect of presidency on what Trump tweets about
+tweet_words %>%
+  mutate(PostPresident = ifelse(Tweeting.date > as.Date('2016-11-03'),'Post','Pre')) %>%
+  count(word,PostPresident) %>%
+  group_by(PostPresident) %>%
+  arrange(desc(n)) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = n,y = reorder(word,n),
+             fill = PostPresident)) + 
+  geom_bar(stat = 'identity')
+
+
+# Convert to DTM
+dtm <- tweet_words %>%
+  count(Tweeting.date,word) %>%
+  group_by(word) %>%
+  mutate(tot_n = sum(n)) %>%
+  ungroup()
+
+dtm %>%
+  arrange(tot_n)
+
+dtm <- dtm %>%
+  filter(tot_n > 20)
+
+# TF-IDF: term frequency, inverse document frequency
+require(tidytext)
+dtm.tfidf <- bind_tf_idf(tbl = dtm,term = word,document = Tweeting.date,n = n)
+
+
+dtm.tfidf %>%
+  select(word,tf_idf) %>%
+  distinct()
+
+# cast_dtm()
+castdtm <- cast_dtm(data = dtm.tfidf,document = Tweeting.date,term = word,value = tf_idf)
+
+# Run k-means on the castdtm object
+km_out <- kmeans(castdtm,
+                 center = 50,
+                 nstart = 5)
+
+require(tidymodels)
+km_out_tidy <- tidy(km_out) %>%
+  gather(word,mean_tfidf,-size,-cluster,-withinss)
+
+km_out_tidy %>%
+  filter(cluster %in% 40:49) %>%
+  group_by(cluster) %>%
+  arrange(desc(mean_tfidf)) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = mean_tfidf,y = reorder(word,mean_tfidf),fill = factor(cluster))) + 
+  geom_bar(stat = 'identity') + 
+  facet_wrap(~cluster,scales = 'free')
+
+# Create elbow plot NOT RUN FOR TIME 
+# totWSS <- NULL
+# for(k in c(10,50,100,250,500,1000)) {
+#   km_out <- kmeans(castdtm,
+#                    center = k,
+#                    nstart = 5)
+#   
+#     totWSS <- data.frame(totWSS = km_out$tot.withinss,k = k) %>%
+#     bind_rows(totWSS)
+# }
+```
+
