@@ -3,7 +3,7 @@ title: "Problem Set 9"
 subtitle: "NLP & Sentiment"
 author: "[YOUR NAME]"
 institute: "Vanderbilt University"
-date: "Due Date: 2023-04-21"
+date: "Due Date: 2023-12-01"
 output:
   html_document: default
 ---
@@ -24,13 +24,21 @@ All of the following questions should be answered in this `.Rmd` file. There are
 
 This problem set is worth 10 total points, plus three extra credit points. The point values for each question are indicated in brackets below. To receive full credit, you must both have the correct code **and include a comment describing what each line does**. In addition, some questions ask you to provide a written response in addition to the code. Furthermore, some of the code chunks are totally empty, requiring you to try writing the code from scratch. Make sure to comment each line, explaining what it is doing!
 
-You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be completed by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/04/21.
+You are free to rely on whatever resources you need to complete this problem set, including lecture notes, lecture presentations, Google, your classmates...you name it. However, the final submission must be complete by you. There are no group assignments. To submit, compiled the completed problem set and upload the PDF file to Brightspace by midnight on 2023/12/01
 
 **Good luck!**
 
+## ChatGPT Link [Optional]
+
+*Copy the link to ChatGPT you used here: _______________________.
+
 
 ## Question 1 [5 points]
-Open the Trump tweet dataset `Trump_tweet_words.Rds` and save it to an object named `tweet_words`. Also load the sentiment dictionary `nrc` from the `tidytext` package, and look at the words with sentiment scores by merging the two datasets with the `inner_join()` function, which you should save to a new object called `tweet_sentiment`. 
+Open the Trump tweet dataset `Trump_tweet_words.Rds` and save it to an object named `tweet_words`. Also load the sentiment dictionary `nrc` from the `tidytext` package, and look at the words with sentiment scores by merging the two datasets with the `inner_join()` function, which you should save to a new object called `tweet_sentiment`. (If you can't open the `nrc` object from the `tidytext` package, you can just load it from GitHub with this link: `https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/nrc.Rds`)
+
+```{r}
+# Loading the data
+```
 
 Using this data, investigate the following research question: do Trump's positive or negative tweets get more engagement (measured with retweets)?
 
@@ -42,61 +50,64 @@ iii. Plot the result and discuss your findings based on visual analysis. [2 poin
 
 iv. Then redo the analysis but take the average retweets by sentiment. Does your conclusion change? If so, why? Which measure do you think is better for answering the research question? [1 point]
 
->- i. Write a few sentences here
+>- i. 
 
 ```{r}
-# Loading data
-
-# Merging with inner join
+# ii. Merging with inner join
 
 # ii. Summing retweets
 
 # iii. Plotting
-
 ```
 
->- iii. Write a few sentences here
+>- iii. 
 
 ```{r}
 # iv. Averaging retweets
 
-# Plotting
-
+# iv. Plotting
 ```
 
->- iv. Write a few sentences here
+>- iv. 
 
 ## Question 2 [5 points]
-Re-run the previous analysis, except look the results year by year. 
+Re-run the previous analysis, except look the results year by year and calculate the *difference* in retweets of positive and negative tweets. Also calculate the total number of tweets written by Trump each year.
 
-i. To do this, you will need to recalculate the average retweets by sentiment for each year. [2 points]
+i. To do this, you will need to recalculate the average retweets by sentiment for each year, and then calculate the difference between the two. **HINT**: This will require two `pivot_wider()` commands, the first to determine whether a tweet is positive or negative, and the second to calculate the difference in average retweets by sentiment per year. [2 points]
 
-ii. Plot your results over time, with the year in the x-axis and the average retweets on the y-axis, with points colored by sentiment and sized by the total number of tweets falling into each sentiment category per year. [2 points]
+ii. Plot your results over time, with the year in the x-axis and the difference in retweets (positive minus negative) on the y-axis, with points sized by the total number of tweets written by Trump per year. Add a horizontal line at zero to help the reader see the pattern (`geom_hline()`). [2 points]
 
-iii. Describe your results. What might explain the patterns you observe? [1 point]
+iii. Describe your results. Was it ever the case that Trump's positive tweets were more popular than his negative tweets? What might explain the patterns you observe? [1 point]
 
 ```{r}
 # i. Averaging retweets by year
 
 # ii. Plotting
-
 ```
 
->- iii. Write a few sentences here.
+>- iii.
 
 ## Extra Credit [3 points]
-Re-answer the research question proposed in Question 1 above comparing Trump pre-presidency to Trump post-presidency.
+Re-answer the research question proposed in Question 1 above comparing Trump pre-presidency to Trump post-presidency, using favorites instead of retweets. **NB:** This is the hardest extra credit, and I don't expect the majority of students to get it perfect. But I do want to see who is really exceeding class expectations, so there won't be any help on this. If you want to attempt it, you'll need to go beyond what we have covered in class.
 
 i. First, state your theory and assumptions, and use this theory to generate a hypothesis. [1 point]
 
-ii. Second, evaluate using a linear regression model (`lm()`) in which you predict average retweets as a function of sentiment, subsetting the data first to prior to 2016 and then again, subsetting to 2016 and later. What do you find? [2 points]
+ii. Second, evaluate using a linear regression model (`lm()`) in which you predict average favorites as a function of sentiment, subsetting the data first to prior to 2016 and then again, subsetting to 2016 and later. What do you find? **NB:** You must use the *continuous* version of `sentiment`, which is just the difference between the number of positive and negative words in each tweet. [1 points]
 
-**HINT:** You can either run the regression with a categorical version of the $X$ variable, or you can re-calculate sentiment as the difference between the number of positive and negative words in each tweet. **HINT 2:** You should log the retweets (run a univariate visualization if you don't believe me).
+iii. Finally, run an interacted regression to test if the difference between the pre-2016 and post-2016 periods is significantly different. (Super users only. [1 point])
 
->- i. Write a few sentences here
+>- i. 
 
 ```{r}
-# Insert code here
+# ii.
 ```
 
->- ii. Write a few sentences here
+
+>- ii. 
+
+```{r}
+# iii.
+```
+
+>- iii. 
+

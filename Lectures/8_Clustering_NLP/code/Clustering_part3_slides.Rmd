@@ -183,8 +183,8 @@ p
 - Good dictionary included in `tidytext` package
 
 ```{r,warning = F}
-require(tidytext)
-nrc <- get_sentiments("nrc")
+require(tidytext) # Might need to install.packages('textdata')
+# nrc <- get_sentiments("nrc")
 # If this doesn't work on your computer, just load it with read_rds()
 nrc <- read_rds('https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/nrc.Rds?raw=true')
 ```
@@ -267,7 +267,7 @@ p
   
 --
 
-```{r}
+```{r,warning=F,message=F}
 tweet_sentiment <- tweet_words %>%
     inner_join(nrc, by = "word") 
   
@@ -439,7 +439,7 @@ m <- glm(PostPresident ~ logodds,toanal,family = binomial) # logit regression
 
 - Evaluate the performance
 
-```{r,message=F}
+```{r,message=F,warning=F}
 require(tidymodels)
 forAUC <- toanal %>% # Evaluate model performance
   mutate(preds = predict(m,type = 'response'),
@@ -486,7 +486,7 @@ toTest %>%
   select(content,PostPresident,preds) %>%
   mutate(pred_binary = preds > .5) %>%
   filter(PostPresident != pred_binary)
-# We only make 1 mistake! And it is on a tough tweet
+# We only make 3 mistakes!
 ```
 
 

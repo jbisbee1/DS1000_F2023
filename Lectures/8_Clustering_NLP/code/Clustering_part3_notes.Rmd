@@ -1,0 +1,105 @@
+---
+title: "NLP, Log-Odds & Sentiment Notes"
+output: html_document
+date: "2023-11-27"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+require(tidyverse)
+
+tweet_words <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds')
+
+
+# Step 1: Calculate counts
+odds1 <- tweet_words %>%
+  mutate(PostPresident = Tweeting.date >= as.Date('2016-11-04')) %>%
+  group_by(word) %>%
+  count(word,PostPresident) %>%
+  filter(sum(n) >= 5) %>%
+  spread(PostPresident,n,fill = 0) %>%
+  ungroup() %>%
+  mutate(totPre = sum(`FALSE`),
+         totPost = sum(`TRUE`))
+
+
+# Step 2: Calculating Probabilities
+odds2 <- odds1 %>%
+  mutate(probPre = (`FALSE` + 1)/ (totPre + 1),
+         probPost = (`TRUE` + 1) / (totPost + 1))
+
+# Step 3: Calculate Odds
+odds3 <- odds2 %>%
+  mutate(odds = probPost / probPre)
+
+# Step 4: Log it!
+odds4 <- odds3 %>%
+  mutate(logodds = log(odds))
+
+# Create pretty plot
+odds4 %>%
+  mutate(bigger_lessthan_0 = logodds > 0) %>%
+  group_by(bigger_lessthan_0) %>%
+  top_n(15,wt = abs(logodds)) %>%
+  ggplot(aes(x = logodds,y = reorder(word,logodds),fill = bigger_lessthan_0)) + 
+  geom_bar(stat = 'identity')
+
+```
+
+# Sentiment
+
+```{r}
+nrc <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/nrc.Rds')
+
+# Calculate proportion of words (again)
+word_freq <- tweet_words %>%
+  mutate(PostPresident = ifelse(Tweeting.date >= as.Date('2016-11-04'),
+                                'Post','Pre')) %>%
+  group_by(PostPresident) %>%
+  count(word) %>%
+  filter(sum(n) > 5) %>%
+  mutate(prop = prop.table(n))
+
+# Merge
+word_freq_sentiment <- word_freq %>%
+  inner_join(nrc,by = 'word')
+
+# Visualization of top words
+word_freq_sentiment %>%
+  group_by(sentiment) %>%
+  top_n(10,wt = n) %>%
+  ggplot(aes(x = n,y = word)) + 
+  geom_bar(stat = 'identity') + 
+  facet_wrap(~ sentiment,scales = 'free',nrow = 3)
+
+# Measuring sentiment as positive minus negative words
+tweet_sentiment <- tweet_words %>%
+  inner_join(nrc,by = 'word')
+
+tweet_sentiment_summary <- tweet_sentiment %>%
+  mutate(PostPresident = ifelse(Tweeting.date >= as.Date('2016-11-04'),'Post','Pre')) %>%
+  group_by(PostPresident,sentiment) %>%
+  count(document,sentiment) %>%
+  arrange(document,sentiment) %>%
+  filter(sentiment %in% c('positive','negative')) %>%
+  pivot_wider(names_from = sentiment,
+              values_from = n,
+              values_fill = 0) %>%
+  mutate(sentiment = positive - negative)
+
+# Sentiment by Presidency
+tweet_sentiment_summary %>%
+  group_by(PostPresident) %>%
+  mutate(ntweet = 1) %>%
+  summarise(across(-document,sum))
+
+# Visualization
+tweet_sentiment_summary %>%
+  ggplot(aes(x = sentiment,y = PostPresident)) + 
+  geom_boxplot()
+```
+
+

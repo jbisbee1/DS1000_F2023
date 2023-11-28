@@ -4,7 +4,7 @@
     <title>Text, Tweets, and Sentiment</title>
     <meta charset="utf-8" />
     <meta name="author" content="Prof. Bisbee" />
-    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/lexis.css" type="text/css" />
     <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
@@ -27,7 +27,7 @@ class: center, middle, inverse, title-slide
 ]
 .date[
 ### Lecture Date: 2023/11/27
-Slides Updated: 2023-11-10
+Slides Updated: 2023-11-27
 ]
 
 ---
@@ -277,7 +277,7 @@ p
 
 
 ```r
-require(tidytext)
+require(tidytext) # Might need to install.packages('textdata')
 ```
 
 ```
@@ -285,7 +285,7 @@ require(tidytext)
 ```
 
 ```r
-nrc &lt;- get_sentiments("nrc")
+# nrc &lt;- get_sentiments("nrc")
 # If this doesn't work on your computer, just load it with read_rds()
 nrc &lt;- read_rds('https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/data/nrc.Rds?raw=true')
 ```
@@ -405,18 +405,7 @@ p
 ```r
 tweet_sentiment &lt;- tweet_words %&gt;%
     inner_join(nrc, by = "word") 
-```
-
-```
-## Warning in inner_join(., nrc, by = "word"): Detected an unexpected many-to-many relationship between
-## `x` and `y`.
-## ℹ Row 2 of `x` matches multiple rows in `y`.
-## ℹ Row 12751 of `y` matches multiple rows in `x`.
-## ℹ If a many-to-many relationship is expected, set
-##   `relationship = "many-to-many"` to silence this warning.
-```
-
-```r
+  
 tweet_sentiment_summary &lt;- tweet_sentiment %&gt;%
   group_by(PostPresident, sentiment) %&gt;%
   count(document,sentiment) %&gt;%
@@ -635,13 +624,6 @@ m &lt;- glm(PostPresident ~ logodds,toanal,family = binomial) # logit regression
 
 ```r
 require(tidymodels)
-```
-
-```
-## Warning: package 'broom' was built under R version 4.2.3
-```
-
-```r
 forAUC &lt;- toanal %&gt;% # Evaluate model performance
   mutate(preds = predict(m,type = 'response'),
          truth = factor(PostPresident,levels = c('TRUE','FALSE')))
@@ -661,22 +643,6 @@ p &lt;- roc_curve(forAUC,'truth','preds') %&gt;%
   ggplot(aes(x = 1-specificity,y = sensitivity)) + 
   geom_line() + 
   geom_abline(intercept = 0,slope = 1,linetype = 'dashed')
-```
-
-```
-## Warning: Returning more (or less) than 1 row per `summarise()` group
-## was deprecated in dplyr 1.1.0.
-## ℹ Please use `reframe()` instead.
-## ℹ When switching from `summarise()` to `reframe()`,
-##   remember that `reframe()` always returns an ungrouped
-##   data frame and adjust accordingly.
-## ℹ The deprecated feature was likely used in the yardstick
-##   package.
-##   Please report the issue at
-##   &lt;https://github.com/tidymodels/yardstick/issues&gt;.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where
-## this warning was generated.
 ```
 
 ---
@@ -745,7 +711,7 @@ toTest %&gt;%
 ```
 
 ```r
-# We only make 1 mistake! And it is on a tough tweet
+# We only make 3 mistakes!
 ```
 
 
