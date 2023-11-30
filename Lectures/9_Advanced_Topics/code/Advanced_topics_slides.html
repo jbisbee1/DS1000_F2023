@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced Topics in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Prof. Bisbee" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/lexis.css" type="text/css" />
+    <link rel="stylesheet" href="css/lexis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Advanced Topics in R
+]
+.subtitle[
+## A Preview of What’s to Come
+]
+.author[
+### Prof. Bisbee
+]
+.institute[
+### Vanderbilt University
+]
+.date[
+### Lecture Date: 2023/04/17
+Slides Updated: 2023-04-16
+]
+
+---
+
+
+
+
+---
+
+# Agenda
+
+- Machine Learning Algorithms
+
+- Mapping in `R` (time permitting)
+
+
+---
+
+# What is regression?
+
+--
+
+- Conditional means for continuous data
+
+--
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+---
+
+# What is regression?
+
+- .blue[Theory]: the more you earn, the more you spend
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+---
+
+# What is regression?
+
+- But **conditional means** make a lot of mistakes. Can we do better?
+
+&lt;center&gt;&lt;img src="figs/condmean.png" width = 45%&gt;&lt;/center&gt;
+
+
+---
+
+# What is regression?
+
+- But **conditional means** make a lot of mistakes. Can we do better?
+
+&lt;center&gt;&lt;img src="figs/condmean_reg.png" width = 45%&gt;&lt;/center&gt;
+
+
+---
+
+# Regression
+
+--
+
+- Calculating a **line** that minimizes mistakes *for every observation*
+
+--
+
+  - NB: could be a curvey line! For now, just assume straight
+  
+--
+
+- Recall from geometry how to graph a straight line
+
+--
+
+- `\(Y = a + bX\)`
+
+  - `\(a\)`: the "intercept" (where the line intercepts the y-axis)
+  - `\(b\)`: the "slope" (how much `\(Y\)` changes for each increase in `\(X\)`)
+
+--
+
+- (Data scientists use `\(\alpha\)` and `\(\beta\)` instead of `\(a\)` and `\(b\)` b/c nerds)
+
+--
+
+- Regression analysis simply chooses the best line
+
+--
+
+  - "Best"?
+
+--
+
+  - The line that minimizes the mistakes (the **line of best fit**)
+
+---
+
+# Visual Intuition
+
+&lt;center&gt;&lt;img src="./figs/raw.png" width = 70%&gt;&lt;/center&gt;
+
+
+---
+
+# Visual Intuition
+
+&lt;center&gt;&lt;img src="./figs/regression-line.gif" width = 70%&gt;&lt;/center&gt;
+
+---
+
+# Regression
+
+--
+
+- The line is .blue[substantively meaningful]
+
+--
+
+- Red line on scatter plot of spending and wages: `\(Y = 12 + 2*X\)`
+
+--
+
+- `\(\alpha\)` tells us the value of `\(Y\)` when `\(X\)` is zero
+
+--
+
+  - People who don't make any money spend $12 per week on entertainment
+  
+--
+
+- `\(\beta\)` tells us how much `\(Y\)` increases for each additional `\(X\)`
+
+--
+
+  - People spend an additional $2 per week for each additional $1 in hourly wages
+  
+---
+
+# Two Camps Revisited
+
+--
+
+- Regression is great for **theory testing**
+
+--
+
+  - Results tell us something **meaningful** about our theory
+  
+--
+
+- But if all we care about is **prediction**...?
+
+--
+
+  - Want to test every possible predictor (and combinations)
+  
+  - Don't care about **relationships**
+  
+  - Just care about **accuracy**
+  
+--
+
+- Algorithms can save us time!
+
+--
+
+  - Random Forests
+  
+  - LASSO
+  
+---
+
+# Random Forests
+
+- Identify the best "partition" (split) that divides the data
+
+--
+
+&lt;center&gt;&lt;img src="./figs/rfdemo.gif" width = 70%&gt;&lt;/center&gt;
+
+--
+
+- In `R`: `ranger`
+
+--
+
+  - `formula = Y ~ .`
+
+---
+
+# Random Forests
+
+
+```r
+require(tidyverse)
+covidData &lt;- read_rds('../data/covid_prepped.Rds')
+glimpse(covidData)
+```
+
+```
+## Rows: 3,067
+## Columns: 18
+## $ trump.votes         &lt;dbl&gt; 19838, 83544, 5622, 7525, 2471…
+## $ perc.trump.2020     &lt;dbl&gt; 0.7255770, 0.7726827, 0.538608…
+## $ covid.deaths        &lt;int&gt; 120, 431, 67, 76, 149, 42, 79,…
+## $ population          &lt;int&gt; 58805, 231767, 25223, 22293, 5…
+## $ perc.non.hisp.white &lt;dbl&gt; 72.789, 82.685, 46.965, 74.460…
+## $ perc.non.hisp.black &lt;dbl&gt; 18.678, 7.379, 45.783, 20.242,…
+## $ perc.non.hisp.asian &lt;dbl&gt; 1.422, 0.853, 0.422, 0.103, 0.…
+## $ perc.hispanic       &lt;dbl&gt; 3.007, 4.492, 4.639, 2.641, 7.…
+## $ perc.male           &lt;dbl&gt; 0.4876331, 0.4856838, 0.525897…
+## $ perc.65up           &lt;dbl&gt; 0.1510923, 0.2000085, 0.189450…
+## $ unemp.rate          &lt;dbl&gt; 0.03904205, 0.04069932, 0.0584…
+## $ lfpr                &lt;dbl&gt; 0.4688933, 0.4333219, 0.330603…
+## $ weekly.wages        &lt;dbl&gt; 711, 663, 676, 791, 651, 623, …
+## $ perc.rural          &lt;dbl&gt; 42.00, 42.28, 67.79, 68.35, 89…
+## $ perc.manuf          &lt;dbl&gt; 0.06168181, 0.04557498, 0.2842…
+## $ perc.trump.2016     &lt;dbl&gt; 0.7277, 0.7655, 0.5210, 0.7640…
+## $ covid.death.rate    &lt;dbl&gt; 2.040643, 1.859626, 2.656306, …
+## $ log.pop             &lt;dbl&gt; 10.981982, 12.353488, 10.13551…
+```
+
+---
+
+# Research Question
+
+- What predicts the Covid-19 death rate by county?
+
+
+```r
+form.demogs &lt;- 'covid.death.rate ~ perc.65up + perc.male + perc.non.hisp.white + perc.non.hisp.black + perc.non.hisp.asian + perc.hispanic + log.pop'
+
+form.econ &lt;- 'covid.death.rate ~ perc.65up + perc.male + perc.non.hisp.white + perc.non.hisp.black + perc.non.hisp.asian + perc.hispanic + log.pop + lfpr + weekly.wages + unemp.rate + perc.manuf + perc.rural'
+
+form.pol &lt;- 'covid.death.rate ~ perc.65up + perc.male + perc.non.hisp.white + perc.non.hisp.black + perc.non.hisp.asian + perc.hispanic + log.pop + lfpr + weekly.wages + unemp.rate + perc.manuf + perc.rural + perc.trump.2016'
+```
+
+---
+
+# Comparing models
+
+
+```r
+m.demogs &lt;- lm(as.formula(form.demogs),covidData)
+summary(m.demogs)
+```
+
+```
+## 
+## Call:
+## lm(formula = as.formula(form.demogs), data = covidData)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.2013 -0.7134 -0.0769  0.6127  6.9393 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)          7.792220   0.659644  11.813  &lt; 2e-16
+## perc.65up            2.102616   0.540668   3.889 0.000103
+## perc.male           -4.658581   0.996893  -4.673 3.10e-06
+## perc.non.hisp.white -0.020637   0.003192  -6.466 1.17e-10
+## perc.non.hisp.black  0.011876   0.003314   3.583 0.000345
+## perc.non.hisp.asian -0.071837   0.009242  -7.773 1.04e-14
+## perc.hispanic        0.003056   0.003425   0.892 0.372286
+## log.pop             -0.193326   0.017954 -10.768  &lt; 2e-16
+##                        
+## (Intercept)         ***
+## perc.65up           ***
+## perc.male           ***
+## perc.non.hisp.white ***
+## perc.non.hisp.black ***
+## perc.non.hisp.asian ***
+## perc.hispanic          
+## log.pop             ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.116 on 3059 degrees of freedom
+## Multiple R-squared:  0.211,	Adjusted R-squared:  0.2092 
+## F-statistic: 116.9 on 7 and 3059 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Comparing models
+
+
+```r
+m.econ &lt;- lm(as.formula(form.econ),covidData)
+summary(m.econ)
+```
+
+```
+## 
+## Call:
+## lm(formula = as.formula(form.econ), data = covidData)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.6810 -0.6706 -0.0941  0.5779  8.5308 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)         11.1115407  0.7684102  14.460  &lt; 2e-16
+## perc.65up            1.4349387  0.5556532   2.582  0.00986
+## perc.male           -7.1002727  1.0172358  -6.980 3.61e-12
+## perc.non.hisp.white -0.0147605  0.0032693  -4.515 6.57e-06
+## perc.non.hisp.black  0.0104428  0.0032715   3.192  0.00143
+## perc.non.hisp.asian -0.0504391  0.0098165  -5.138 2.95e-07
+## perc.hispanic        0.0074509  0.0034500   2.160  0.03088
+## log.pop             -0.2382359  0.0236365 -10.079  &lt; 2e-16
+## lfpr                -4.2922126  0.4097871 -10.474  &lt; 2e-16
+## weekly.wages         0.0002320  0.0001262   1.838  0.06613
+## unemp.rate          -4.7758605  1.7375382  -2.749  0.00602
+## perc.manuf           1.0193997  0.2291917   4.448 8.98e-06
+## perc.rural          -0.0007606  0.0011116  -0.684  0.49388
+##                        
+## (Intercept)         ***
+## perc.65up           ** 
+## perc.male           ***
+## perc.non.hisp.white ***
+## perc.non.hisp.black ** 
+## perc.non.hisp.asian ***
+## perc.hispanic       *  
+## log.pop             ***
+## lfpr                ***
+## weekly.wages        .  
+## unemp.rate          ** 
+## perc.manuf          ***
+## perc.rural             
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.09 on 3054 degrees of freedom
+## Multiple R-squared:  0.248,	Adjusted R-squared:  0.245 
+## F-statistic: 83.92 on 12 and 3054 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Comparing models
+
+
+```r
+m.pol &lt;- lm(as.formula(form.pol),covidData)
+summary(m.pol)
+```
+
+```
+## 
+## Call:
+## lm(formula = as.formula(form.pol), data = covidData)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.5375 -0.6331 -0.0998  0.5212  7.4524 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)          7.5048349  0.7865457   9.542  &lt; 2e-16
+## perc.65up            2.9946782  0.5493709   5.451 5.40e-08
+## perc.male           -5.6817433  0.9904641  -5.736 1.06e-08
+## perc.non.hisp.white -0.0303016  0.0033509  -9.043  &lt; 2e-16
+## perc.non.hisp.black  0.0102318  0.0031692   3.229  0.00126
+## perc.non.hisp.asian -0.0378293  0.0095508  -3.961 7.64e-05
+## perc.hispanic       -0.0017425  0.0034042  -0.512  0.60879
+## log.pop             -0.1472463  0.0237775  -6.193 6.71e-10
+## lfpr                -1.9962819  0.4286574  -4.657 3.34e-06
+## weekly.wages         0.0001890  0.0001223   1.545  0.12234
+## unemp.rate           1.0135052  1.7318907   0.585  0.55846
+## perc.manuf           0.9801056  0.2220381   4.414 1.05e-05
+## perc.rural          -0.0019888  0.0010803  -1.841  0.06572
+## perc.trump.2016      2.6673022  0.1879211  14.194  &lt; 2e-16
+##                        
+## (Intercept)         ***
+## perc.65up           ***
+## perc.male           ***
+## perc.non.hisp.white ***
+## perc.non.hisp.black ** 
+## perc.non.hisp.asian ***
+## perc.hispanic          
+## log.pop             ***
+## lfpr                ***
+## weekly.wages           
+## unemp.rate             
+## perc.manuf          ***
+## perc.rural          .  
+## perc.trump.2016     ***
+## ---
+## Signif. codes:  
+## 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.056 on 3053 degrees of freedom
+## Multiple R-squared:  0.2945,	Adjusted R-squared:  0.2915 
+## F-statistic: 98.05 on 13 and 3053 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Evaluate Model Fit
+
+
+```r
+cvRes &lt;- NULL
+for(i in 1:100) {
+  inds &lt;- sample(1:nrow(covidData),size = round(nrow(covidData)*.8),replace = F)
+  train &lt;- covidData %&gt;% slice(inds)
+  test &lt;- covidData %&gt;% slice(-inds)
+  
+  # Train
+  mTmp.demogs &lt;- lm(as.formula(form.demogs),train)
+  mTmp.econ &lt;- lm(as.formula(form.econ),train)
+  mTmp.pol &lt;- lm(as.formula(form.pol),train)
+  
+  # Test
+  tmp &lt;- test %&gt;%
+    mutate(pred.d = predict(mTmp.demogs,newdata = test),
+           pred.e = predict(mTmp.econ,newdata = test),
+           pred.p = predict(mTmp.pol,newdata = test)) %&gt;%
+    summarise(rmse.d = sqrt(mean((covid.death.rate - pred.d)^2)),
+              rmse.e = sqrt(mean((covid.death.rate - pred.e)^2)),
+              rmse.p = sqrt(mean((covid.death.rate - pred.p)^2))) %&gt;%
+    mutate(cvIndex = i)
+  
+  cvRes &lt;- cvRes %&gt;%
+    bind_rows(tmp)
+}
+```
+
+---
+
+# Evaluate Model Fit
+
+
+```r
+cvRes %&gt;%
+  gather(metric,rmse,-cvIndex) %&gt;%
+  ggplot(aes(x = rmse,y = metric)) + 
+  geom_boxplot()
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Random Forests
+
+
+```r
+require(ranger) # Fast random forests package
+m.all &lt;- ranger(formula = as.formula(form.demogs),data = covidData)
+m.all
+```
+
+```
+## Ranger result
+## 
+## Call:
+##  ranger(formula = as.formula(form.demogs), data = covidData) 
+## 
+## Type:                             Regression 
+## Number of trees:                  500 
+## Sample size:                      3067 
+## Number of independent variables:  7 
+## Mtry:                             2 
+## Target node size:                 5 
+## Variable importance mode:         none 
+## Splitrule:                        variance 
+## OOB prediction error (MSE):       1.126429 
+## R squared (OOB):                  0.2848192
+```
+
+---
+
+# Random Forest Comparison
+
+
+```r
+cvRes &lt;- NULL
+for(i in 1:100) {
+  inds &lt;- sample(1:nrow(covidData),size = round(nrow(covidData)*.8),replace = F)
+  train &lt;- covidData %&gt;% slice(inds)
+  test &lt;- covidData %&gt;% slice(-inds)
+  
+  # Train
+  mLM.p &lt;- lm(as.formula(form.pol),train)
+  mRF.p &lt;- ranger(as.formula(form.pol),train)
+  
+  # Test
+  # NEED TO RUN PREDICTION ON RF FIRST
+  tmpPred &lt;- predict(mRF.p,test)
+  
+  tmp &lt;- test %&gt;%
+    mutate(pred.lm = predict(mLM.p,newdata = test),
+           pred.rf = tmpPred$predictions) %&gt;%
+    summarise(rmse.lm = sqrt(mean((covid.death.rate - pred.lm)^2)),
+              rmse.rf = sqrt(mean((covid.death.rate - pred.rf)^2))) %&gt;%
+    mutate(cvIndex = i)
+  
+  cvRes &lt;- cvRes %&gt;%
+    bind_rows(tmp)
+}
+```
+
+---
+
+# Random Forest Comparison
+
+
+```r
+cvRes %&gt;%
+  gather(metric,rmse,-cvIndex) %&gt;%
+  ggplot(aes(x = rmse,y = metric)) + 
+  geom_boxplot()
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# What matters most?
+
+- Random Forests are particularly suitable for investigating **variable importance**
+
+--
+
+  - I.e., which `\(X\)` predictors are most helpful?
+  
+--
+
+- A few options, but we rely on **permutation tests**
+
+--
+
+  - Idea: run the best model you have, then re-run it after "permuting" one of the variables
+  
+  - "Permute" means randomly reshuffle...breaks relationship
+  
+  - How much **worse** is the model when you break a variable?
+  
+---
+
+# Variable Importance
+
+- In `ranger()`, use `importance = "permutation"`
+
+
+```r
+rf.pol &lt;- ranger(formula = as.formula(form.pol),data = covidData,importance = 'permutation')
+
+rf.pol$variable.importance
+```
+
+```
+##           perc.65up           perc.male perc.non.hisp.white 
+##          0.08698038          0.07701430          0.41155854 
+## perc.non.hisp.black perc.non.hisp.asian       perc.hispanic 
+##          0.24682569          0.18361829          0.18203055 
+##             log.pop                lfpr        weekly.wages 
+##          0.11904814          0.17866041          0.04163480 
+##          unemp.rate          perc.manuf          perc.rural 
+##          0.05170493          0.05189645          0.07484234 
+##     perc.trump.2016 
+##          0.33363024
+```
+
+---
+
+# Variable Importance
+
+
+```r
+toplot &lt;- data.frame(vimp = rf.pol$variable.importance,
+                     vars = names(rf.pol$variable.importance))
+
+toplot %&gt;%
+  ggplot(aes(x = vimp,y = reorder(vars,vimp))) + 
+  geom_bar(stat = 'identity')
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# LASSO
+
+--
+
+- "Least Absolute Shrinkage and Selection Operator"
+
+--
+
+- Concept: Make it hard for predictors to matter
+
+--
+
+  - Practice: `\(\lambda\)` penalizes how many variables you can include
+  
+  - `\(\sum_{i = 1}^n (y_i - \sum_j x_{ij}\beta_j)^2 + \lambda \sum_{j=1}^p |\beta_j|\)`
+  
+  - Minimize the errors, but penalize for each additional predictor
+  
+  - You *could* kitchen-sink a regression and get super low errors
+  
+  - LASSO penalizes you from throwing everything into the kitchen sink
+
+--
+
+- In `R`, need to install a new package! `install.packages('glmnet')`
+
+
+```r
+require(glmnet)
+```
+
+---
+
+# LASSO
+
+- Function doesn't use formulas
+
+--
+
+- Give it the raw data instead, divided into `Y` (outcome) and `X` (predictors)
+
+--
+
+
+```r
+Y &lt;- covidData$covid.death.rate
+X &lt;- covidData %&gt;% select(perc.65up,perc.male,perc.non.hisp.white,perc.non.hisp.black,perc.non.hisp.asian,perc.hispanic,log.pop,lfpr,weekly.wages,unemp.rate,perc.manuf,perc.rural,perc.trump.2016)
+```
+
+
+---
+
+# LASSO
+
+- Now estimate!
+
+
+```r
+lassFit &lt;- glmnet(x = as.matrix(X),
+                  y = as.matrix(Y))
+```
+
+---
+
+# LASSO
+
+
+```r
+plot(lassFit)
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Has its own CV!
+
+
+```r
+cv.lassFit &lt;- cv.glmnet(x = as.matrix(X),y = as.matrix(Y))
+
+plot(cv.lassFit)
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Variable Importance
+
+
+```r
+best &lt;- cv.lassFit$glmnet.fit$beta[,cv.lassFit$index[2,]]
+vimpLass &lt;- data.frame(vimp = best,
+                       vars = names(best))
+vimpLass %&gt;%
+  ggplot(aes(x = vimp,y = reorder(vars,vimp))) + 
+  geom_bar(stat = 'identity')
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Install `maps`
+
+
+```r
+require(tidyverse)
+require(maps)
+require(mapproj)
+
+# Load dataset included in maps package
+states48 &lt;- map_data('state')
+
+states48 %&gt;%
+  as_tibble()
+```
+
+```
+## # A tibble: 15,537 × 6
+##     long   lat group order region  subregion
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;    
+##  1 -87.5  30.4     1     1 alabama &lt;NA&gt;     
+##  2 -87.5  30.4     1     2 alabama &lt;NA&gt;     
+##  3 -87.5  30.4     1     3 alabama &lt;NA&gt;     
+##  4 -87.5  30.3     1     4 alabama &lt;NA&gt;     
+##  5 -87.6  30.3     1     5 alabama &lt;NA&gt;     
+##  6 -87.6  30.3     1     6 alabama &lt;NA&gt;     
+##  7 -87.6  30.3     1     7 alabama &lt;NA&gt;     
+##  8 -87.6  30.3     1     8 alabama &lt;NA&gt;     
+##  9 -87.7  30.3     1     9 alabama &lt;NA&gt;     
+## 10 -87.8  30.3     1    10 alabama &lt;NA&gt;     
+## # … with 15,527 more rows
+```
+
+---
+
+# Maps
+
+- `maps` data are prepared to run with `ggplot()`
+
+--
+
+  - Specifically, want to use `geom_polygon()`
+  
+--
+
+
+```r
+p &lt;- states48 %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group),
+               color = 'black',
+               fill = 'lightblue')
+```
+
+---
+
+# Maps
+
+
+```r
+p
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Can quickly improve with pre-made `theme()`s and `coord()`s
+
+--
+
+
+```r
+p + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Can zoom in with `filter()`
+
+--
+
+
+```r
+ny &lt;- states48 %&gt;%
+  filter(region == 'new york')
+
+pNY &lt;- ny %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group),
+               color = 'black',
+               fill = 'grey85') + 
+  theme_void()
+```
+
+---
+
+# Maps
+
+
+```r
+pNY
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+
+```r
+pNY + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Can also get counties prepared!
+
+
+```r
+counties &lt;- map_data('county')
+
+pCty &lt;- counties %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group),
+               color = 'black',
+               fill = 'grey90') + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+pCty
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+
+```r
+pNYCty &lt;- counties %&gt;%
+  filter(region == 'new york') %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group),
+               color = 'black',
+               fill = 'grey90') + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+pNYCty
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Want to visualize data!
+
+--
+
+- Put the `fill` inside the `aes`
+
+--
+
+- But we need data first
+
+--
+
+
+```r
+JBStates &lt;- c('new york','california','vermont','massachusetts','district of columbia','tennessee','connecticut')
+
+states48 &lt;- states48 %&gt;%
+  mutate(jbLived = ifelse(region %in% JBStates,'Lived','Never lived'))
+```
+
+---
+
+# Maps
+
+
+```r
+p &lt;- states48 %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group,fill = jbLived),
+               color = 'black',alpha = .6) + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+p + 
+  scale_fill_manual(name = '',values = c('Lived' = 'darkgreen','Never lived' = 'grey95')) + 
+  labs(title = "Places I've Lived in the U.S.")
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-33-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Also have world maps!
+
+
+```r
+JBCountries &lt;- c('USA','South Korea','France','UK',
+                 'Germany','Switzerland','Greece',
+                 'Dominican Republic','Saint Lucia',
+                 'China','Thailand','Cambodia','Japan',
+                 'Guatemala','Aruba','Canada','Belize','Mexico')
+world &lt;- map_data('world')
+
+world &lt;- world %&gt;%
+  mutate(jbVisit = ifelse(region %in% JBCountries,'Visited','Never been'))
+
+p &lt;- world %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group,fill = jbVisit),
+               color = 'black',alpha = .6) + 
+  theme_void()
+```
+
+---
+
+# Maps
+
+
+```r
+p + 
+  scale_fill_manual(name = '',values = c('Visited' = 'darkgreen','Never been' = 'grey95')) + 
+  labs(title = "Places I've Visited")
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-35-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- More interesting data?
+
+--
+
+
+```r
+PollDat &lt;- readRDS('../data/PresStatePolls04to20.Rds') %&gt;%
+  as_tibble() %&gt;%
+  rename(region = state.name)
+
+PollDat %&gt;% head()
+```
+
+```
+## # A tibble: 6 × 11
+##   state.postal  year sampl…¹ dem.p…² rep.p…³ dem.v…⁴ rep.v…⁵
+##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 AK            2016     500    30      38      37.7    52.9
+## 2 AK            2016     201    37.4    37.7    37.7    52.9
+## 3 AK            2016     660    30.6    36.1    37.7    52.9
+## 4 AK            2008     500    42      53      37.9    59.4
+## 5 AK            2008     500    41      57      37.9    59.4
+## 6 AK            2016     409    31      48      37.7    52.9
+## # … with 4 more variables: days.until.election &lt;dbl&gt;,
+## #   days.in.field &lt;dbl&gt;, EV &lt;int&gt;, region &lt;chr&gt;, and
+## #   abbreviated variable names ¹​samplesize, ²​dem.poll,
+## #   ³​rep.poll, ⁴​dem.vote, ⁵​rep.vote
+```
+
+---
+
+# Maps
+
+- Collapse to state-by-year
+
+--
+
+
+```r
+PollDat &lt;- PollDat %&gt;%
+  group_by(year,region) %&gt;%
+  summarise(DemPct = mean(dem.poll,na.rm=T),
+            RepPct = mean(rep.poll,na.rm=T),
+            DemVote = first(dem.vote),
+            RepVote = first(rep.vote)) %&gt;%
+  ungroup()
+```
+
+```
+## `summarise()` has grouped output by 'year'. You can
+## override using the `.groups` argument.
+```
+
+---
+
+# Maps
+
+- Merge with map data
+
+--
+
+
+```r
+toplot &lt;- states48 %&gt;%
+  left_join(PollDat %&gt;%
+              filter(year == 2020))
+```
+
+```
+## Joining, by = "region"
+```
+
+```r
+p &lt;- toplot %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group,fill = DemPct),
+               color = 'black') + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+p
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-39-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Let's adjust with `scale_fill_continuous()`
+
+
+```r
+p + 
+  scale_fill_continuous(name = 'Biden %',low = 'red',high = 'blue')
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-40-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Could also `cut` to create bins
+
+
+```r
+p + 
+  scale_fill_stepsn(colors = c('darkred','red','tomato','grey80','skyblue','blue','darkblue'),
+                    breaks = c(30,35,40,49,51,60,65,70))
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-41-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Different geographies &amp; different data
+
+
+```r
+countycovid &lt;- readRDS('../data/countycovid.Rds') # Already prepared!
+
+p &lt;- countycovid %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group,fill = deaths),
+               color = 'grey90') + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+p + 
+  scale_fill_continuous(name = 'Deaths',low = 'white',high = 'red')
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-43-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Raw deaths are a bad measure...why?
+
+--
+
+- Want to normalize by population!
+
+
+```r
+p &lt;- countycovid %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group,
+                   fill = deaths*100000/population)) + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+p + 
+  scale_fill_continuous(name = 'Deaths (per 100K)',
+                        low = 'white',high = 'red')
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-45-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- What about more precise things?
+
+--
+
+- I.e., where I've lived by county
+
+
+```r
+jbCounties &lt;- c('norfolk:massachusetts','washington:vermont',
+                'manhattan:new york','san francisco:california',
+                'davidson:tennessee','hartford:connecticut',
+                'washington:district of columbia')
+
+counties &lt;- counties %&gt;%
+  mutate(combReg = paste0(subregion,":",region)) %&gt;%
+  mutate(jbLived = ifelse(combReg %in% jbCounties,'Lived',
+                          'Never lived'))
+
+p &lt;- counties %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group,
+                   fill = jbLived)) + 
+  theme_void() + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+p
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-47-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Maps
+
+- Can add points instead!
+
+--
+
+
+```r
+jbLivedDF &lt;- data.frame(combReg = jbCounties,
+                        years = c(18,18,7,1,.4,3,4))
+
+counties &lt;- counties %&gt;% left_join(jbLivedDF)
+
+p &lt;- counties %&gt;%
+  ggplot() + 
+  geom_polygon(aes(x = long,y = lat,group = group),
+               fill = 'grey95',color = 'grey70') + 
+  geom_point(data = counties %&gt;%
+               drop_na(years) %&gt;%
+               group_by(group,years) %&gt;%
+               summarise(long = mean(long),lat = mean(lat)),
+             aes(x = long,y = lat,size = years),shape = 21,color = 'red') + 
+  theme_void() + 
+  scale_size_continuous(range = c(2,10),breaks = c(1,5,10)) + 
+  coord_map('albers',lat0 = 30,lat1 = 40)
+```
+
+---
+
+# Maps
+
+
+```r
+p
+```
+
+&lt;img src="Advanced_topics_slides_files/figure-html/unnamed-chunk-49-1.png" style="display: block; margin: auto;" /&gt;
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
