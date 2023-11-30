@@ -1,0 +1,97 @@
+---
+title: "NLP Wrap Up"
+output: html_document
+date: "2023-11-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+require(tidyverse)
+
+tweet_words <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/Trump_tweet_words.Rds')
+
+# Step 1: Calculate counts
+odds1 <- tweet_words %>%
+  mutate(PostPresident = Tweeting.date >= as.Date('2016-11-04')) %>%
+  group_by(word) %>%
+  count(word,PostPresident) %>%
+  filter(sum(n) >= 5) %>%
+  spread(PostPresident,n,fill = 0) %>%
+  ungroup() %>%
+  mutate(totPre = sum(`FALSE`),
+         totPost = sum(`TRUE`))
+
+
+# Step 2: Calculating Probabilities
+odds2 <- odds1 %>%
+  mutate(probPre = (`FALSE` + 1)/ (totPre + 1),
+         probPost = (`TRUE` + 1) / (totPost + 1))
+
+# Step 3: Calculate Odds
+odds3 <- odds2 %>%
+  mutate(odds = probPost / probPre)
+
+# Step 4: Log it!
+odds4 <- odds3 %>%
+  mutate(logodds = log(odds))
+
+# Need to merge log odds data with tweet data
+toanal <- tweet_words %>%
+  mutate(PostPresident = Tweeting.date >= as.Date('2016-11-04')) %>%
+  select(document,word,PostPresident) %>%
+  left_join(odds4 %>% select(word,logodds),by = 'word') %>%
+  group_by(document,PostPresident) %>%
+  summarise(logodds = mean(logodds,na.rm=T),.groups = 'drop')
+
+toanal <- toanal %>%
+  drop_na()
+
+# Simply logit regression
+m <- glm(PostPresident ~ logodds, toanal,family = binomial(link = 'logit'))
+
+summary(m)
+
+# Evaluate our model
+require(tidymodels)
+forAUC <- toanal %>%
+  mutate(preds = round(predict(m,type = 'response'),5),
+         truth = factor(PostPresident,levels = c('TRUE','FALSE')))
+  
+roc_auc(forAUC,'truth','preds')
+
+```
+
+# Help on Pset 9 Q2
+
+```{r}
+nrc <- read_rds('https://github.com/jbisbee1/DS1000_F2023/raw/main/Lectures/8_Clustering_NLP/data/nrc.Rds')
+
+# Measuring sentiment as positive minus negative words
+tweet_sentiment <- tweet_words %>%
+  inner_join(nrc,by = 'word')
+
+
+tweet_sentiment %>%
+  filter(sentiment %in% c('positive','negative')) %>%
+  count(sentiment,document,Tweeting.year,retweets) %>%
+  arrange(document,sentiment) %>%
+  spread(sentiment,n,fill = 0) %>%
+  mutate(net_sentiment = positive - negative) %>%
+  mutate(sentiment_cat = ifelse(net_sentiment > 0,'Positive',
+                                ifelse(net_sentiment < 0,'Negative','Neutral'))) %>%
+  group_by(sentiment_cat,Tweeting.year) %>%
+  summarise(avgRT = mean(retweets,na.rm=T),
+            nTweets = n(),.groups = 'drop') %>%
+  arrange(Tweeting.year,sentiment_cat) %>%
+  group_by(Tweeting.year) %>%
+  mutate(tot_tweets = sum(nTweets)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = 'sentiment_cat',
+              values_from = c('avgRT','nTweets')) %>%
+  mutate(diff = avgRT_Positive - avgRT_Negative)
+```
+
