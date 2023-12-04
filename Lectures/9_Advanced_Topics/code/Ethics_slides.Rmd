@@ -42,11 +42,6 @@ knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
 
   - NB: some of this could be triggering (and it is certainly vulgar)
   
---
-
-- Brief review for pset 9
-
-
 
   
 ---
