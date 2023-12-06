@@ -1,0 +1,182 @@
+---
+title: "Final Exam"
+subtitle: "DS-1000: Fall 2023"
+author: "[YOUR NAME]"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-12-08"
+output:
+  html_document: default
+---
+
+```{r,include=F}
+knitr::opts_chunk$set(error=TRUE)
+```
+
+
+## Overview
+
+This is your final exam for DS-1000. It consists of five questions plus an additional extra credit question. It is cumulative in the sense that you are expected to apply concepts and skills learned over the course of the semester.
+
+## Grading
+
+The final exam is due by 11:59PM on Friday, December 8th. Five points will be deducted for each day late it is received. Submissions received after midnight on Sunday, December 10th will not be graded. 
+
+Please upload **two** versions of this final. The first is a PDF of the **knitted** output, just like your problem sets which is used by the graders. The second is this .Rmd file in its raw form which is used by the professor to **apply a machine learning algorithm to check for violations of the honor code (see below)**. An additional 5 points will be deducted for failing to submit both files in the requested formats. 
+
+## Resources
+
+You are permitted to rely on any course resources from the Fall 2023 semester. These include all lecture slides, recordings, problem sets, answer keys, homeworks, ChatGPT (**copy the link in the space below**) and lecture notes, as well as any and all posts to Campuswire.
+
+Campuswire access will be restricted during the week of the final exam You are only permitted to post clarifying questions about the exam, and these should only be made visible to the instructor and TAs. The graders, TAs, and the Professor will remove questions that ask for help on the contents of the exam.
+
+## Honor
+
+Unlike the problem sets, you are **prohibited** from working on this final together. You must digitally sign your name below, confirming that you did not collaborate on this exam with any of your classmates, share work, or otherwise discuss its contents. 
+
+## Independent Work Statement
+Please sign your name in the space provided by typing out your full name in place of the underline:
+
+"I, __________________________________, am aware of the serious nature of plagiarism and affirm that I did not collaborate with other students while completing this final exam. I understand that violations of this agreement will result in a zero on the final exam, a failing grade for the semester, and a hearing with the Undergraduate Honor Council."
+
+## ChatGPT Link [Optional]
+
+*Copy the link to ChatGPT you used here: _______________________.
+
+## Question 0
+Require `tidyverse` and load the [`covid_prepped.Rds`](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/9_Advanced_Topics/data/covid_prepped.Rds?raw=true) data to an object called `covidData`. 
+
+
+```{r}
+set.seed(123)
+# INSERT CODE HERE
+```
+
+## Codebook
+
+The codebook for this dataset is produced below. Refer to this when interpreting regression coefficients!
+
+| Name                  | Description                                                                                                                                                                                             |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| trump.votes           | Total number of votes cast for Trump in 2020                                                                                                                                                            |
+| perc.trump.2020       | Proportion of all votes that were cast for Trump in 2020                                                                                                                                                |
+| covid.deaths          | Total number of Covid-19 related deaths in each county as of fall of 2020                                                                                                                               |
+| population            | County population                                                                                                                                                                                       |
+| perc.non.hisp.white   | Percent of the county that is non-Hispanic white                                                                                                                                                        |
+| perc.non.hisp.black   | Percent of the county that is non-Hispanic black                                                                                                                                                        |
+| perc.non.hisp.asian   | Percent of the county that is non-Hispanic asian                                                                                                                                                        |
+| perc.hispanic         | Percent of the county that is Hispanic                                                                                                                                                                  |
+| perc.male             | Percent of the county that is male                                                                                                                                                                      |
+| perc.65up             | Percent of the county that is 65 years or older                                                                                                                                                         |
+| unemp.rate            | County unemployment rate (unemployed / in the labor force)                                                                                                                                              |
+| lfpr                  | County labor force participation rate                                                                                                                                                                   |
+| weekly.wages          | Average weekly wages in the county                                                                                                                                                                      |
+| perc.rural            | The percent of the county that is classified as rural                                                                                                                                                   |
+| perc.manuf            | Percent of the county that is employed in manufacturing                                                                                                                                                 |
+| perc.trump.2016       | Proportion of all votes that were cast for Trump in 2016                                                                                                                                                |
+| covid.death.rate      | Number of Covid-19 related deaths per 1,000 people in each county as of the fall of 2020                                                                                                                |
+| log.pop               | County population (logged)                                                                                                                                                                              |
+
+
+
+## Question 1 [8 points]
+
+Consider the following research question: "Were counties that had higher unemployment rates less likely to vote for Donald Trump in 2020 than counties with lower unemployment rates?"
+
+Please provide two arguments, one for both YES answer, and one for the NO answer to this research question, stating your theoretical assumptions [3 points] and your hypothesis [1 point].
+
+>- YES: Write several sentences describing why the answer might be "YES". Make sure to clearly state your theoretical assumptions!
+
+>- NO: Write several sentences describing why the answer might be "NO". Make sure to clearly state your theoretical assumptions!
+
+## Question 2 [8 points]
+
+What are the main $X$ and $Y$ variables for this analysis [1 point]? Provide univariate [2 points] and multivariate [2 points] visualizations of them both. Do you need to transform either of these variables? If so, what is the optimal transformation [1 point]? Finally, interpret the multivariate visualization in light of the research question above. Which answer does it support [2 points]?
+
+>- Write a sentence here defining which variables are the main $X$ and $Y$ variables.
+
+```{r}
+# INSERT CODE HERE TO GENERATE UNIVARIATE VISUALIZATION OF X
+```
+
+>- Write a few sentences here discussing the univariate visualization of $X$.
+
+```{r}
+# INSERT CODE HERE TO GENERATE UNIVARIATE VISUALIZATION OF Y
+```
+
+>- Write a sentence or two here discussing the univariate visualization of $Y$.
+
+```{r}
+# INSERT CODE HERE TO GENERATE MULTIVARIATE VISUALIZATION
+```
+
+>- Write a few sentences interpreting the multivariate visualization.
+
+## Question 3 [8 points]
+
+Now run a simple linear regression predicting `perc.trump.2020` as a function of `unemp.rate` [1 point] (DO NOT MODIFY EITHER VARIABLE FOR THIS QUESTION). What do you conclude? Make sure to interpret (1) the regression coefficient in substantive terms and (2) the confidence in the conclusion. [2 points] Why might we doubt that this regression captures the real relationship between the unemployment rate and Trump support? [2 points]
+
+```{r}
+# INSERT CODE HERE TO RUN THE REGRESSION
+```
+
+>- Write a few sentences here interpreting the regression output.
+
+## Question 4 [8 points]
+
+Evaluate model fit for this linear regression model using 100-fold cross validation with an 80-20 split and save the RMSE to an object called `lm.simple.RMSE` [4 points]. What is the cross-validated average RMSE [1 point]? Make sure to interpret it in substantive terms [3 point]! Do you think this is a good model?
+
+```{r}
+# INSERT CV CODE HERE
+```
+
+>- Write a few sentences here interpreting the RMSE result.
+
+## Question 5 [8 points]
+
+Now re-run the second specification (i.e., the one estimating `perc.trump.2020 ~ unemp.rate`) but include the following additional $X$ variables:
+- Population: `population` (you need to log it first)
+- Share of the county that is non-Hispanic white: `perc.non.hisp.white`
+- Share of the county that is non-Hispanic black: `perc.non.hisp.black`
+- Share of the county that is non-Hispanic asian: `perc.non.hisp.asian`
+- Share of the county that is Hispanic: `perc.hispanic`
+- Share of the county that is male: `perc.male`
+- Share of the county that is 65 years or older: `perc.65up`
+- Labor force participation rate: `lfpr`
+- Average weekly wages: `weekly.wages`
+- Share of the county that is classified as rural: `perc.rural`
+- Share of the county employed in manufacturing: `perc.manuf`
+
+Save this regression model to an object called `lm.controls`. Does the answer to the research question change after including these controls? [4 points]. **Only interpret the coefficient on `unemp.rate` for full credit! No need to interpret every coefficient!**
+
+What about the RMSE? (Again, you need to run 100-fold cross validation with an 80-20 split, and save it to an object called `lm.controls.RMSE`.) Which specification is better, based on these results? [4 points]
+
+```{r}
+# INSERT CODE HERE TO RUN THE REGRESSION
+```
+
+>- Write a few sentences here interpreting the regression output and answering the first question.
+
+```{r}
+# INSERT CV CODE HERE
+```
+
+>- Write a few sentences here interpreting the RMSE output and comparing it to the preceding result.
+
+## Extra Credit [5 points]
+
+Finally, re-run the same specification once again, except add Trump's 2016 support (`perc.trump.2016`) as a control $X$ predictor, and save it to `lm.controls2` object. Does your conclusion change? Why? [3 points]
+
+What about the model fit? Again using 100-fold cross validation with an 80-20 split, does the RMSE improve? [2 points]
+
+```{r}
+# INSERT CODE HERE TO RUN THE REGRESSION
+```
+
+>- Write a few sentences here answering the first questions.
+
+```{r}
+# INSERT CV CODE HERE
+```
+
+>- Write a few sentences here.
