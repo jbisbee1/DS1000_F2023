@@ -192,8 +192,8 @@ All these can also be found on the [Campuswire calendar](https://campuswire.com/
 | 11/22 | BREAK | | | | | 
 | 11/27 | [NLP 2](https://www.jamesbisbee.com/DS1000_F2023/Lectures/8_Clustering_NLP/code/Clustering_part3_slides.html#1)<br />[- Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3059924/View) | Sentiment analysis | [Pset 9](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/NLP_PS9.Rmd)<br />[AK](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/NLP_PS9_AK.Rmd) | [HW #18](https://github.com/jbisbee1/DS1000_F2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_part3_hw.Rmd) | Quiz 18 | 
 | 11/29 | Review Session<br />[- Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3063969/View) | | | | | 
-| 12/04 | [Ethics](https://www.jamesbisbee.com/DS1000_F2023/Lectures/9_Advanced_Topics/code/Ethics_slides.html#1)<br />[- Recording] | Ethical data science | | | **Final Assigned** | 
-| 12/06 | Review Session | | | |  | 
+| 12/04 | [Ethics](https://www.jamesbisbee.com/DS1000_F2023/Lectures/9_Advanced_Topics/code/Ethics_slides.html#1)<br />[- Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3070547/View) | Ethical data science | | | **Final Assigned** | 
+| 12/06 | Review Session<br />[- Recording](https://brightspace.vanderbilt.edu/d2l/le/content/442169/viewContent/3070558/View) | | | |  | 
 | 12/08 | **Final Exam Due** | | | | | 
 
 ## Helpful Resources
